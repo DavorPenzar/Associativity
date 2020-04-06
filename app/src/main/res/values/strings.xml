@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name" translatable="true">Associativity</string>
     <string name="column" translatable="true">column</string>
-    <string name="correct" translatable="true">Correct! \u0001\uf60a</string>
+    <string name="correct" translatable="true">Correct! \ud83d\ude0a</string>
     <plurals name="days" translatable="true">
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>
@@ -18,5 +18,5 @@
     <string name="sign_plus" translatable="false">+</string>
     <string name="solution" translatable="true">Solution</string>
     <string name="try_guess" translatable="true">Try</string>
-    <string name="wrong" translatable="true">Wrong! \u0001\uf61e</string>
+    <string name="wrong" translatable="true">Wrong! \ud83d\ude1e</string>
 </resources>

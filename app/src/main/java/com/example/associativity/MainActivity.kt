@@ -36,7 +36,7 @@ import kotlin.math.abs
  * @property gameFreshness State of freshness of the game (if `true`, the game table should be initialised with new values and all cells closed as when starting the app or starting a new game).
  *
  * @property stopwatchStartness If the stopwatch has started, `true`; `false` otherwise.
- * @property stopwatchStopness If the stopwatch has fully stopped (as when succesfully fuessing the final solution, giving up or closing the app), `true`; `false` otherwise.
+ * @property stopwatchStopness If the stopwatch has fully stopped (as when successfully guessing the final solution, giving up or closing the app), `true`; `false` otherwise.
  * @property stopwatchDuration The duration of gameplay measured by the stopwatch.
  * @property stopwatchHandler The [Handler] object of the stopwatch; could be considered the stopwatch itself.
  * @property stopwatchStartTimeStamp The initial timestamp for measuring [stopwatchDuration] of gameplay by the stopwatch (it changes when calling methods [onPause] and [onResume] to disregard idle time therefore ultimately it may be a different timestamp, so that [stopwatchDuration] would be measured properly and fairly).

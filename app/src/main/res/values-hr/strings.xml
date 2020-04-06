@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name" translatable="true">Asocijativnost</string>
     <string name="column" translatable="true">stupac</string>
-    <string name="correct" translatable="true">Točno! \u0001\uf60a</string>
+    <string name="correct" translatable="true">Točno! \ud83d\ude0a</string>
     <plurals name="days" translatable="true">
         <item quantity="one">%d dan</item>
         <item quantity="few">%d dana</item>
@@ -15,5 +15,5 @@
     <string name="open" translatable="true">otvoreno</string>
     <string name="solution" translatable="true">Rješenje</string>
     <string name="try_guess" translatable="true">Pokušaj</string>
-    <string name="wrong" translatable="true">Pogrešno! \u0001\uf61e</string>
+    <string name="wrong" translatable="true">Pogrešno! \ud83d\ude1e</string>
 </resources>
