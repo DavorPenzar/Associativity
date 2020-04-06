@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ScrollView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import java.lang.Integer.min
 import java.time.Duration
@@ -431,6 +432,24 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    /**
+     * Reinstantiate the activity's layout.
+     * 
+     * This method does not start a new game, use [prepareNewGame] to do that instead.
+     * 
+     */
+    private fun reinstatiate() {
+        // Destroy the old layout and construct a new one.
+        findViewById<ConstraintLayout>(R.id.constraintLayoutApplication).apply {
+            invalidate()
+            requestLayout()
+        }
+        setContentView(R.layout.activity_main)
+
+        // Make [editTextGuess] IME action done to be clicking [buttonGuess].
+        connectEditTextGuessAndButtonGuess()
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //  INITIALISING METHODS                                                                      //
@@ -683,7 +702,7 @@ class MainActivity : AppCompatActivity() {
      * @param initialise If `true`, the new game is initialised via [initialiseTable] method.
      *
      */
-    private fun startNewGame(destroyPrevious: Boolean = true, initialise: Boolean = true) {
+    private fun prepareNewGame(destroyPrevious: Boolean = true, initialise: Boolean = true) {
         // Reset the stopwatch.
         resetStopwatch()
 
@@ -691,17 +710,8 @@ class MainActivity : AppCompatActivity() {
         changeGameFreshness(true)
 
         // Reconstruct the layout of the previous game if needed.
-        if (destroyPrevious) {
-            // Destroy the old layout and construct a new one.
-            constraintLayoutApplication.apply {
-                invalidate()
-                requestLayout()
-            }
-            setContentView(R.layout.activity_main)
-
-            // Make [editTextGuess] IME action done to be clicking [buttonGuess].
-            connectEditTextGuessAndButtonGuess()
-        }
+        if (destroyPrevious)
+            reinstatiate()
 
         // Initialise the new game if [initialise], otherwise just clear properties.
         if (initialise)
@@ -753,6 +763,20 @@ class MainActivity : AppCompatActivity() {
      */
     private fun changeGameFreshness(freshness: Boolean) {
         gameFreshness = freshness
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //  NEW GAME BUTTON                                                                           //
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * On-click method for [buttonNewGame].
+     *
+     * The method starts a new game by calling [prepareNewGame] method.
+     *
+     */
+    public fun newGame(it: View) {
+        prepareNewGame()
     }
 
 
@@ -1717,7 +1741,10 @@ class MainActivity : AppCompatActivity() {
                     appendSuffix(resources.getString(R.string.sol), SUFFIX_OPEN),
                     isFinalOpen()
                 )
-                putStringArray(resources.getString(R.string.sol), finalValue())
+                putStringArray(
+                    appendSuffix(resources.getString(R.string.sol), SUFFIX_VALUE),
+                    finalValue()
+                )
             }
 
             putString(CURRENT_TEXT, retrieveCurrentText())
@@ -1754,7 +1781,7 @@ class MainActivity : AppCompatActivity() {
 
             val restoredGameFreshness: Boolean = getBoolean(GAME_FRESHNESS)
 
-            if (restoredGameFreshness) {
+            if (!restoredGameFreshness) {
                 for (cell in arrayOfCells()) {
                     changeCellOpennes(cell, getBoolean(appendSuffix(cell, SUFFIX_OPEN)))
                     editCellValue(cell, getString(appendSuffix(cell, SUFFIX_VALUE)) as String)

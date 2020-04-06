@@ -12,6 +12,7 @@
     <string name="game" translatable="true">game</string>
     <string name="give_up" translatable="true">Give up</string>
     <string name="hms_time_delimiter" translatable="false">:</string>
+    <string name="new_game" translatable="true">New game</string>
     <string name="open" translatable="true">open</string>
     <string name="sign_minus" translatable="false">-</string>
     <string name="sign_plus" translatable="false">+</string>

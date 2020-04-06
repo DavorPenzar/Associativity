@@ -10,6 +10,7 @@
     <string name="dismiss" translatable="true">Dismiss</string>
     <string name="game" translatable="true">game</string>
     <string name="give_up" translatable="true">Give up</string>
+    <string name="new_game" translatable="true">New game</string>
     <string name="open" translatable="true">open</string>
     <string name="solution" translatable="true">Solution</string>
     <string name="try_guess" translatable="true">Try</string>

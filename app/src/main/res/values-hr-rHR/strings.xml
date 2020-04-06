@@ -11,6 +11,7 @@
     <string name="dismiss" translatable="true">Odustani</string>
     <string name="game" translatable="true">igra</string>
     <string name="give_up" translatable="true">Predaj se</string>
+    <string name="new_game" translatable="true">Nova igra</string>
     <string name="open" translatable="true">otvoreno</string>
     <string name="solution" translatable="true">Rješenje</string>
     <string name="try_guess" translatable="true">Pokušaj</string>
