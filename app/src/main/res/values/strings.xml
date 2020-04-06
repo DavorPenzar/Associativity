@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="true">Associativity</string>
+    <string name="column" translatable="true">column</string>
+    <string name="correct" translatable="true">Correct! \u0001\uf60a</string>
+    <plurals name="days" translatable="true">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <string name="dismiss" translatable="true">Dismiss</string>
+    <string name="display_two_items" translatable="false">%1$s: %2$s</string>
+    <string name="game" translatable="true">game</string>
+    <string name="give_up" translatable="true">Give up</string>
+    <string name="hms_time_delimiter" translatable="false">:</string>
+    <string name="open" translatable="true">open</string>
+    <string name="sign_minus" translatable="false">-</string>
+    <string name="sign_plus" translatable="false">+</string>
+    <string name="solution" translatable="true">Solution</string>
+    <string name="try_guess" translatable="true">Try</string>
+    <string name="wrong" translatable="true">Wrong! \u0001\uf61e</string>
+</resources>

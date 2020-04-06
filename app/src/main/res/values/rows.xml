@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="row" translatable="false">Row</string>
+
+    <string name="row_1" translatable="false">1</string>
+    <string name="row_2" translatable="false">2</string>
+    <string name="row_3" translatable="false">3</string>
+    <string name="row_4" translatable="false">4</string>
+
+    <string-array name="rows" translatable="false">
+        <item>@string/row_1</item>
+        <item>@string/row_2</item>
+        <item>@string/row_3</item>
+        <item>@string/row_4</item>
+    </string-array>
+</resources>

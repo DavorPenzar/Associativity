@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="col" translatable="false">Col</string>
+
+    <string name="column_A" translatable="false">A</string>
+    <string name="column_B" translatable="false">B</string>
+    <string name="column_C" translatable="false">C</string>
+    <string name="column_D" translatable="false">D</string>
+
+    <string-array name="columns" translatable="false">
+        <item>@string/column_A</item>
+        <item>@string/column_B</item>
+        <item>@string/column_C</item>
+        <item>@string/column_D</item>
+    </string-array>
+</resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="array" translatable="false">array</string>
+    <string name="id" translatable="false">id</string>
+    <string name="string" translatable="false">string</string>
+
+    <string name="button" translatable="false">button</string>
+    <string name="edit_text" translatable="false">editText</string>
+    <string name="text_view" translatable="false">textView</string>
+
+    <string name="cells" translatable="false">cells</string>
+    <string name="cells_underscore" translatable="false">cells_</string>
+    <string name="cell_underscore" translatable="false">cell_</string>
+    <string name="columns" translatable="false">columns</string>
+    <string name="column_underscore" translatable="false">column_</string>
+    <string name="rows" translatable="false">rows</string>
+    <string name="row_underscore" translatable="false">row_</string>
+</resources>

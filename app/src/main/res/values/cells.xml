@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cell_A1" translatable="false">A1</string>
+    <string name="cell_A2" translatable="false">A2</string>
+    <string name="cell_A3" translatable="false">A3</string>
+    <string name="cell_A4" translatable="false">A4</string>
+    <string name="cell_B1" translatable="false">B1</string>
+    <string name="cell_B2" translatable="false">B2</string>
+    <string name="cell_B3" translatable="false">B3</string>
+    <string name="cell_B4" translatable="false">B4</string>
+    <string name="cell_C1" translatable="false">C1</string>
+    <string name="cell_C2" translatable="false">C2</string>
+    <string name="cell_C3" translatable="false">C3</string>
+    <string name="cell_C4" translatable="false">C4</string>
+    <string name="cell_D1" translatable="false">D1</string>
+    <string name="cell_D2" translatable="false">D2</string>
+    <string name="cell_D3" translatable="false">D3</string>
+    <string name="cell_D4" translatable="false">D4</string>
+
+    <string-array name="cells" translatable="false">
+        <item>@string/cell_A1</item>
+        <item>@string/cell_A2</item>
+        <item>@string/cell_A3</item>
+        <item>@string/cell_A4</item>
+        <item>@string/cell_B1</item>
+        <item>@string/cell_B2</item>
+        <item>@string/cell_B3</item>
+        <item>@string/cell_B4</item>
+        <item>@string/cell_C1</item>
+        <item>@string/cell_C2</item>
+        <item>@string/cell_C3</item>
+        <item>@string/cell_C4</item>
+        <item>@string/cell_D1</item>
+        <item>@string/cell_D2</item>
+        <item>@string/cell_D3</item>
+        <item>@string/cell_D4</item>
+    </string-array>
+
+    <string-array name="cells_A" translatable="false">
+        <item>@string/cell_A1</item>
+        <item>@string/cell_A2</item>
+        <item>@string/cell_A3</item>
+        <item>@string/cell_A4</item>
+    </string-array>
+
+    <string-array name="cells_B" translatable="false">
+        <item>@string/cell_B1</item>
+        <item>@string/cell_B2</item>
+        <item>@string/cell_B3</item>
+        <item>@string/cell_B4</item>
+    </string-array>
+
+    <string-array name="cells_C" translatable="false">
+        <item>@string/cell_C1</item>
+        <item>@string/cell_C2</item>
+        <item>@string/cell_C3</item>
+        <item>@string/cell_C4</item>
+    </string-array>
+
+    <string-array name="cells_D" translatable="false">
+        <item>@string/cell_D1</item>
+        <item>@string/cell_D2</item>
+        <item>@string/cell_D3</item>
+        <item>@string/cell_D4</item>
+    </string-array>
+
+    <string-array name="cells_1" translatable="false">
+        <item>@string/cell_A1</item>
+        <item>@string/cell_B1</item>
+        <item>@string/cell_C1</item>
+        <item>@string/cell_D1</item>
+    </string-array>
+
+    <string-array name="cells_2" translatable="false">
+        <item>@string/cell_A2</item>
+        <item>@string/cell_B2</item>
+        <item>@string/cell_C2</item>
+        <item>@string/cell_D2</item>
+    </string-array>
+
+    <string-array name="cells_3" translatable="false">
+        <item>@string/cell_A3</item>
+        <item>@string/cell_B3</item>
+        <item>@string/cell_C3</item>
+        <item>@string/cell_D3</item>
+    </string-array>
+
+    <string-array name="cells_4" translatable="false">
+        <item>@string/cell_A4</item>
+        <item>@string/cell_B4</item>
+        <item>@string/cell_C4</item>
+        <item>@string/cell_D4</item>
+    </string-array>
+</resources>

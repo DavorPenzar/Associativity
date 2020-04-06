@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="true">Asocijativnost</string>
+    <string name="column" translatable="true">stupac</string>
+    <string name="correct" translatable="true">Točno! \u0001\uf60a</string>
+    <plurals name="days" translatable="true">
+        <item quantity="one">%d dan</item>
+        <item quantity="few">%d dana</item>
+        <item quantity="other">% dana</item>
+    </plurals>
+    <string name="dismiss" translatable="true">Odustani</string>
+    <string name="game" translatable="true">igra</string>
+    <string name="give_up" translatable="true">Predaj se</string>
+    <string name="open" translatable="true">otvoreno</string>
+    <string name="solution" translatable="true">Rješenje</string>
+    <string name="try_guess" translatable="true">Pokušaj</string>
+    <string name="wrong" translatable="true">Pogrešno! \u0001\uf61e</string>
+</resources>
