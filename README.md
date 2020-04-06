@@ -1,2 +1,3 @@
-# Associativity
-Associations game Android app
+#   Associativity
+
+Associations game Android app.
