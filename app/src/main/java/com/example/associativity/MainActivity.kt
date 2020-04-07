@@ -39,9 +39,10 @@ import kotlin.math.abs
  * @property stopwatchStopness If the stopwatch has fully stopped (as when successfully guessing the final solution, giving up or closing the app), `true`; `false` otherwise.
  * @property stopwatchDuration The duration of gameplay measured by the stopwatch.
  * @property stopwatchHandler The [Handler] object of the stopwatch; could be considered the stopwatch itself.
- * @property stopwatchStartTimeStamp The initial timestamp for measuring [stopwatchDuration] of gameplay by the stopwatch (it changes when calling methods [onPause] and [onResume] to disregard idle time therefore ultimately it may be a different timestamp, so that [stopwatchDuration] would be measured properly and fairly).
+ * @property stopwatchStartTimeStamp The initial timestamp for measuring [stopwatchDuration] of gameplay by the stopwatch (it changes when calling methods [onPause] and [onResume] to disregard idle time therefore ultimately it may be a different timestamp so that [stopwatchDuration] would be measured properly and fairly).
  *
  * @property guessOpenness If the guess dialog is open, `true`; `false` otherwise.
+ * @property guessGiveUp If giving up is allowed during guessing, `true`; `false` otherwise.
  * @property guessTarget Label of the target of guessing.
  *
  * @property cellsOpenness Mapping from cells' labels to their openness.
@@ -63,6 +64,8 @@ class MainActivity : AppCompatActivity() {
     /**
      * The companion object of class [MainActivity].
      *
+     * @property COMMA_DELIMITER String between items separated by a comma---a comma followed by a single whitespace, i. e. `", "`.
+     *
      * @property TIME_SPACE_DELIMITER String between days and hours in time's string representation---a single whitespace, i. e. `" "`.
      * @property TIME_COLON_DELIMITER String between hours, minutes and seconds in time's string representation---a colon, i. e. `":"`.
      * @property HOURS_FORMAT String format for hours in time's string representation.
@@ -82,10 +85,11 @@ class MainActivity : AppCompatActivity() {
      * @property CURRENT_TEXT Label to save currently displayed text in [textViewCurrent] in [onSaveInstanceState] method.
      *
      * @property GUESS_OPENNESS Label to save openness of the guess dialog in [onSaveInstanceState] method.
+     * @property GUESS_GIVE_UP Label to save the ability to give up in [onSaveInstanceState] method.
      * @property GUESS_TARGET Label to save the target of guessing in [onSaveInstanceState] method.
      * @property GUESS_HINT_ELABORATE Label to save the elaborate hint for guessing in [onSaveInstanceState] method.
      * @property GUESS_HINT_BRIEF Label to save the brief hint of guessing in [onSaveInstanceState] method.
-     * @property GUESS_INPUT Label to save the typed guess in [editTextGuess] in [onSaveInstanceState] method.
+     * @property GUESS_INPUT Label to save the typed guess in [editTextEnterGuess] in [onSaveInstanceState] method.
      *
      */
     private companion object {
@@ -93,6 +97,8 @@ class MainActivity : AppCompatActivity() {
         ////////////////////////////////////////////////////////////////////////////////////////////
         //  LABELS FOR [onSaveInstanceState] AND [onRestoreInstanceState] METHODS                 //
         ////////////////////////////////////////////////////////////////////////////////////////////
+
+        private const val COMMA_DELIMITER: String = ", "
 
         private const val TIME_SPACE_DELIMITER: String = " "
         private const val TIME_COLON_DELIMITER: String = ":"
@@ -112,10 +118,11 @@ class MainActivity : AppCompatActivity() {
 
         private const val CURRENT_TEXT: String = "displayCurrent"
 
-        private const val GUESS_OPENNESS: String = "openGuess"
+        private const val GUESS_OPENNESS: String = "isGuessDialogOpen"
+        private const val GUESS_GIVE_UP: String = "guessGiveUp"
         private const val GUESS_TARGET: String = "guessTarget"
-        private const val GUESS_HINT_ELABORATE: String = "elaborateHint"
-        private const val GUESS_HINT_BRIEF: String = "conciseHint"
+        private const val GUESS_HINT_ELABORATE: String = "guessElaborateHint"
+        private const val GUESS_HINT_BRIEF: String = "guessBriefHint"
         private const val GUESS_INPUT: String = "guess"
 
 
@@ -150,7 +157,7 @@ class MainActivity : AppCompatActivity() {
          * @return A "fixed" array of acceptable answers (solutions).
          *
          */
-        private fun fixAcceptable(acceptables: Array<String>): Array<String> {
+        private fun fixAcceptables(acceptables: Array<String>): Array<String> {
             // If the original array is empty, return an array of a single empty string.
             if (acceptables.isEmpty())
                 return arrayOf(String())
@@ -195,8 +202,8 @@ class MainActivity : AppCompatActivity() {
         /**
          * Check if the given guess is an acceptable solution.
          *
-         * The [guess] is an acceptable solution if it is equal case-insensitively to at least one
-         * acceptable answer in the array [acceptables].
+         * The [guess] is an acceptable solution if it is case-insensitively equal to at least one
+         * acceptable answer in the array of [acceptables].
          *
          * @param guess The given guess.
          * @param acceptables Acceptable answers.
@@ -205,12 +212,12 @@ class MainActivity : AppCompatActivity() {
          *
          */
         private fun isAcceptable(guess: String, acceptables: Array<String>): Boolean {
-            // Try to find the [guess] among [acceptables], case-insensitive.
+            // Try to find the [guess] among [acceptables], case-insensitively.
             for (acceptable in acceptables)
                 if (guess.equals(acceptable, true))
                     return true
 
-            // Return `false` if the [guess] is not found.
+            // Return `false` if the [guess] was not found.
             return false
         }
     }
@@ -239,6 +246,7 @@ class MainActivity : AppCompatActivity() {
     private var stopwatchStartTimeStamp: LocalDateTime = LocalDateTime.now()
 
     private var guessOpenness: Boolean = false
+    private var guessGiveUp: Boolean = false
     private var guessTarget: String = String()
 
     private val cellsOpenness: HashMap<String, Boolean> = HashMap()
@@ -258,10 +266,10 @@ class MainActivity : AppCompatActivity() {
     /**
      * Express time.
      *
-     * The time is expressed as a string `"+D days HH:MM:SS.xxx"`, where `+` is the right sign (zero
+     * The time is expressed as a string `"+D days HH:MM:SS.mmm"`, where `+` is the right sign (zero
      * time is given the positive sign), `D` is the number of days, `"days"` is the right plural
      * string of the locale, `HH`, `MM` and `SS` are zero-padded hours, minutes and seconds and
-     * `xxx` are milliseconds.  Days and hours may be omitted if they are equal to 0 (if days are
+     * `mmm` are milliseconds.  Days and hours may be omitted if they are equal to 0 (if days are
      * included, the hours are also included even if they are equal to 0). If the time is positive,
      * the sign may be omitted.
      *
@@ -298,6 +306,7 @@ class MainActivity : AppCompatActivity() {
 
         // Express the absolute time.
 
+        // Express days.
         if (includeDays || absoluteDays > 0L) {
             val absoluteDaysInt: Int = absoluteDays.toInt()
 
@@ -307,9 +316,11 @@ class MainActivity : AppCompatActivity() {
                     )
         }
 
+        // Express hours.
         if (includeDays || includeHours || absoluteHours > 0L)
             timeExpression += HOURS_FORMAT.format(absoluteHours % 24L) + TIME_COLON_DELIMITER
 
+        // Express minutes, seconds and milliseconds.
         timeExpression += MINUTES_SECONDS_FORMAT.format(
             absoluteMinutes % 60L,
             TIME_COLON_DELIMITER,
@@ -441,7 +452,8 @@ class MainActivity : AppCompatActivity() {
     /**
      * Reinstantiate the activity's layout.
      * 
-     * This method does not start a new game, use [prepareNewGame] to do that instead.
+     * **Note: This method does not start a new game, use [prepareNewGame] to do that instead which,
+     * given the right parameters, will in turn call this method.**
      * 
      */
     private fun reinstatiate() {
@@ -452,8 +464,8 @@ class MainActivity : AppCompatActivity() {
         }
         setContentView(R.layout.activity_main)
 
-        // Make [editTextGuess]' IME action done to be clicking [buttonGuess].
-        connectEditTextGuessAndButtonGuess()
+        // Make [editTextEnterGuess]' IME action done to be clicking [buttonGuess].
+        connecteditTextEnterGuessAndButtonGuess()
     }
 
 
@@ -500,7 +512,7 @@ class MainActivity : AppCompatActivity() {
      *
      * @param rowsAndColumns If `true`, reset [labelOne], [labelTwo], [labelThree] and [labelFour], and [labelA], [labelB], [labelC] and [labelD].
      * @param gameFreshness If `true`, reset [gameFreshness] (i. e. the game's freshness is reset).
-     * @param stopwatch If `true`, reset [stopwatchStartness], [stopwatchStopness], [stopwatchDuration], [stopwatchHandler] and [stopwatchStartTimeStamp] (i. e. the stopwatch is reset, but **not** as with [resetStopwatch]).
+     * @param stopwatch If `true`, reset [stopwatchStartness], [stopwatchStopness], [stopwatchDuration], [stopwatchHandler] and [stopwatchStartTimeStamp] (i. e. the stopwatch is reset, but **not** as with [resetStopwatch] method).
      * @param guessDialog If `true`, reset [guessOpenness] and [guessTarget] (i. e. the guess dialog is reset).
      * @param gameTableAndSolutions If `true`, reset [cellsOpenness], [cellsValues], [columnsOpenness], [columnsValues], [solutionOpenness] and [solutionValue] (i. e. the game table and solutions are reset).
      *
@@ -541,6 +553,7 @@ class MainActivity : AppCompatActivity() {
         // Reset the guess dialog if needed.
         if (guessDialog) {
             guessOpenness = false
+            guessGiveUp = false
             guessTarget = String()
         }
 
@@ -560,9 +573,12 @@ class MainActivity : AppCompatActivity() {
     /**
      * Initialise the game table.
      *
-     * Game freshness is set to `false`, all cells, all columns and the solution are set to closed
-     * (the corresponding open property is set to `false`), and the game table, the columns'
-     * solutions and the main solution are set.
+     * Game freshness is set to `false`, all cells, all columns's solutions and the final solution
+     * are set to closed (the corresponding *open* property is set to `false`), and the game table,
+     * the columns' solutions and the main solution are set.  **Note: no existing graphical UI is
+     * affected by this method, the method only sets what [isGameFresh], [isCellOpen],
+     * [cellValue], [isColumnOpen], [columnValue], [isFinalOpen] and [finalValue] methods will
+     * return.**
      *
      * **Note: Currently the game table, the columns' solutions and the main solution are
      * hardcoded---this should be changed to read from an external file.**
@@ -605,7 +621,7 @@ class MainActivity : AppCompatActivity() {
             editCellValue(resources.getString(R.string.cell_D3), "Kelvin")
             editCellValue(resources.getString(R.string.cell_D4), "živa")
 
-            // Columns.
+            // Columns' solutions.
             editColumnValue(
                 resources.getString(R.string.column_A),
                 arrayOf(
@@ -657,9 +673,14 @@ class MainActivity : AppCompatActivity() {
     /**
      * Shuffle the game table.
      *
-     * This method shuffles only the [cellsValues] and [columnsValues] maps as the method should be
-     * called only when the game table is being initialised, therefore it is assumed that all
-     * cells and columns are closed.
+     * If a column's label is missing in [shuffleColumns], the cells inside the column will not be
+     * shuffled (as if the column maps to `fasle`).  Non-existing columns' labels as keys in
+     * [shuffleColumns] are ignored.
+     *
+     * **Note: This method shuffles only the values returned by [cellValue] and [columnValue]
+     * methods as the method should be called only when the game table is being initialised,
+     * therefore it is assumed that all cells and columns are closed---that the shuffling is
+     * irrelevant to the graphical UI.**
      *
      * @param shuffleColumns If a column maps to `true`, its cells are shuffled.
      * @param shuffleFinal If `true`, the columns themselves are shuffled.
@@ -669,10 +690,10 @@ class MainActivity : AppCompatActivity() {
         shuffleColumns: Map<String, Boolean> = mapOf(),
         shuffleFinal: Boolean = false
     ) {
-        // Shuffle cells inside columns.
+        // Shuffle cells inside columns if needed.
         for (column in arrayOfColumns())
             if (shuffleColumns.getOrDefault(column, false)) {
-                // Get the original order of cells and the new order (arrays of labels of cells).
+                // Get the original order of cells and the new order.
                 val order: ArrayList<String> = arrayOfCells(column).toCollection(ArrayList())
                 val reorder: ArrayList<String> = ArrayList(order).apply {
                     shuffle()
@@ -695,7 +716,7 @@ class MainActivity : AppCompatActivity() {
                     editCellValue(cell, newTableValuesColumn[cell]!!)
             }
 
-        // Shuffle columns.
+        // Shuffle columns if needed.
         if (shuffleFinal) {
             // Get the original order of columns and the new order (arrays of labels of cells).
             val order: ArrayList<String> = arrayOfColumns().toCollection(ArrayList())
@@ -746,13 +767,17 @@ class MainActivity : AppCompatActivity() {
     /**
      * Start a new game.
      *
+     * **Note: This method needs not to be called on the startup of the app because [onStart] and
+     * [onPause] methods will initialise a new game if no game has been initialised yet.**
+     *
      * If a game has already been started (even if it has ended by solving the final solution or
      * giving up on it), [destroyPrevious] should be set to `true` to destroy everything from the
      * previous game.  This also destroys the old content view and sets a new one.  It is safe to
      * set [destroyPrevious] even if a previous game did not exist.
      *
      * If [initialise] is `false`, the game will be fresh after the method returns.  Otherwise the
-     * game will not be fresh as [initialiseTable] method sets the freshness to `false`.
+     * game will not be fresh as [initialiseTable] method will be called which sets the freshness to
+     * `false`.
      *
      * @param destroyPrevious If `true`, the old game is destroyed first (if it has existed at all).
      * @param initialise If `true`, the new game is initialised via [initialiseTable] method.
@@ -790,11 +815,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Make [editTextGuess]' IME action done to be clicking [buttonGuess].
+     * Make [editTextEnterGuess]' IME action done to be clicking [buttonGuess].
      *
      */
-    private fun connectEditTextGuessAndButtonGuess() {
-        findViewById<EditText>(R.id.editTextGuess).setOnEditorActionListener { _, actionId, _ ->
+    private fun connecteditTextEnterGuessAndButtonGuess() {
+        findViewById<EditText>(R.id.editTextEnterGuess).setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
                     findViewById<Button>(R.id.buttonGuess).performClick()
@@ -812,7 +837,7 @@ class MainActivity : AppCompatActivity() {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Check if the game is fresh and should be initialised.
+     * Check if the game is fresh.
      *
      * @return If the game is fresh, `true`; `false` otherwise.
      *
@@ -829,7 +854,7 @@ class MainActivity : AppCompatActivity() {
      *
      * **Note: This method merely changes what [isGameFresh] method will return.  To actually
      * refresh a game the graphical UI must be reset and the game table must be initialised among
-     * other things.**
+     * other things---use [prepareNewGame] method to do that.**
      *
      * @param freshness New freshness of the game.
      *
@@ -848,10 +873,14 @@ class MainActivity : AppCompatActivity() {
     /**
      * On-click method for [buttonNewGame].
      *
-     * The method starts a new game by calling [prepareNewGame] method.
+     * A new game is started by calling [prepareNewGame] with destroying the previous game and
+     * initialising a new one.
+     *
+     * @param it The button [buttonNewGame].
      *
      */
     public fun newGame(it: View) {
+        // Start a new game by calling [prepareNewGame] method.
         prepareNewGame()
     }
 
@@ -941,9 +970,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Get the current stopwatch duration.
+     * Get the current stopwatch's duration.
      *
-     * @return The current stopwatch duration.
+     * @return The current stopwatch's duration.
      *
      */
     private fun retrieveStopwatchDuration(): Duration {
@@ -951,9 +980,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Set current stopwatch duration.
+     * Set current stopwatch's duration.
      *
-     * @param duration New stopwatch duration.
+     * @param duration New stopwatch's duration.
      *
      */
     private fun changeStopwatchDuration(duration: Duration) {
@@ -973,7 +1002,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * Print time to [textViewStopwatch]
      *
-     * @param time Time to print as a [String] object.
+     * @param time Time to print to [textViewStopwatch] as a [String] object.
      *
      */
     private fun printStopwatchTime(time: String?) {
@@ -1115,8 +1144,8 @@ class MainActivity : AppCompatActivity() {
         // Set the guess dialog's openness to `true`.
         changeGuesDialogOpenness(true)
 
-        // Open the guess dialog.
-        findViewById<ScrollView>(R.id.scrollViewGuess).visibility = View.VISIBLE
+        // Actually open the guess dialog.
+        findViewById<ScrollView>(R.id.scrollViewGuessDialog).visibility = View.VISIBLE
     }
 
     /**
@@ -1125,12 +1154,12 @@ class MainActivity : AppCompatActivity() {
      */
     private fun closeGuessDialog() {
         // Close the input method.
-        closeInputMethod(findViewById<EditText>(R.id.editTextGuess).windowToken)
+        closeInputMethod(findViewById<EditText>(R.id.editTextEnterGuess).windowToken)
 
         // Actually close the guess dialog.
-        findViewById<ScrollView>(R.id.scrollViewGuess).visibility = View.GONE
+        findViewById<ScrollView>(R.id.scrollViewGuessDialog).visibility = View.GONE
 
-        // Clear [editTextGuess].
+        // Clear [editTextEnterGuess].
         typeGuess(String())
 
         // Set the guess dialog's openness to `false`.
@@ -1138,7 +1167,37 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Get the label ogf the current target of guessing.
+     * Check if giving up is allowed during guessing.
+     *
+     * @return If giving up is allowed during guessing, `true`; `false` otherwise.
+     *
+     */
+    private fun isGuessGivingUpAllowed(): Boolean {
+        return guessGiveUp
+    }
+
+    /**
+     * Change the allowness of giving up during guessing.
+     *
+     * If [giveUp] is `null`, the guessing's allowness state is toggled (a guessing with allowed
+     * giving up will be set to guessing with non-allowed giving up and vice versa).
+     *
+     * **Note: This method merely changes what [isGuessGivingUpAllowed] method will return.  To
+     * actually allow or disallow giving up pass appropriate arguments to [offerColumnGuess] and
+     * [offerFinalGuess] methods.**
+     *
+     * @param giveUp New allowness of giving up during guessing.
+     *
+     */
+    private fun changeGuessGivingUpAllowness(giveUp: Boolean? = null) {
+        guessGiveUp = when (giveUp) {
+            null -> !guessGiveUp
+            else -> giveUp
+        }
+    }
+
+    /**
+     * Get the label of the current target of guessing.
      *
      * @return The label of the current target of guessing.
      *
@@ -1158,27 +1217,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Get the current hint for the guess.
+     * Get the current hint for guessing.
      *
-     * @param elaborate If `true`, the elaborate hint (i. e. the text in [textViewHint]) is returned; otherwise the brief hint is returned (i. e. `hint` of [editTextGuess]).
+     * @param elaborate If `true`, the elaborate hint (i. e. the text in [textViewHint]) is returned; otherwise the brief hint is returned (i. e. `hint` of [editTextEnterGuess]).
      *
-     * @return Current hint for the guess.
+     * @return Current hint for guessing.
      *
      */
     private fun retrieveGuessHint(elaborate: Boolean = true): String {
         return when (elaborate) {
             true -> findViewById<TextView>(R.id.textViewHint).text.toString()
-            else -> findViewById<EditText>(R.id.editTextGuess).hint.toString()
+            else -> findViewById<EditText>(R.id.editTextEnterGuess).hint.toString()
         }
     }
 
     /**
      * Print an elaborate hint in [textViewHint].
      *
-     * If [target] is given (is not `null`), the hint is displayed as `"target: hint"`, where
+     * If [target] is given (if it is not `null`), the hint is displayed as `"target: hint"`, where
      * `target` is [target] and `hint` is [hint].  Otherwise only [hint] is printed.
      *
-     * @param hint Elaborate hint to display.
+     * When restoring a previously printed elaborate hint, pass the complete elaborate hint as the
+     * argument [hint] while leaving the argument [target] to the default `null` value.
+     *
+     * @param hint Elaborate hint to print.
      * @param target Target of the solution (column label if the solution is not final).
      *
      */
@@ -1190,33 +1252,33 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Print a brief hint in [editTextGuess].
+     * Print a brief hint in [editTextEnterGuess].
      *
      * @param hint Brief hint to display.
      *
      */
     private fun displayBriefGuessHint(hint: String?) {
-        findViewById<EditText>(R.id.editTextGuess).hint = hint
+        findViewById<EditText>(R.id.editTextEnterGuess).hint = hint
     }
 
     /**
-     * Get the currently written guess in [editTextGuess].
+     * Get the currently written guess in [editTextEnterGuess].
      *
-     * @return Currently written guess in [editTextGuess].
+     * @return Currently written guess in [editTextEnterGuess].
      *
      */
     private fun retrieveGuess(): String {
-        return findViewById<EditText>(R.id.editTextGuess).text.toString()
+        return findViewById<EditText>(R.id.editTextEnterGuess).text.toString()
     }
 
     /**
-     * Set the guess in [editTextGuess].
+     * Set the guess in [editTextEnterGuess].
      *
-     * @param guess Guess to set in [editTextGuess].
+     * @param guess Guess to set in [editTextEnterGuess].
      *
      */
     private fun typeGuess(guess: String?) {
-        findViewById<EditText>(R.id.editTextGuess).setText(guess)
+        findViewById<EditText>(R.id.editTextEnterGuess).setText(guess)
     }
 
     /**
@@ -1251,6 +1313,9 @@ class MainActivity : AppCompatActivity() {
      *
      * If [origin] is given (is not `null`), the text is displayed as `"origin: text"`, where
      * `origin` is [origin] and `text` is [text].  Otherwise only [text] is printed.
+     *
+     * When restoring a previously printed text, pass the complete text as the argument [text] while
+     * leaving the argument [origin] to the default `null` value.
      *
      * @param text Text to display.
      * @param origin Origin of the text to display (cell or column label).
@@ -1351,7 +1416,7 @@ class MainActivity : AppCompatActivity() {
         button.setOnClickListener(this::clickOnOpenCell)
 
         // Start the stopwatch if it has not started yet.
-        if (!hasStopwatchStarted())
+        if (!(hasStopwatchStarted() || hasStopwatchStopped()))
             startStopwatch()
     }
 
@@ -1407,11 +1472,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Get a column's acceptable answers (solutions).
+     * Get a column's solution's acceptable answers.
      *
      * @param column Column's label.
      *
-     * @return The [column]'s acceptable answers (solutions).
+     * @return The [column]'s solution's acceptable answers.
      *
      */
     private fun columnValue(column: String): Array<String> {
@@ -1419,28 +1484,28 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Set a column's acceptable answers (solutions).
+     * Set a column's solution's acceptable answers.
      *
-     * If the old acceptable answers of the [column] are displayed somewhere, the display will not
-     * be updated.
+     * If the old acceptable answers of the [column]'s solution are displayed somewhere, the display
+     * will not be updated.
      *
      * @param column Column's label.
-     * @param value New value of the [column]'s acceptable answers.
-     * @param fix If `true`, the raw [value] is not used, instead [fixAcceptable] method is called first; otherwise the raw [value] is used.
+     * @param value New value of the [column]'s solution's acceptable answers.
+     * @param fix If `true`, the raw [value] is not used, instead [fixAcceptables] method is called first; otherwise the raw [value] is used.
      *
      */
     private fun editColumnValue(column: String, value: Array<String>, fix: Boolean = true) {
         columnsValues[column] = when (fix) {
-            true -> fixAcceptable(value)
+            true -> fixAcceptables(value)
             else -> value
         }
     }
 
     /**
-     * Open the solution of a column.
+     * Open a column's solution.
      *
      * @param column Column's label.
-     * @param recursiveOpen If `true`, all cells in the column are opened as well.
+     * @param recursiveOpen If `true`, all cells in the [column] are opened as well.
      * @param displayContent If `true`, the content is displayed in [textViewCurrent].
      *
      */
@@ -1449,22 +1514,22 @@ class MainActivity : AppCompatActivity() {
         recursiveOpen: Boolean = true,
         displayContent: Boolean = true
     ) {
-        // If [recursiveOpen], open all cells in the [column] first.
+        // Open all cells in the [column] first if needed.
         if (recursiveOpen)
             for (cell in arrayOfCells(column))
                 openCell(cell, displayContent)
 
-        // Get the [column]'s solution.
+        // Get the [column]'s main solution.
         val value: String = columnValue(column)[0]
 
         // Get the [button] of the [column]'s solution.
         val button: Button = findViewById(idOfColumn(column))
 
-        // Display the [column]'s solution in the [button] and set it to open.
+        // Display the [column]'s main solution in the [button] and set it to open.
         button.text = value
         changeColumnOpennes(column, true)
 
-        // If [displayContent], display the solution in [textViewCurrent].
+        // Display the solution in [textViewCurrent] if needed.
         if (displayContent)
             displayCurrentText(value, column)
 
@@ -1473,7 +1538,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Close a solution of a column
+     * Close a column's solution.
      *
      * @param column Column's label.
      *
@@ -1482,14 +1547,14 @@ class MainActivity : AppCompatActivity() {
         // Get the [button] of the [column] solution.
         val button: Button = findViewById(idOfColumn(column))
 
-        // Set the [button]'s text to the [colum]n's label and set it to closed.
+        // Set the [button]'s text to the [column]'s label and set it to closed.
         button.text = column
         changeColumnOpennes(column, false)
 
         // Change [onClick] of the [button].
         button.setOnClickListener(this::clickOnClosedColumn)
 
-        // If [recursiveClose], close all cells in the [column].
+        // Close all cells in the [column] if needed.
         if (recursiveClose)
             for (cell in arrayOfCells(column))
                 closeCell(cell)
@@ -1542,18 +1607,20 @@ class MainActivity : AppCompatActivity() {
      * not be updated.
      *
      * @param value New value of the final solution.
-     * @param fix If `true`, the raw [value] is not used, instead [fixAcceptable] method is called first; otherwise the raw [value] is used.
+     * @param fix If `true`, the raw [value] is not used, instead [fixAcceptables] method is called first; otherwise the raw [value] is used.
      *
      */
     private fun editFinalValue(value: Array<String>, fix: Boolean = true) {
         solutionValue = when (fix) {
-            true -> fixAcceptable(value)
+            true -> fixAcceptables(value)
             else -> value
         }
     }
 
     /**
      * Open the final solution.
+     *
+     * The stopwatch is permanently stopped.
      *
      * @param recursiveOpen If `true`, all columns' solutions and cells are opened as well.
      * @param displayContent If `true`, the content is displayed in [textViewCurrent].
@@ -1563,22 +1630,23 @@ class MainActivity : AppCompatActivity() {
         // Permanently stop the stopwatch.
         stopStopwatch(true)
 
-        // If [recursiveOpen], open all columns' solutions and cells first.
+        // Open all columns' solutions and cells first if needed.
         if (recursiveOpen)
             for (column in arrayOfColumns())
                 openColumn(column, true, displayContent)
 
-        // Get the final solution.
+        // Get the main final solution.
         val value: String = finalValue()[0]
 
         // Get the [button] of the final solution.
         val button: Button = findViewById(idOfSolution())
 
-        // Set the [button]'s text to the actual value of the final solution and set it to open.
+        // Set the [button]'s text to the actual value of the main final solution and set it to
+        // open.
         button.text = value
         changeFinalOpennes(true)
 
-        // If [displayContent], display the solution in [textViewCurrent].
+        // Display the solution in [textViewCurrent] if needed.
         if (displayContent)
             displayCurrentText(value)
 
@@ -1588,6 +1656,8 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * Close the final solution.
+     *
+     * The stopwatch is reset.
      *
      * @param recursiveClose If `true`, all columns' solutions and cells are closed as well.
      *
@@ -1603,7 +1673,7 @@ class MainActivity : AppCompatActivity() {
         // Change [onClick] of the [button].
         button.setOnClickListener(this::clickOnClosedFinal)
 
-        // If [recursiveClose], close all columns' solutions and cells.
+        // Close all columns' solutions and cells if needed.
         if (recursiveClose)
             for (column in arrayOfColumns())
                 closeColumn(column, true)
@@ -1645,6 +1715,9 @@ class MainActivity : AppCompatActivity() {
      * 1. if any of the column's cells is open, the [offerColumnGuess] method is called
      * 2. otherwise column's label is displayed in [textViewCurrent].
      *
+     * If the [offerColumnGuess] method is called, the argument `offerGivingUp` will be set to
+     * `true` if and only if all cells in the column are opened.
+     *
      * @param it The button of the column's solution (instance of [Button] class).
      *
      */
@@ -1658,7 +1731,7 @@ class MainActivity : AppCompatActivity() {
         // Initialise the array of open values in the [column].
         val open: Array<String> = Array(cells.size) { String() }
 
-        // Of all cells in the [column], copy only the values of open among them into the array
+        // Of all the cells in the [column], copy only the values of open among them into the array
         // [open].  The variable [n] represents their quantity.
 
         var n: Int = 0
@@ -1671,13 +1744,13 @@ class MainActivity : AppCompatActivity() {
         if (n == 0)
             displayCurrentText(column)
         else
-            offerColumnGuess(column, open.copyOf(n))
+            offerColumnGuess(column, open.copyOf(n), n == open.size)
     }
 
     /**
      * On-click method for buttons of open columns' solutions in the game table.
      *
-     * When called, the column's solution is displayed in [textViewCurrent].
+     * When called, the column's main solution is displayed in [textViewCurrent].
      *
      * @param it The button of the column's solution (instance of [Button] class).
      *
@@ -1689,11 +1762,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * On-click method for button of closed final solution.
+     * On-click method for the button of closed final solution.
      *
      * When called,
      * 1. if any of the columns' solutions is opened, the [offerFinalGuess] method is called
      * 2. otherwise the solution string is displayed in [textViewCurrent].
+     *
+     * If the [offerColumnGuess] method is called, the argument `offerGivingUp` will be set to
+     * `true` if and only if all columns are opened.
      *
      * @param it The button of the column's solution (instance of [Button] class).
      *
@@ -1705,7 +1781,7 @@ class MainActivity : AppCompatActivity() {
         // Initialise the array of open columns' solutions.
         val open: Array<String> = Array(columns.size) { String() }
 
-        // Of all columns, copy only the open solutions among them into the array [open].  The
+        // Of all the columns, copy only the open solutions among them into the array [open].  The
         // variable [n] represents their quantity.
 
         var n: Int = 0
@@ -1718,11 +1794,11 @@ class MainActivity : AppCompatActivity() {
         if (n == 0)
             displayCurrentText(resources.getString(R.string.solution))
         else
-            offerFinalGuess(open.copyOf(n))
+            offerFinalGuess(open.copyOf(n), n == open.size)
     }
 
     /**
-     * On-click method for button of open final solution.
+     * On-click method for the button of open final solution.
      *
      * When called, the final solution is displayed in [textViewCurrent].
      *
@@ -1745,15 +1821,23 @@ class MainActivity : AppCompatActivity() {
      *
      * @param column Column's label.
      * @param hint Array of values of open cells in the [column].
+     * @param offerGivingUp If `true`, [buttonGiveUp] is enabled.
      *
      */
-    private fun offerColumnGuess(column: String, hint: Array<String?>?) {
+    private fun offerColumnGuess(
+        column: String,
+        hint: Array<String?>?,
+        offerGivingUp: Boolean = false
+    ) {
         // Set the target of guessing.
         changeGuessTarget(column)
 
         // Display hints.
         displayElaborateGuessHint(hint!!.joinToString(), column)
         displayBriefGuessHint(column)
+
+        // Allow or disallow giving up.
+        changeGuessGivingUpAllowness(offerGivingUp)
 
         // Make [buttonGuess] respond to guessing the [column]'s solution.
         bindButtonGuessToColumn(column)
@@ -1768,15 +1852,19 @@ class MainActivity : AppCompatActivity() {
      * The guess dialog is opened with correct parameters.
      *
      * @param hint Array of solutions of open columns.
+     * @param offerGivingUp If `true`, [buttonGiveUp] is enabled.
      *
      */
-    private fun offerFinalGuess(hint: Array<String?>?) {
+    private fun offerFinalGuess(hint: Array<String?>?, offerGivingUp: Boolean = false) {
         // Set the target of guessing.
         changeGuessTarget(resources.getString(R.string.sol))
 
         // Display hints.
         displayElaborateGuessHint(hint!!.joinToString())
         displayBriefGuessHint(resources.getString(R.string.solution))
+
+        // Allow or disallow giving up.
+        changeGuessGivingUpAllowness(offerGivingUp)
 
         // Make [buttonGuess] respond to guessing the final solution.
         bindButtonGuessToFinal()
@@ -1788,14 +1876,16 @@ class MainActivity : AppCompatActivity() {
     /**
      * Make [buttonGuess] respond to guessing a column's solution.
      *
-     * When clicked, it is checked whether or not the guess typed in [editTextGuess] is correct or
-     * not.  If it is correct, the [column] is opened, otherwise the player is informed their guess
-     * was wrong by displaying the message in [textViewCurrent].  In the end the guess dialog is
-     * closed.
+     * When clicked, it is checked whether or not the guess typed in [editTextEnterGuess] is correct
+     * or not.  If it is correct, the [column] and its solution are opened, otherwise the player is
+     * informed their guess was wrong by displaying the message in [textViewCurrent].  In the end
+     * the guess dialog is closed.
      *
-     * Also, clicking [buttonGiveUp] will automatically open the [column].
+     * Also, clicking [buttonGiveUp] will automatically open the [column] and its solution if the
+     * button is enabled (if [offerGivingUp]).
      *
      * @param column Column's label.
+     * @param offerGivingUp If `true`, [buttonGiveUp] is enabled.
      *
      */
     private fun bindButtonGuessToColumn(column: String) {
@@ -1809,23 +1899,45 @@ class MainActivity : AppCompatActivity() {
             closeGuessDialog()
         }
 
-        // Set on-click method of [buttonGiveUp].
-        findViewById<Button>(R.id.buttonGiveUp).setOnClickListener {
-            openColumn(column)
+        // Act accordingly on [buttonGiveUp].
+        if (isGuessGivingUpAllowed()) {
+            // Enable the button.
+            findViewById<Button>(R.id.buttonGiveUp).apply {
+                isClickable = true
+                isEnabled = true
+            }
 
-            closeGuessDialog()
+            // Set on-click method.
+            findViewById<Button>(R.id.buttonGiveUp).setOnClickListener {
+                openColumn(column)
+
+                closeGuessDialog()
+            }
+        }
+        else {
+            findViewById<Button>(R.id.buttonGiveUp).apply {
+                // Remove [onClick]
+                setOnClickListener(null)
+
+                // Disable the button.
+                isEnabled = false
+                isClickable = true
+            }
         }
     }
 
     /**
      * Make [buttonGuess] respond to guessing the final solution.
      *
-     * When clicked, it is checked whether or not the guess typed in [editTextGuess] is correct or
-     * not.  If it is correct, the complete table is opened, otherwise the player is informed their
-     * guess was wrong by displaying the message in [textViewCurrent].  In the end the guess dialog
-     * is closed.
+     * When clicked, it is checked whether or not the guess typed in [editTextEnterGuess] is correct
+     * or not.  If it is correct, the complete game table along with the final solution are opened,
+     * otherwise the player is informed their guess was wrong by displaying the message in
+     * [textViewCurrent].  In the end the guess dialog is closed.
      *
-     * Also, clicking [buttonGiveUp] will automatically open the final solution.
+     * Also, clicking [buttonGiveUp] will automatically open the complete game table and the final
+     * solution if the button is enabled (if [offerGivingUp]).
+     *
+     * @param offerGivingUp If `true`, [buttonGiveUp] is enabled.
      *
      */
     private fun bindButtonGuessToFinal() {
@@ -1839,11 +1951,30 @@ class MainActivity : AppCompatActivity() {
             closeGuessDialog()
         }
 
-        // Set on-click method of [buttonGiveUp].
-        findViewById<Button>(R.id.buttonGiveUp).setOnClickListener {
-            openFinal()
+        // Act accordingly on [buttonGiveUp].
+        if (isGuessGivingUpAllowed()) {
+            // Enable the button.
+            findViewById<Button>(R.id.buttonGiveUp).apply {
+                isClickable = true
+                isEnabled = true
+            }
 
-            closeGuessDialog()
+            // Set on-click method.
+            findViewById<Button>(R.id.buttonGiveUp).setOnClickListener {
+                openFinal()
+
+                closeGuessDialog()
+            }
+        }
+        else {
+            findViewById<Button>(R.id.buttonGiveUp).apply {
+                // Remove [onClick]
+                setOnClickListener(null)
+
+                // Disable the button.
+                isEnabled = false
+                isClickable = true
+            }
         }
     }
 
@@ -1884,7 +2015,7 @@ class MainActivity : AppCompatActivity() {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Save all appropriate fragment state.
+     * Save all appropriate fragments' state.
      *
      * @param outState [Bundle] in which to place saved state.
      *
@@ -1936,6 +2067,8 @@ class MainActivity : AppCompatActivity() {
 
             // If the guess dialog is open, save its state.
             if (isOpenGuessDialog()) {
+                putBoolean(GUESS_GIVE_UP, isGuessGivingUpAllowed())
+
                 putString(GUESS_TARGET, retrieveGuessTarget())
 
                 putString(GUESS_HINT_ELABORATE, retrieveGuessHint(true))
@@ -2023,6 +2156,8 @@ class MainActivity : AppCompatActivity() {
 
             // If the guess dialog has been open, recover its state and reopen it.
             if (getBoolean(GUESS_OPENNESS)) {
+                changeGuessGivingUpAllowness(getBoolean(GUESS_GIVE_UP))
+
                 changeGuessTarget(getString(GUESS_TARGET) as String)
 
                 val guessTarget: String = retrieveGuessTarget()
@@ -2058,8 +2193,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Make [editTextGuess]' IME action done to be clicking [buttonGuess].
-        connectEditTextGuessAndButtonGuess()
+        // Make [editTextEnterGuess]' IME action done to be clicking [buttonGuess].
+        connecteditTextEnterGuessAndButtonGuess()
 
         // Reset inner properties.
         resetProperties(
