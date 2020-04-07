@@ -33,7 +33,7 @@ import kotlin.math.abs
  * @property labelC Label of the column C of cells in the game table in [resources].
  * @property labelD Label of the column D of cells in the game table in [resources].
  *
- * @property gameFreshness State of freshness of the game (if `true`, the game table should be initialised with new values and all cells closed as when starting the app or starting a new game).
+ * @property gameFreshness Game's freshness state (if `true`, the game table should be initialised with new values and all cells closed as when starting the app or starting a new game).
  *
  * @property stopwatchStartness If the stopwatch has started, `true`; `false` otherwise.
  * @property stopwatchStopness If the stopwatch has fully stopped (as when successfully guessing the final solution, giving up or closing the app), `true`; `false` otherwise.
@@ -1833,7 +1833,7 @@ class MainActivity : AppCompatActivity() {
         changeGuessTarget(column)
 
         // Display hints.
-        displayElaborateGuessHint(hint!!.joinToString(), column)
+        displayElaborateGuessHint(hint!!.joinToString(COMMA_DELIMITER), column)
         displayBriefGuessHint(column)
 
         // Allow or disallow giving up.
@@ -1860,7 +1860,7 @@ class MainActivity : AppCompatActivity() {
         changeGuessTarget(resources.getString(R.string.sol))
 
         // Display hints.
-        displayElaborateGuessHint(hint!!.joinToString())
+        displayElaborateGuessHint(hint!!.joinToString(COMMA_DELIMITER))
         displayBriefGuessHint(resources.getString(R.string.solution))
 
         // Allow or disallow giving up.
