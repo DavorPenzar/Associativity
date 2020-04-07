@@ -41,6 +41,9 @@ import kotlin.math.abs
  * @property stopwatchHandler The [Handler] object of the stopwatch; could be considered the stopwatch itself.
  * @property stopwatchStartTimeStamp The initial timestamp for measuring [stopwatchDuration] of gameplay by the stopwatch (it changes when calling methods [onPause] and [onResume] to disregard idle time therefore ultimately it may be a different timestamp, so that [stopwatchDuration] would be measured properly and fairly).
  *
+ * @property guessOpenness If the guess dialog is open, `true`; `false` otherwise.
+ * @property guessTarget Label of the target of guessing.
+ *
  * @property cellsOpenness Mapping from cells' labels to their openness.
  * @property cellsValues Mapping from cells' labels to their values.
  *
@@ -235,6 +238,9 @@ class MainActivity : AppCompatActivity() {
     private var stopwatchHandler: Handler = Handler()
     private var stopwatchStartTimeStamp: LocalDateTime = LocalDateTime.now()
 
+    private var guessOpenness: Boolean = false
+    private var guessTarget: String = String()
+
     private val cellsOpenness: HashMap<String, Boolean> = HashMap()
     private val cellsValues: HashMap<String, String> = HashMap()
 
@@ -259,8 +265,8 @@ class MainActivity : AppCompatActivity() {
      * included, the hours are also included even if they are equal to 0). If the time is positive,
      * the sign may be omitted.
      *
-     * Caution: the current implementation of the function works properly only for left-to-right
-     * writing/reading languages.
+     * **Note: The current implementation of the function works properly only for left-to-right
+     * writing/reading languages.**
      *
      * @param milliseconds Time to express given in milliseconds
      * @param includeHours If `true`, hours are expressed even if they are 0.
@@ -446,7 +452,7 @@ class MainActivity : AppCompatActivity() {
         }
         setContentView(R.layout.activity_main)
 
-        // Make [editTextGuess] IME action done to be clicking [buttonGuess].
+        // Make [editTextGuess]' IME action done to be clicking [buttonGuess].
         connectEditTextGuessAndButtonGuess()
     }
 
@@ -484,19 +490,71 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Clear mappings [cellsOpenness], [cellsValues], [columnsOpenness], [columnsValues] and set
-     * [solutionOpenness] to `false` and [solutionValue] to `arrayOf<String>()`.
+     * Reset inner properties to their default values.
+     *
+     * **Note: Before calling the method, be sure to manually adapt other things.  For instance, if
+     * [stopwatch] is set to `true`, be sure that the stopwatch is not running, i. e. call
+     * [stopStopwatch] or [resetStopwatch] beforehand.  Also, reset the graphical UI where
+     * needed---for instance, if guess dialog is open, it will not be closed after calling this
+     * method, although [isOpenGuessDialog] will return `false`.**
+     *
+     * @param rowsAndColumns If `true`, reset [labelOne], [labelTwo], [labelThree] and [labelFour], and [labelA], [labelB], [labelC] and [labelD].
+     * @param gameFreshness If `true`, reset [gameFreshness] (i. e. the game's freshness is reset).
+     * @param stopwatch If `true`, reset [stopwatchStartness], [stopwatchStopness], [stopwatchDuration], [stopwatchHandler] and [stopwatchStartTimeStamp] (i. e. the stopwatch is reset, but **not** as with [resetStopwatch]).
+     * @param guessDialog If `true`, reset [guessOpenness] and [guessTarget] (i. e. the guess dialog is reset).
+     * @param gameTableAndSolutions If `true`, reset [cellsOpenness], [cellsValues], [columnsOpenness], [columnsValues], [solutionOpenness] and [solutionValue] (i. e. the game table and solutions are reset).
      *
      */
-    private fun clearGameTableAndSolutions() {
-        cellsOpenness.clear()
-        cellsValues.clear()
+    private fun resetProperties(
+        rowsAndColumns: Boolean = false,
+        gameFreshness: Boolean = false,
+        stopwatch: Boolean = false,
+        guessDialog: Boolean = false,
+        gameTableAndSolutions: Boolean = false
+    ) {
+        // Reset rows' and columns' labels if needed.
+        if (rowsAndColumns) {
+            labelOne = String()
+            labelTwo = String()
+            labelThree = String()
+            labelFour = String()
 
-        columnsOpenness.clear()
-        columnsValues.clear()
+            labelA = String()
+            labelB = String()
+            labelC = String()
+            labelD = String()
+        }
 
-        solutionOpenness = false
-        solutionValue = arrayOf()
+        // Reset the game's freshness if needed.
+        if (gameFreshness)
+            this.gameFreshness = true
+
+        // Reset the stopwatch if needed.
+        if (stopwatch) {
+            stopwatchStartness = false
+            stopwatchStopness = false
+            stopwatchDuration = Duration.ZERO
+            stopwatchHandler = Handler()
+            stopwatchStartTimeStamp = LocalDateTime.now()
+        }
+
+        // Reset the guess dialog if needed.
+        if (guessDialog) {
+            guessOpenness = false
+            guessTarget = String()
+        }
+
+        // Reset the game table and solutions if needed.
+        if (gameTableAndSolutions) {
+            cellsOpenness.clear()
+            cellsValues.clear()
+
+            columnsOpenness.clear()
+            columnsValues.clear()
+
+            solutionOpenness = false
+            solutionValue = arrayOf()
+        }
     }
 
     /**
@@ -506,16 +564,14 @@ class MainActivity : AppCompatActivity() {
      * (the corresponding open property is set to `false`), and the game table, the columns'
      * solutions and the main solution are set.
      *
-     * Currently the game table, the columns' solutions and the main solution are hardcoded---this
-     * should be changed to read from an external file.
+     * **Note: Currently the game table, the columns' solutions and the main solution are
+     * hardcoded---this should be changed to read from an external file.**
      *
      */
     private fun initialiseTable() {
-        // Set the game to fresh and initialise other properties.
+        // Set the game to fresh and reset the game table's and solutions' properties.
 
-        changeGameFreshness(true)
-
-        clearGameTableAndSolutions()
+        resetProperties(gameFreshness = true, gameTableAndSolutions = true)
 
         // Set everything to closed (not open).
 
@@ -713,15 +769,28 @@ class MainActivity : AppCompatActivity() {
         if (destroyPrevious)
             reinstatiate()
 
-        // Initialise the new game if [initialise], otherwise just clear properties.
+        // Reset inner properties.
+        resetProperties(
+            rowsAndColumns = true,
+            gameFreshness = true,
+            stopwatch = true,
+            guessDialog = true,
+            gameTableAndSolutions = true
+        )
+
+        // Initialise rows' and columns' labels.
+        initialiseRowsAndColumns()
+
+        // Initialise the stopwatch handler.
+        initialiseStopwatchHandler()
+
+        // Initialise the new game if needed.
         if (initialise)
             initialiseTable()
-        else
-            clearGameTableAndSolutions()
     }
 
     /**
-     * Make [editTextGuess] IME action done to be clicking [buttonGuess].
+     * Make [editTextGuess]' IME action done to be clicking [buttonGuess].
      *
      */
     private fun connectEditTextGuessAndButtonGuess() {
@@ -755,14 +824,21 @@ class MainActivity : AppCompatActivity() {
     /**
      * Set the game's freshness.
      *
-     * This method merely changes what [isGameFresh] method will return.  To actually refresh a game
-     * the graphical UI must be reset and the game table must be initialised among other things.
+     * If [freshness] is `null`, the game's freshness state is toggled (a fresh game will be set to
+     * non-fresh and vice versa).
+     *
+     * **Note: This method merely changes what [isGameFresh] method will return.  To actually
+     * refresh a game the graphical UI must be reset and the game table must be initialised among
+     * other things.**
      *
      * @param freshness New freshness of the game.
      *
      */
-    private fun changeGameFreshness(freshness: Boolean) {
-        gameFreshness = freshness
+    private fun changeGameFreshness(freshness: Boolean? = null) {
+        gameFreshness = when (freshness) {
+            null -> !gameFreshness
+            else -> freshness
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -795,6 +871,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
+     * Set the stopwatch's startness.
+     *
+     * If [startness] is `null`, the stopwatch's startness state is toggled (a started stopwatch
+     * will be set to non-started and vice versa).
+     *
+     * **Note: This method merely changes what [hasStopwatchStarted] method will return.  To
+     * actually start the stopwatch call [startStopwatch] method or to reset it call
+     * [resetStopwatch] method which will in turn call this method among doing other things.**
+     *
+     * @param startness New startness of the stopwatch.
+     *
+     */
+    private fun changeStopwatchStartness(startness: Boolean? = null) {
+        stopwatchStartness = when (startness) {
+            null -> !stopwatchStartness
+            else -> startness
+        }
+    }
+
+    /**
      * Check if the stopwatch has permanently stopped (until a new game).
      *
      * @return If the stopwatch has permanently stopped, `true`; `false` otherwise.
@@ -802,6 +898,26 @@ class MainActivity : AppCompatActivity() {
      */
     private fun hasStopwatchStopped(): Boolean {
         return stopwatchStopness
+    }
+
+    /**
+     * Set the stopwatch's stopness.
+     *
+     * If [stopness] is `null`, the stopwatch's stopness state is toggled (a stopped stopwatch
+     * will be set to non-stopped and vice versa).
+     *
+     * **Note: This method merely changes what [hasStopwatchStopped] method will return.  To
+     * actually stop the stopwatch call [stopStopwatch] method or to reset it call
+     * [resetStopwatch] method which will in turn call this method among doing other things.**
+     *
+     * @param stopness New stopness of the stopwatch.
+     *
+     */
+    private fun changeStopwatchStopness(stopness: Boolean? = null) {
+        stopwatchStopness = when (stopness) {
+            null -> !stopwatchStopness
+            else -> stopness
+        }
     }
 
     /**
@@ -881,14 +997,16 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun startStopwatch() {
-        // Set [stopwatchStartness] to `true` and [stopwatchStopness] to `false`.
-        stopwatchStartness = true
-        stopwatchStopness = false
+        // Reset the stopwatch.
+        resetStopwatch(false)
 
         // Compute the timestamp from which to count time.
         changeStopwatchStartTimestamp(
             LocalDateTime.now() - retrieveStopwatchDuration()
         )
+
+        // Set the stopwatch's startness to `true`.
+        changeStopwatchStartness(true)
 
         // Count time and display it in [textViewStopwatch] using [stopwatchHandler].
         stopwatchHandler.post(
@@ -919,10 +1037,10 @@ class MainActivity : AppCompatActivity() {
         // Remove callbacks in [stopwatchHandler].
         stopwatchHandler.removeCallbacksAndMessages(null)
 
-        // If [fullStop], set [stopwatchStartness] and [stopwatchStopness] to `true`
+        // If [fullStop], set the stopwatch's startness and stopness to `true`.
         if (fullStop) {
-            stopwatchStartness = true
-            stopwatchStopness = true
+            changeStopwatchStartness(true)
+            changeStopwatchStopness(true)
         }
     }
 
@@ -930,25 +1048,28 @@ class MainActivity : AppCompatActivity() {
      * Reset the stopwatch.
      *
      * If stopwatch has started, firstly it is stopped.  Then [textViewStopwatch] is cleared and
-     * stopwatch's initial timestamp and duration are reset.  After the method returns, both
-     * [hasStopwatchStarted] and [hasStopwatchStopped] methods will return `false`.
+     * stopwatch's initial timestamp and, if [resetDuration], duration are reset.  After the method
+     * returns, both [hasStopwatchStarted] and [hasStopwatchStopped] methods will return `false`.
+     *
+     * @param resetDuration If `true`, the stopwatch's duration is reset (set to 0).
      *
      */
-    private fun resetStopwatch() {
+    private fun resetStopwatch(resetDuration: Boolean = true) {
         // Stop the stopwatch.
         stopStopwatch(true)
 
         // Reset stopwatch values.
-        changeStopwatchStartTimestamp(LocalDateTime.now())
-        changeStopwatchDuration(Duration.ZERO)
         printStopwatchTime(String())
+        changeStopwatchStartTimestamp(LocalDateTime.now())
+        if (resetDuration)
+            changeStopwatchDuration(Duration.ZERO)
 
         // Reinitialise the stopwatch handler.
         initialiseStopwatchHandler()
 
         // Set [stopwatchStartness] and [stopwatchStopness] to `false`.
-        stopwatchStopness = false
-        stopwatchStartness = false
+        changeStopwatchStartness(false)
+        changeStopwatchStopness(false)
     }
 
 
@@ -963,7 +1084,27 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun isOpenGuessDialog(): Boolean {
-        return findViewById<ScrollView>(R.id.scrollViewGuess).visibility != View.GONE
+        return guessOpenness
+    }
+
+    /**
+     * Set the guess dialog's openness.
+     *
+     * If [openness] is `null`, the guess dialog's openness state is toggled (an open guess dialog
+     * will be set to closed and vice versa).
+     *
+     * **Note: This method merely changes what [isOpenGuessDialog] method will return.  To
+     * actually open the guess dialog call [openGuessDialog] method or to close it call
+     * [closeGuessDialog] method which will in turn call this method among doing other things.**
+     *
+     * @param openness New openness of the guess dialog.
+     *
+     */
+    private fun changeGuesDialogOpenness(openness: Boolean? = null) {
+        guessOpenness = when(openness) {
+            null -> !guessOpenness
+            else -> openness
+        }
     }
 
     /**
@@ -971,6 +1112,10 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun openGuessDialog() {
+        // Set the guess dialog's openness to `true`.
+        changeGuesDialogOpenness(true)
+
+        // Open the guess dialog.
         findViewById<ScrollView>(R.id.scrollViewGuess).visibility = View.VISIBLE
     }
 
@@ -987,6 +1132,9 @@ class MainActivity : AppCompatActivity() {
 
         // Clear [editTextGuess].
         typeGuess(String())
+
+        // Set the guess dialog's openness to `false`.
+        changeGuesDialogOpenness(false)
     }
 
     /**
@@ -996,7 +1144,7 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun retrieveGuessTarget(): String {
-        return findViewById<TextView>(R.id.textViewHint).tag.toString()
+        return guessTarget
     }
 
     /**
@@ -1005,8 +1153,8 @@ class MainActivity : AppCompatActivity() {
      * @param target The label of the new target of guessing.
      *
      */
-    private fun changeGuessTarget(target: String?) {
-        findViewById<TextView>(R.id.textViewHint).tag = target
+    private fun changeGuessTarget(target: String) {
+        guessTarget = target
     }
 
     /**
@@ -1135,15 +1283,21 @@ class MainActivity : AppCompatActivity() {
     /**
      * Change a cell's openness.
      *
-     * This method merely changes what [isCellOpen] method will return.  To actually open a cell
-     * call [openCell] method.
+     * If [openness] is `null`, the [cell]'s openness state is toggled (an open [cell] will be set
+     * to closed and vice versa).
+     *
+     * **Note: This method merely changes what [isCellOpen] method will return.  To actually open a
+     * cell call [openCell] method which will in turn call this method among doing other things.**
      *
      * @param cell Cell's label.
      * @param openness New openness of the [cell].
      *
      */
-    private fun changeCellOpennes(cell: String, openness: Boolean) {
-        cellsOpenness[cell] = openness
+    private fun changeCellOpennes(cell: String, openness: Boolean? = null) {
+        cellsOpenness[cell] = when (openness) {
+            null -> !cellsOpenness[cell]!!
+            else -> openness
+        }
     }
 
     /**
@@ -1234,15 +1388,22 @@ class MainActivity : AppCompatActivity() {
     /**
      * Change a column's solution's openness.
      *
+     * If [openness] is `null`, the [column]'s solution's openness state is toggled (an open
+     * [column]'s solution will be set to closed and vice versa).
+     *
      * This method merely changes what [isColumnOpen] method will return.  To actually open a
-     * column's solution call [openColumn] method.
+     * column's solution call [openColumn] method which will in turn call this method among doing
+     * other things.
      *
      * @param column Column's label.
      * @param openness New openness of the [column]'s solution.
      *
      */
-    private fun changeColumnOpennes(column: String, openness: Boolean) {
-        columnsOpenness[column] = openness
+    private fun changeColumnOpennes(column: String, openness: Boolean? = null) {
+        columnsOpenness[column] = when (openness) {
+            null -> !columnsOpenness[column]!!
+            else -> openness
+        }
     }
 
     /**
@@ -1347,14 +1508,21 @@ class MainActivity : AppCompatActivity() {
     /**
      * Change the final solution's openness.
      *
+     * If [openness] is `null`, the final solution's openness state is toggled (an open final
+     * solution will be set to closed and vice versa).
+     *
      * This method merely changes what [isFinalOpen] method will return.  To actually open the final
-     * solution call [openFinal] method.
+     * solution call [openFinal] method which will in turn call this method among doing other
+     * things.
      *
      * @param openness New openness of the final solution.
      *
      */
-    private fun changeFinalOpennes(openness: Boolean) {
-        solutionOpenness = openness
+    private fun changeFinalOpennes(openness: Boolean? = null) {
+        solutionOpenness = when (openness) {
+            null -> !solutionOpenness
+            else -> openness
+        }
     }
 
     /**
@@ -1715,28 +1883,41 @@ class MainActivity : AppCompatActivity() {
     //  ACTIVITY LIFECYCLE METHODS                                                                //
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Save all appropriate fragment state.
+     *
+     * @param outState [Bundle] in which to place saved state.
+     *
+     */
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
+        // Save the game state.
         outState.apply {
+            // Save the game's freshness.
             putBoolean(GAME_FRESHNESS, isGameFresh())
 
+            // Save the state of the stopwatch.
             putBoolean(STOPWATCH_STARTNESS, hasStopwatchStarted())
             putBoolean(STOPWATCH_STOPNESS, hasStopwatchStopped())
             putString(STOPWATCH_PRINT, retrieveStopwatchTime())
             putLong(STOPWATCH_DURATION, retrieveStopwatchDuration().toMillis())
 
+            // If the game is not fresh, save the state of the game table and the solutions.
             if (!isGameFresh()) {
+                // Save the state of the game table.
                 for (cell in arrayOfCells()) {
                     putBoolean(appendSuffix(cell, SUFFIX_OPEN), isCellOpen(cell))
                     putString(appendSuffix(cell, SUFFIX_VALUE), cellValue(cell))
                 }
 
+                // Save the state of the columns' solutions.
                 for (column in arrayOfColumns()) {
                     putBoolean(appendSuffix(column, SUFFIX_OPEN), isColumnOpen(column))
                     putStringArray(appendSuffix(column, SUFFIX_VALUE), columnValue(column))
                 }
 
+                // Save the state of the final solution.
                 putBoolean(
                     appendSuffix(resources.getString(R.string.sol), SUFFIX_OPEN),
                     isFinalOpen()
@@ -1747,10 +1928,13 @@ class MainActivity : AppCompatActivity() {
                 )
             }
 
+            // Save the currently displayed text in [textViewCurrent].
             putString(CURRENT_TEXT, retrieveCurrentText())
 
+            // Save the openness of the guess dialog.
             putBoolean(GUESS_OPENNESS, isOpenGuessDialog())
 
+            // If the guess dialog is open, save its state.
             if (isOpenGuessDialog()) {
                 putString(GUESS_TARGET, retrieveGuessTarget())
 
@@ -1762,26 +1946,40 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Restore any view state that had previously been frozen by [onSaveInstanceState].
+     *
+     * This method is called after onStart when the activity is being re-initialized from a
+     * previously saved state, given here in [savedInstanceState].  This method is called between
+     * [onStart] and [onPostCreate].
+     *
+     * @param savedInstanceState The data most recently supplied in [onSaveInstanceState] method.
+     *
+     */
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
 
+        // Recover data from [savedInstanceState].
         savedInstanceState.apply {
+            // Temporarily set the game as fresh.
             changeGameFreshness(true)
 
-            clearGameTableAndSolutions()
+            // Clear properties.
+            resetProperties()
 
+            // Recover the state of the stopwatch, but do not restart it yet if needed.
             printStopwatchTime(getString(STOPWATCH_PRINT) as String)
-            if (getBoolean(STOPWATCH_STARTNESS)) {
-                changeStopwatchDuration(Duration.of(getLong(STOPWATCH_DURATION), ChronoUnit.MILLIS))
+            changeStopwatchStartness(getBoolean(STOPWATCH_STARTNESS))
+            changeStopwatchStopness(getBoolean(STOPWATCH_STOPNESS))
+            changeStopwatchDuration(Duration.of(getLong(STOPWATCH_DURATION), ChronoUnit.MILLIS))
 
-                startStopwatch()
-            }
-            else
-                resetStopwatch()
-
+            // Recover the freshness of the game, but do not set it yet.
             val restoredGameFreshness: Boolean = getBoolean(GAME_FRESHNESS)
 
+            // If the game has not been fresh, recover the state of the game table and the
+            // solutions.
             if (!restoredGameFreshness) {
+                // Recover the state of the game table.
                 for (cell in arrayOfCells()) {
                     changeCellOpennes(cell, getBoolean(appendSuffix(cell, SUFFIX_OPEN)))
                     editCellValue(cell, getString(appendSuffix(cell, SUFFIX_VALUE)) as String)
@@ -1790,6 +1988,7 @@ class MainActivity : AppCompatActivity() {
                         openCell(cell, false)
                 }
 
+                // Recover the state of the columns' solutions.
                 for (column in arrayOfColumns()) {
                     changeColumnOpennes(column, getBoolean(appendSuffix(column, SUFFIX_OPEN)))
                     editColumnValue(
@@ -1800,8 +1999,10 @@ class MainActivity : AppCompatActivity() {
                     )
 
                     if (isColumnOpen(column))
-                        openColumn(column, false, false)
+                        openColumn(column, recursiveOpen = false, displayContent = false)
                 }
+
+                // Recover the state of the final solution.
 
                 changeFinalOpennes(
                     getBoolean(appendSuffix(resources.getString(R.string.sol), SUFFIX_OPEN))
@@ -1814,13 +2015,13 @@ class MainActivity : AppCompatActivity() {
                 )
 
                 if (isFinalOpen())
-                    openFinal(false, false)
+                    openFinal(recursiveOpen = false, displayContent = false)
             }
-            else
-                initialiseTable()
 
+            // Recover the text displayed in [textViewCurrent] and redesplay it.
             displayCurrentText(getString(CURRENT_TEXT) as String)
 
+            // If the guess dialog has been open, recover its state and reopen it.
             if (getBoolean(GUESS_OPENNESS)) {
                 changeGuessTarget(getString(GUESS_TARGET) as String)
 
@@ -1839,52 +2040,131 @@ class MainActivity : AppCompatActivity() {
                 openGuessDialog()
             }
 
+            // Set the game's freshness to the recovered freshness.
             changeGameFreshness(restoredGameFreshness)
         }
     }
 
+    /**
+     * Perform initialisation of all fragments.
+     *
+     * Only the game freshness is recovered from [savedInstanceState] (if not `null`).  All other
+     * restoration is done in [onRestoreInstanceState] method.
+     *
+     * @param savedInstanceState If the activity is being re-initialised after previously being shut down then this [Bundle] contains the data it most recently supplied in [onSaveInstanceState] method.  **Note: Otherwise it is `null`.**
+     *
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Make [editTextGuess]' IME action done to be clicking [buttonGuess].
+        connectEditTextGuessAndButtonGuess()
+
+        // Reset inner properties.
+        resetProperties(
+            rowsAndColumns = true,
+            gameFreshness = true,
+            stopwatch = true,
+            guessDialog = true,
+            gameTableAndSolutions = true
+        )
+
+        // Initialise rows' and columns' labels.
         initialiseRowsAndColumns()
+
+        // Initialise the stopwatch handler.
         initialiseStopwatchHandler()
 
+        // If [savedInstanceState] is not `null`, recover the game's freshness.
         if (savedInstanceState != null)
             changeGameFreshness(savedInstanceState.getBoolean(GAME_FRESHNESS))
-
-        connectEditTextGuessAndButtonGuess()
     }
 
+    /**
+     * Do final initialisation after application code has run.
+     *
+     * Called when activity start-up is complete (after [onStart] and [onRestoreInstanceState]
+     * methods have been called).
+     *
+     * **Note: Derived classes must call through to the super class's implementation of this method.
+     * If they do not, an exception will be thrown.**
+     *
+     * @param savedInstanceState If the activity is being re-initialised after previously being shut down then this [Bundle] contains the data it most recently supplied in [onSaveInstanceState] method.  **Note: Otherwise it is `null`.**
+     *
+     */
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+    }
+
+    /**
+     * Dispatch `onStart()` to all fragments and initialise the game if it is fresh.
+     *
+     */
     override fun onStart() {
         super.onStart()
 
+        // If the game is fresh, initialise it.
         if (isGameFresh())
             initialiseTable()
     }
 
+    /**
+     * Dispatch `onResume()` to fragments, initialise the game if it is fresh and restart the stopwatch if needed.
+     *
+     * Note that for better inter-operation with older versions of the platform, at the point of
+     * this call the fragments attached to the activity are not resumed.
+     *
+     */
     override fun onResume() {
         super.onResume()
 
+        // If the game is fresh, initialise it.
+        if (isGameFresh())
+            initialiseTable()
+
+        // If the stopwatch needs to be restarted, restart it.
         if (hasStopwatchStarted() && !hasStopwatchStopped())
             startStopwatch()
     }
 
+    /**
+     * Stop the stopwatch if needed and dispatch `onPause()` to fragments.
+     *
+     */
     override fun onPause() {
-        if (hasStopwatchStarted())
+        // If the stopwatch needs to be stopped, stop it.
+        if (hasStopwatchStarted() && !hasStopwatchStopped())
             stopStopwatch()
 
         super.onPause()
     }
 
+    /**
+     * Dispatch `onStop()` to all fragments.
+     *
+     */
     override fun onStop() {
         super.onStop()
     }
 
+    /**
+     * Destroy all fragments.
+     *
+     */
     override fun onDestroy() {
         super.onDestroy()
     }
 
+    /**
+     * Called after [onStop] when the current activity is being re-displayed to the user (the user has navigated back to it).
+     *
+     * The method will be followed by [onStart] and then [onResume].
+     *
+     * **Note: Derived classes must call through to the super class's implementation of this method.
+     * If they do not, an exception will be thrown.**
+     *
+     */
     override fun onRestart() {
         super.onRestart()
     }
