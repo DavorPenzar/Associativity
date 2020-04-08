@@ -52,7 +52,7 @@ import kotlin.math.abs
  * @property columnsValues Mapping from columns' labels to their solutions and alternative acceptable answers.
  *
  * @property solutionOpenness Openness of the final solution.
- * @property finalValue The final solution and alternative acceptable answers.
+ * @property solutionValue The final solution and alternative acceptable answers.
  *
  */
 class MainActivity : AppCompatActivity() {
@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * The companion object of class [MainActivity].
+     * The companion object of the class [MainActivity].
      *
      * @property COMMA_DELIMITER String between items separated by a comma---a comma followed by a single whitespace, i. e. `", "`.
      *
@@ -196,7 +196,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             // Return the newly constructed "fixed" array.
-            return newAcceptables.toArray(Array(0) { String() })
+            return newAcceptables.toArray(arrayOf())
         }
 
         /**
