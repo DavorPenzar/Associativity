@@ -1,16 +1,14 @@
 package com.example.associativity
 
 import android.os.Bundle
-import java.io.File
-import java.io.FileReader
-import java.io.IOException
+import java.io.*
 
 /**
  * Read a table of information for an associations game.
  *
  * The format of the table is defined in [readAssociationsTable].  This class also provides an
  * interface to read information from a CSV file, and the format of the CSV files is defined in
- * [readCSV].
+ * [readCSV] and [escapeExpression].
  *
  * **Note: This class cannot be instantiated.  All methods of the class are defined in its companion
  * object.**
@@ -24,6 +22,7 @@ class TableReader : Any {
      * @property ILLEGAL_ESCAPE_EXPR_LENGTH_ERROR_MESSAGE Error message for an exception when the argument `expression` in [escapeExpression] method is not a single character string.
      * @property ILLEGAL_ESCAPE_CHAR_ERROR_MESSAGE Format error message for an exception when the argument `expression` in [escapeExpression] method is not a valid escaping expression.
      *
+     * @property CSV_NEGATIVE_PRECEDING_LINE_INDEX_ERROR_MESSAGE Format error message for an exception when a negative `precedingLine` value is passed in [readCSV] method.
      * @property CSV_UNEXPECTED_LINE_END_ERROR_MESSAGE Format error message for an exception when a line unexpectedly ends when reading a CSV file in [readCSV] method.
      * @property CSV_EXPECTED_CELL_END_ERROR_MESSAGE Format error message when a non-whitespace character that is not a cell separator is found after closing a cell when reading a CSV file in [readCSV] method.
      * @property CSV_ILLEGAL_ESCAPE_EXPR_ERROR_MESSAGE Format error message for an exception when an illegal escape expression is found (when [escapeExpression] method throws an exception) when reading a CSV file in [readCSV] method.
@@ -33,6 +32,8 @@ class TableReader : Any {
      * @property ASSOCIATIONS_TABLE_FIRST_FOUR_ROWS_FORMAT_ERROR_MESSAGE Error message for an exception when lines 2 to 5 (inclusive) of the table are of illegal length (not 4 or 5 cells), mutually different length or, if of length 5, the last cell is non-empty.
      * @property ASSOCIATIONS_TABLE_SOLUTIONS_ILLEGAL_LENGTH_ERROR_MESSAGE Error message for an exception when lines 6 until the end (inclusive) of the table in [readAssociationsTable] method are not of length of 5 cells.
      * @property ASSOCIATIONS_TABLE_SOLUTIONS_LATE_ENTRY_ERROR_MESSAGE Error message for an exception if a non-empty cells appears in a column in a row 6 until the end (inclusive) of the table in [readAssociationsTable] method if an empty cell has previously appeared in the same column.
+     *
+     * @property CSV_DEFAULT_ORIGIN_NAME Default value for `originName` in [readCSV] method.
      *
      * @property ASSOCIATIONS_TABLE_ROWS_LABELS Array of rows' labels in the table of the associations game.
      * @property ASSOCIATIONS_TABLE_COLUMNS_LABELS Array of columns' labels in the table of the associations game.
@@ -63,6 +64,8 @@ class TableReader : Any {
         private const val ILLEGAL_ESCAPE_CHAR_ERROR_MESSAGE: String =
             "Illegal escape expression \"\\%s\"."
 
+        private const val CSV_NEGATIVE_PRECEDING_LINE_INDEX_ERROR_MESSAGE: String =
+            "Preceding line index must be non-negative; %d is given instead."
         private const val CSV_UNEXPECTED_LINE_END_ERROR_MESSAGE: String =
             "Unexpected line end in %s:%d.%d."
         private const val CSV_EXPECTED_CELL_END_ERROR_MESSAGE: String =
@@ -82,6 +85,8 @@ class TableReader : Any {
             "Rows 6 until the end (inclusive) of the association table must contain exactly 5 cells."
         private const val ASSOCIATIONS_TABLE_SOLUTIONS_LATE_ENTRY_ERROR_MESSAGE: String =
             "If a column in rows 6 until the end (inclusive) of the association table has an empty cells, all consecutive rows in the column must have an empty cell (all entries must be aggregated at the top)."
+
+        private const val CSV_DEFAULT_ORIGIN_NAME: String = "input"
 
         private val ASSOCIATIONS_TABLE_ROWS_LABELS: Array<String> = arrayOf("1", "2", "3", "4")
         private val ASSOCIATIONS_TABLE_COLUMNS_LABELS: Array<String> = arrayOf("A", "B", "C", "D")
@@ -166,7 +171,7 @@ class TableReader : Any {
         /**
          * Parse an escaping character.
          *
-         * The function returns `escapeExpression(c.toString())` without catching any exceptions.
+         * The method returns `escapeExpression(c.toString())` without catching any exceptions.
          *
          * @param c Escaping character to parse.
          *
@@ -178,7 +183,7 @@ class TableReader : Any {
         }
 
         /**
-         * Read a CSV file.
+         * Read a CSV input.
          *
          * The quotations, separator and escaping character of CSV files are explained by
          * [CSV_SINGLE_QUOTE], [CSV_DOUBLE_QUOTE], [CSV_SEPARATOR] and [CSV_ESCAPE_CHAR].  Lines
@@ -191,23 +196,33 @@ class TableReader : Any {
          * reader or manually parse the result of this method.
          *
          * The resulting two-dimensional array is the matrix of cells in the table represented by
-         * the CSV [file].  The first dimension represents the rows of the table, while the second
-         * one represents its columns.  Therefore to get the cell in the `j`-th column of the `i`-th
-         * row use `table[i][j]`, where `table` is the result of this method.
+         * the CSV read from [bufferedReader].  The first dimension represents the rows of the
+         * table, while the second one represents its columns.  Therefore to get the cell in the
+         * `j`-th column of the `i`-th row use `table[i][j]`, where `table` is the result of this
+         * method.
          *
          * **Note: the method does not check if all rows have the same number of columns.  The
          * number of columns in each row is *n* + 1, where *n* >= 0 is the number of actual
          * separators appearing in the line representing the row (this does not include escaped
-         * separator characters and separators inside quotations).**
+         * separator characters and separators inside quotations).  Putting a [CSV_SEPARATOR] in the
+         * beginning of a line will result in an empty cell at the row's beginning, while putting it
+         * in the end will result in an empty cell at the row's end.**
          *
-         * @param file CSV [File] to read.
+         * @param bufferedReader [BufferedReader] from which to read the CSV table.
+         * @param originName The name or the path of the origin of [bufferedReader].  If the table is read from a file, this parameter should be set to the file's name or its path.  This argument is used to explain errors when throwing exceptions.
+         * @param precedingLine Index of the line directly before the first line read from [bufferedReader].  If the first line that is read should have index `1`, set this argument to `0`.  This argument is used to explain errors when throwing exceptions.  **Note: The first column that is read is assumed to have index `1`.**
          *
-         * @return The table written in the CSV [file].
+         * @return The table written in the CSV input.
          *
+         * @throws IllegalArgumentException If [precedingLine] is negative.
          * @throws IOException [IOException]s thrown by the [FileReader] used in the method are not caught, and additional [IOException]s may be thrown by the method itself if the CSV [file] is not formatted properly.
          *
          */
-        public fun readCSV(file: File): Array<Array<String>> {
+        public fun readCSV(
+            bufferedReader: BufferedReader,
+            originName: String = CSV_DEFAULT_ORIGIN_NAME,
+            precedingLine: Int = 0
+        ): Array<Array<String>> {
             // Lambda function for inserting rows in tables.  The resulting [table] is returned.
             val insertRowInTable: (
                 table: ArrayList<Array<String>>, row: ArrayList<String>
@@ -217,7 +232,6 @@ class TableReader : Any {
 
                     table
                 }
-
 
             // Lambda function for inserting cells in rows.  If [wereQuotes], the cell is built and
             // added to the end; otherwise it is built, trimmed and then added.  The resulting [row]
@@ -234,23 +248,26 @@ class TableReader : Any {
                     row
                 }
 
-            // Open the file with a [FileReader] object.
-            val csv: FileReader = FileReader(file)
+            // Check if [precedingRow] is negative.
+            if (precedingLine < 0)
+                throw IllegalArgumentException(
+                    CSV_NEGATIVE_PRECEDING_LINE_INDEX_ERROR_MESSAGE.format(precedingLine)
+                )
 
             // Initialise the resulting [table].
             val table: ArrayList<Array<String>> = ArrayList()
 
-            // Initialise the indicator of the end of the [file].
-            var eol: Boolean = false
+            // Initialise indices of rows.
+            var i: Int = precedingLine
 
-            // Initialise indices of rows and columns.
-            var i: Int = 0
-            var j: Int = 0
-
-            // Read the CSV [file].
+            // Read the CSV input.
             while (true) {
                 // Increment the row index.
                 ++i
+
+                // Read the next [line] from [bufferedReader].  If no [line] is read, break the
+                // `while`-loop.
+                val line: String = bufferedReader.readLine() ?: break
 
                 // Initialise the [row].
                 val row: ArrayList<String> = ArrayList()
@@ -264,77 +281,32 @@ class TableReader : Any {
                 // Initialise indicators of quotes, expectation of the end of a cell and escaping
                 // commands.  If [insideQuotes] is 0, the current character is not inside quotes;
                 // if it is 1, the current character is inside single quotes (or the terminating
-                // single quote); if it is 2, the  the current character is inside double qoutes (or
-                // the terminating double qoutes).  After closing quotes, the end of the cell is
+                // single quote); if it is 2, the current character is inside double quotes (or the
+                // terminating double quotes).  After closing quotes, the end of the cell is
                 // expected.
                 var insideQuotes: Int = 0
                 var expectCellEnd: Boolean = false
                 var escaping: Boolean = false
 
-                // Initialise the indicator whether the cell was enclosed in quotes or not.  This is
-                // used to check if the value of the cell should be trimmed or not.
-                var wereQuotes: Boolean = false
-
-                // Initialise the column index.
-                j = 0
-
                 // Read the line.
-                loop@ while (true) {
-                    // Increment the column index.
-                    ++j
-
-                    // Get the current character.
-                    val data: Int = csv.read()
-
-                    // Check if the end of the file was reached.
-                    if (data == -1) {
-                        // If the end of the file was reached but quotes were not closed or an
-                        // escaping expression is open, throw an [IOException].
-                        if (insideQuotes != 0 || escaping)
-                            throw IOException(
-                                CSV_UNEXPECTED_LINE_END_ERROR_MESSAGE.format(file.path, i, j)
-                            )
-
-                        // Add the last [cell] to the [row].
-                        row.add(
-                            when (wereQuotes) {
-                                true -> cell.toString()
-                                else -> cell.toString().trim()
-                            }
-                        )
-
-                        // Indicate the end of the [file].
-                        eol = true
-
-                        // Break reading the [row].
-                        break
-                    }
-
+                for (j in line.indices) {
                     // Get the current character as a [Char] and a [String].
-                    val c: Char = data.toChar()
+                    val c: Char = line[j]
                     val s = c.toString()
 
                     // Ignore leading or trailing whitespaces.  If a non-whitespace is read,
                     // indicate that the line is not empty.
-                    if (c.isWhitespace() && s != CSV_LINE_BREAK) {
+                    if (c.isWhitespace()) {
                         if ((cell.isEmpty() && insideQuotes == 0) || expectCellEnd)
                             continue
                     }
                     else
                         emptyLine = false
 
-                    // If the line ended but quotes were not closed or an escaping expression was
-                    // expected, throw an [IOException].
-                    if ((insideQuotes != 0 || escaping) && s == CSV_LINE_BREAK)
+                    // Check if a separator or the end of the line were expected but were not found.
+                    if (expectCellEnd && s != CSV_SEPARATOR)
                         throw IOException(
-                            CSV_UNEXPECTED_LINE_END_ERROR_MESSAGE.format(file.path, i, j)
-                        )
-
-                    // If a separator or the end of the line were expected but are not found, throw
-                    // an [IOException].
-                    if (expectCellEnd && !(s == CSV_SEPARATOR || s == CSV_LINE_BREAK))
-                        throw IOException(
-                            CSV_EXPECTED_CELL_END_ERROR_MESSAGE.format(file.path, i, j)
+                            CSV_EXPECTED_CELL_END_ERROR_MESSAGE.format(originName, i, j + 1)
                         )
 
                     // If an escaping expression is expected, parse it.
@@ -342,10 +314,9 @@ class TableReader : Any {
                         // Try to parse the expression.  In case of a fail, throw an [IOException].
                         try {
                             cell.append(escapeExpression(s))
-                        }
-                        catch (exception: IllegalArgumentException) {
+                        } catch (exception: IllegalArgumentException) {
                             throw IOException(
-                                CSV_ILLEGAL_ESCAPE_EXPR_ERROR_MESSAGE.format(file.path, i, j),
+                                CSV_ILLEGAL_ESCAPE_EXPR_ERROR_MESSAGE.format(originName, i, j + 1),
                                 exception
                             )
                         }
@@ -375,7 +346,11 @@ class TableReader : Any {
                                 // Throw an exception if the [cell] is not empty.
                                 if (cell.isNotEmpty())
                                     throw IOException(
-                                        CSV_ILLEGAL_QUOTES_ERROR_MESSAGE.format(file.path, i, j)
+                                        CSV_ILLEGAL_QUOTES_ERROR_MESSAGE.format(
+                                            originName,
+                                            i,
+                                            j + 1
+                                        )
                                     )
 
                                 // Open single quotes.
@@ -387,7 +362,11 @@ class TableReader : Any {
                                 // Throw an exception if the [cell] is not empty.
                                 if (cell.isNotEmpty())
                                     throw IOException(
-                                        CSV_ILLEGAL_QUOTES_ERROR_MESSAGE.format(file.path, i, j)
+                                        CSV_ILLEGAL_QUOTES_ERROR_MESSAGE.format(
+                                            originName,
+                                            i,
+                                            j + 1
+                                        )
                                     )
 
                                 // Open double quotes.
@@ -396,25 +375,13 @@ class TableReader : Any {
 
                             CSV_SEPARATOR -> {
                                 // Insert the [cell] in the [row] list of cells.
-                                insertCellInRow(row, cell, wereQuotes)
+                                insertCellInRow(row, cell, expectCellEnd)
 
                                 // Do not necessarily expect the end of the [cell] any more.
                                 expectCellEnd = false
 
-                                // Set the indicator of the [cell]'s enclosure inside quotes to
-                                // `false`.
-                                wereQuotes = false
-
                                 // Initialise a new [cell].
                                 cell = StringBuilder()
-                            }
-
-                            CSV_LINE_BREAK -> {
-                                // Insert the [cell] in the [row] list of cells.
-                                insertCellInRow(row, cell, wereQuotes)
-
-                                // Break reading the row.
-                                break@loop
                             }
 
                             // Otherwise just add the character to the [cell].
@@ -425,10 +392,6 @@ class TableReader : Any {
                             CSV_SINGLE_QUOTE -> {
                                 // Close single quotes.
                                 insideQuotes = 0
-
-                                // Set the indicator of the [cell]'s enclosure inside quotes to
-                                // `true`.
-                                wereQuotes = true
 
                                 // Expect the end of the [cell].
                                 expectCellEnd = true
@@ -443,10 +406,6 @@ class TableReader : Any {
                                 // Close double quotes.
                                 insideQuotes = 0
 
-                                // Set the indicator of the [cell]'s enclosure inside quotes to
-                                // `true`.
-                                wereQuotes = true
-
                                 // Expect the end of the [cell].
                                 expectCellEnd = true
                             }
@@ -457,30 +416,97 @@ class TableReader : Any {
                     }
                 }
 
-                // If the line is not empty, add the [row] to the [table].
+                // Check if the [line] ended while inside quotes or while expecting an escaping
+                // expression.
+                if (insideQuotes != 0 || escaping)
+                    throw IllegalArgumentException(
+                        CSV_UNEXPECTED_LINE_END_ERROR_MESSAGE.format(originName, i, line.length)
+                    )
+
+                // If the [line] is not empty, add the [row] to the [table].
                 if (!emptyLine)
-                    insertRowInTable(table, row)
-
-                // If the end of the [file] was reached, break reading it.
-                if (eol)
-                    break
+                    insertRowInTable(table, insertCellInRow(row, cell, expectCellEnd))
             }
-
-            // Close the [file].
-            csv.close()
 
             // Return the [table] as a two-dimensional [Array].
             return table.toArray(arrayOf())
         }
 
         /**
+         * Read a CSV input.
+         *
+         * The method returns `readCSV(BufferedReader(reader), originName, precedingLine)` without
+         * catching any exceptions.
+         *
+         * @param reader [Reader] from which to read the CSV table.
+         * @param originName The name or the path of the origin of [reader].
+         * @param precedingLine Index of the line directly before the first line read from [reader].
+         *
+         * @return The table written in [reader].
+         *
+         */
+        public fun readCSV(
+            reader: Reader,
+            originName: String = CSV_DEFAULT_ORIGIN_NAME,
+            precedingLine: Int = 0
+        ): Array<Array<String>> {
+            return readCSV(BufferedReader(reader), originName, precedingLine)
+        }
+
+        /**
+         * Read a CSV input.
+         *
+         * The method returns `readCSV(inputStream.reader(), originName, precedingLine)` without
+         * catching any exceptions.
+         *
+         * @param inputStream [InputStream] from which to read the CSV table.
+         * @param originName The name or the path of the origin of [inputStream].
+         * @param precedingLine Index of the line directly before the first line read from [inputStream].
+         *
+         * @return The table written in [inputStream].
+         *
+         */
+        public fun readCSV(
+            inputStream: InputStream,
+            originName: String = CSV_DEFAULT_ORIGIN_NAME,
+            precedingLine: Int = 0
+        ): Array<Array<String>> {
+            return readCSV(inputStream.reader(), originName, precedingLine)
+        }
+
+        /**
          * Read a CSV file.
          *
-         * The function returns `readCSV(File(fileName))` without catching any exceptions.
+         * The method is equivalent to calling `readCSV(FileReader(file), file.path, 0)` without
+         * catching any exceptions, only the [FileReader] is explicitly closed.
+         *
+         * @param file [File] from which to read the CSV table.
+         *
+         * @return The table written in the CSV [file].
+         *
+         */
+        public fun readCSV(file: File): Array<Array<String>> {
+            // Open the CSV [file] to read.
+            val fileReader: FileReader = FileReader(file)
+
+            // Read the CSV [file].
+            val table: Array<Array<String>> = readCSV(fileReader, file.path, 0)
+
+            // Close the CSV [file].
+            fileReader.close()
+
+            // Return the CSV table read from [file].
+            return table
+        }
+
+        /**
+         * Read a CSV file.
+         *
+         * The method returns `readCSV(File(fileName))` without catching any exceptions.
          *
          * @param fileName The name of the CSV file.
          *
-         * @return The table written in the CSV file.
+         * @return The table written in the CSV file at [fileName].
          *
          */
         public fun readCSV(fileName: String): Array<Array<String>> {
@@ -692,7 +718,9 @@ class TableReader : Any {
             // Put values from [columnsValues] and [solutionValue] to [table].
             for (column in ASSOCIATIONS_TABLE_COLUMNS_LABELS)
                 table.putStringArray(column, columnsValues[column]!!.toArray(arrayOf()))
-            table.putStringArray(ASSOCIATIONS_TABLE_SOLUTION_LABEL, solutionValue.toArray(arrayOf()))
+            table.putStringArray(
+                ASSOCIATIONS_TABLE_SOLUTION_LABEL, solutionValue.toArray(arrayOf())
+            )
 
             // Return the [Bundle] of extracted and sorted information.
             return table
@@ -701,7 +729,50 @@ class TableReader : Any {
         /**
          * Read an associations game from a raw table.
          *
-         * The function returns `readAssociationsTable(readCSV(file))` without catching any exceptions.
+         * The method returns `readAssociationsTable(readCSV(reader, originName, precedingLine))`
+         * without catching any exceptions.
+         *
+         * @param reader CSV [Reader] containing the raw table of information for an associations game.
+         * @param originName The name or the path of the origin of [reader].
+         * @param precedingLine Index of the line directly before the first line read from [reader].
+         *
+         * @return [Bundle] of extracted and sorted information.
+         *
+         */
+        public fun readAssociationsTable(
+            reader: Reader,
+            originName: String = CSV_DEFAULT_ORIGIN_NAME,
+            precedingLine: Int = 0
+        ): Bundle {
+            return readAssociationsTable(readCSV(reader, originName, precedingLine))
+        }
+
+        /**
+         * Read an associations game from a raw table.
+         *
+         * The method returns
+         * `readAssociationsTable(readCSV(inputStream, originName, precedingLine))` without catching
+         * any exceptions.
+         *
+         * @param inputStream CSV [InputStream] containing the raw table of information for an associations game.
+         * @param originName The name or the path of the origin of [inputStream].
+         * @param precedingLine Index of the line directly before the first line read from [inputStream].
+         *
+         * @return [Bundle] of extracted and sorted information.
+         *
+         */
+        public fun readAssociationsTable(
+            inputStream: InputStream,
+            originName: String = CSV_DEFAULT_ORIGIN_NAME,
+            precedingLine: Int = 0
+        ): Bundle {
+            return readAssociationsTable(readCSV(inputStream, originName, precedingLine))
+        }
+
+        /**
+         * Read an associations game from a raw table.
+         *
+         * The method returns `readAssociationsTable(readCSV(file))` without catching any exceptions.
          *
          * @param file CSV [File] containing the raw table of information for an associations game.
          *
@@ -715,7 +786,7 @@ class TableReader : Any {
         /**
          * Read an associations game from a raw table.
          *
-         * The function returns `readAssociationsTable(readCSV(fileName))` without catching any exceptions.
+         * The method returns `readAssociationsTable(readCSV(fileName))` without catching any exceptions.
          *
          * @param fileName The name of the CSV file containing the raw table of information for an associations game.
          *
@@ -727,9 +798,53 @@ class TableReader : Any {
         }
     }
 
+    /**
+     * The empty constructor is private.
+     *
+     */
     private constructor() {
     }
 
+    /**
+     * The copy constructor is private.
+     *
+     */
     private constructor(other: TableReader) {
+    }
+
+    /**
+     * Get the hash code value of the instance of [TableReader].
+     *
+     * **Note: The method is hardcoded to always return `0`.**
+     *
+     * @return The hash code of the instance of [TableReader].
+     *
+     */
+    override fun hashCode(): Int {
+        return 0
+    }
+
+    /**
+     * Check whether some other object is "equal to" this one.
+     *
+     * **Note: The method is hardcoded to always return `false`.**
+     *
+     * @return If the objects are equal, `true`; `false` otherwise.
+     *
+     */
+    override fun equals(other: Any?): Boolean {
+        return false
+    }
+
+    /**
+     * Get the string representation of the instance of [TableReader].
+     *
+     * **Note: The method is hardcoded to always return `this.javaClass.name`.**
+     *
+     * @return The string representation of the instance of [TableReader].
+     *
+     */
+    override fun toString(): String {
+        return this.javaClass.name
     }
 }
