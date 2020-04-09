@@ -16,6 +16,10 @@ import java.io.*
  */
 class TableReader : Any {
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //  COMPANION ELEMENTS                                                                        //
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     /**
      * The companion object of the class [TableReader].
      *
@@ -26,12 +30,16 @@ class TableReader : Any {
      * @property CSV_UNEXPECTED_LINE_END_ERROR_MESSAGE Format error message for an exception when a line unexpectedly ends when reading a CSV file in [readCSV] method.
      * @property CSV_EXPECTED_CELL_END_ERROR_MESSAGE Format error message when a non-whitespace character that is not a cell separator is found after closing a cell when reading a CSV file in [readCSV] method.
      * @property CSV_ILLEGAL_ESCAPE_EXPR_ERROR_MESSAGE Format error message for an exception when an illegal escape expression is found (when [escapeExpression] method throws an exception) when reading a CSV file in [readCSV] method.
+     * @property CSV_ILLEGAL_QUOTES_ERROR_MESSAGE Format error message for an exception when illegal unescaped quotes appear in [readCSV] method.
      *
-     * @property ASSOCIATIONS_TABLE_TOO_SHORT_ERROR_MESSAGE Error message for an exception when the table in [readAssociationsTable] method does not have at least 6 rows.
-     * @property ASSOCIATIONS_TABLE_ILLEGAL_SHUFFLE_ALLOWING_INDICATOR_ERROR_MESSAGE Format error message for an exception when the first line of the table in [readAssociationsTable] method is not a row of 5 cells of values [ASSOCIATIONS_TABLE_DISALLOW_SHUFFLING] or [ASSOCIATIONS_TABLE_ALLOW_SHUFFLING].
-     * @property ASSOCIATIONS_TABLE_FIRST_FOUR_ROWS_FORMAT_ERROR_MESSAGE Error message for an exception when lines 2 to 5 (inclusive) of the table are of illegal length (not 4 or 5 cells), mutually different length or, if of length 5, the last cell is non-empty.
-     * @property ASSOCIATIONS_TABLE_SOLUTIONS_ILLEGAL_LENGTH_ERROR_MESSAGE Error message for an exception when lines 6 until the end (inclusive) of the table in [readAssociationsTable] method are not of length of 5 cells.
-     * @property ASSOCIATIONS_TABLE_SOLUTIONS_LATE_ENTRY_ERROR_MESSAGE Error message for an exception if a non-empty cells appears in a column in a row 6 until the end (inclusive) of the table in [readAssociationsTable] method if an empty cell has previously appeared in the same column.
+     * @property ASSOCIATIONS_TABLE_TOO_SHORT_ERROR_MESSAGE Format error message for an exception when the table in [readAssociationsTable] method does not contain at least 6 rows.
+     * @property ASSOCIATIONS_TABLE_SHUFFLE_ALLOWING_INDICATOR_ILLEGAL_LENGTH_ERROR_MESSAGE Format error message for an exception when the first line of the table in [readAssociationsTable] method does not contain exactly 5 cells.
+     * @property ASSOCIATIONS_TABLE_SHUFFLE_ALLOWING_INDICATOR_ILLEGAL_VALUES_ERROR_MESSAGE Format error message for an exception when the first line of the table in [readAssociationsTable] method contains something other than [ASSOCIATIONS_TABLE_DISALLOW_SHUFFLING] and [ASSOCIATIONS_TABLE_ALLOW_SHUFFLING].
+     * @property ASSOCIATIONS_TABLE_FIRST_FOUR_ROWS_INCONSISTENT_LENGTH_ERROR_MESSAGE Format error message for an exception when lines 2 to 5 (inclusive) of the table in [readAssociationsTable] method are not of the same length.
+     * @property ASSOCIATIONS_TABLE_FIRST_FOUR_ROWS_ILLEGAL_LENGTH_ERROR_MESSAGE Format error message for an exception when lines 2 to 5 (inclusive) of the table in [readAssociationsTable] method do not contain exactly 4 or 5 cells.
+     * @property ASSOCIATIONS_TABLE_FIRST_FOUR_ROWS_ILLEGAL_NON_EMPTY_LAST_CELL_ERROR_MESSAGE Format error message for an exception when lines 2 to 5 (inclusive) of the table in [readAssociationsTable] method contain 5 cells, but the 5th cell is not empty.
+     * @property ASSOCIATIONS_TABLE_SOLUTIONS_ILLEGAL_LENGTH_ERROR_MESSAGE Format error message for an exception when rows 6 until the end (inclusive) of the table in [readAssociationsTable] method do not contain exactly 5 cells.
+     * @property ASSOCIATIONS_TABLE_SOLUTIONS_LATE_ENTRY_ERROR_MESSAGE Format error message for an exception if a non-empty cells appears in a column in a row 6 until the end (inclusive) of the table in [readAssociationsTable] method but an empty cell has previously appeared in the same column and a higher row (not higher than row 6).
      *
      * @property CSV_DEFAULT_ORIGIN_NAME Default value for `originName` in [readCSV] method.
      *
@@ -53,11 +61,15 @@ class TableReader : Any {
      * @property CSV_LITERAL_SEPARATOR The string of the proper escaping expression of [CSV_SEPARATOR] in CSV files.  Actually a string of [CSV_ESCAPE_CHAR] followed by [CSV_SEPARATOR], i. e. the string `"\\,"`.
      * @property CSV_LITERAL_ESCAPE_CHAR The string of the proper escaping expression of [CSV_ESCAPE_CHAR] in CSV files.  Actually a string of double [CSV_ESCAPE_CHAR], i. e. the string `"\\\\"`.
      *
-     * @property ASSOCIATIONS_TABLE_DISALLOW_SHUFFLING The proper content of a cell in the first row of the table in [readAssociationsTable] method if the corresponding column or the final solution must not be shuffled.
-     * @property ASSOCIATIONS_TABLE_DISALLOW_SHUFFLING The proper content of a cell in the first row of the table in [readAssociationsTable] method if the corresponding column or the final solution may be shuffled.
+     * @property ASSOCIATIONS_TABLE_DISALLOW_SHUFFLING The proper content of a cell in the first row of the table in [readAssociationsTable] method if the corresponding column or the final solution must not be shuffled.  Actually a string of a single `'0'` character, i. e. the string `"0"`.
+     * @property ASSOCIATIONS_TABLE_DISALLOW_SHUFFLING The proper content of a cell in the first row of the table in [readAssociationsTable] method if the corresponding column or the final solution may be shuffled.  Actually a string of a single `'1'` character, i. e. the string `"1"`.
      *
      */
     public companion object {
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //  ERROR MESSAGES                                                                        //
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
         private const val ILLEGAL_ESCAPE_EXPR_LENGTH_ERROR_MESSAGE: String =
             "Escape expression must be a single character string."
@@ -73,18 +85,29 @@ class TableReader : Any {
         private const val CSV_ILLEGAL_ESCAPE_EXPR_ERROR_MESSAGE: String =
             "Escape expression failed in %s:%d.%d."
         private const val CSV_ILLEGAL_QUOTES_ERROR_MESSAGE: String =
-            "Quotes not allowed in %s:%d.%d."
+            "Unescaped quotes not allowed in %s:%d.%d."
 
         private const val ASSOCIATIONS_TABLE_TOO_SHORT_ERROR_MESSAGE: String =
-            "Association table must have at least 6 rows."
-        private const val ASSOCIATIONS_TABLE_ILLEGAL_SHUFFLE_ALLOWING_INDICATOR_ERROR_MESSAGE: String =
-            "The first row of the association table must contain exactly 5 cells of values: %s (to disallow shuffling) or %s (to allow shuffling)."
-        private const val ASSOCIATIONS_TABLE_FIRST_FOUR_ROWS_FORMAT_ERROR_MESSAGE: String =
-            "Rows 2 -- 5 (inclusive) of the association table must be of the same length---either 4 or 5 cells---and, if of length 5, the last cell must be empty."
+            "Association table must have at least 6 rows, but a table of %d rows was given."
+        private const val ASSOCIATIONS_TABLE_SHUFFLE_ALLOWING_INDICATOR_ILLEGAL_LENGTH_ERROR_MESSAGE: String =
+            "The first row of the association table must contain exactly 5 cells, but a row of %d cells was given."
+        private const val ASSOCIATIONS_TABLE_SHUFFLE_ALLOWING_INDICATOR_ILLEGAL_VALUES_ERROR_MESSAGE: String =
+            "The first row of the association table must contain only \"%s\" (to disallow shuffling) and \"%s\" (to allow shuffling), but a cell \"%s\" was encountered."
+        private const val ASSOCIATIONS_TABLE_FIRST_FOUR_ROWS_INCONSISTENT_LENGTH_ERROR_MESSAGE: String =
+            "Rows 2 -- 5 (inclusive) of the association table must be of the same length, but row %d contains %d cells and row %d contains %d cells."
+        private const val ASSOCIATIONS_TABLE_FIRST_FOUR_ROWS_ILLEGAL_LENGTH_ERROR_MESSAGE: String =
+            "Rows 2 -- 5 (inclusive) of the association table must contain either 4 or 5 cells, but row %d contains %d cells."
+        private const val ASSOCIATIONS_TABLE_FIRST_FOUR_ROWS_ILLEGAL_NON_EMPTY_LAST_CELL_ERROR_MESSAGE: String =
+            "If rows 2 -- 5 (inclusive) of the association table contain 5 cells, the 5th cell must be empty, but row %d contains \"%s\" as the last cell."
         private const val ASSOCIATIONS_TABLE_SOLUTIONS_ILLEGAL_LENGTH_ERROR_MESSAGE: String =
-            "Rows 6 until the end (inclusive) of the association table must contain exactly 5 cells."
+            "Rows 6 until the end (inclusive) of the association table must contain exactly 5 cells, but row %d contains %d cells."
         private const val ASSOCIATIONS_TABLE_SOLUTIONS_LATE_ENTRY_ERROR_MESSAGE: String =
-            "If a column in rows 6 until the end (inclusive) of the association table has an empty cells, all consecutive rows in the column must have an empty cell (all entries must be aggregated at the top)."
+            "Column %d contains a non-empty cell in row %d after already having an empty cell in row %d (after reaching an empty cell in column 6 until the end (inclusive), all consecutive rows must have empty cells in the column)."
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //  PRIVATE CONSTANTS                                                                     //
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
         private const val CSV_DEFAULT_ORIGIN_NAME: String = "input"
 
@@ -93,6 +116,11 @@ class TableReader : Any {
         private const val ASSOCIATIONS_TABLE_SOLUTION_LABEL: String = "Sol"
 
         private const val SUFFIX_ASSOCIATIONS_TABLE_SHUFFLE: String = "Shuffle"
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //  PUBLIC CONSTANTS                                                                      //
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
         public const val CSV_LINE_BREAK: String = "\n"
         public const val CSV_SINGLE_QUOTE: String = "\'"
@@ -109,6 +137,11 @@ class TableReader : Any {
         public const val ASSOCIATIONS_TABLE_DISALLOW_SHUFFLING: String = "0"
         public const val ASSOCIATIONS_TABLE_ALLOW_SHUFFLING: String = "1"
 
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //  AUXILIARY METHODS                                                                     //
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
         /**
          * Construct a label for saving permutation allowing in [readAssociationsTable] from a column's or the final solution's label and a suffix.
          *
@@ -121,6 +154,11 @@ class TableReader : Any {
         private fun appendSuffix(label: String, suffix: String): String {
             return label + suffix
         }
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //  READING METHODS                                                                       //
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
         /**
          * Parse an escaping expression.
@@ -191,6 +229,12 @@ class TableReader : Any {
          * (this includes empty lines).  The value of each cell in the table is trimmed by calling
          * [String.trim] method, unless the cell was enclosed in quotes and whitespaces were inside
          * the quotes.
+         *
+         * Escaping a [CSV_SEPARATOR] is not mandatory if the cell is enclosed in
+         * [CSV_SINGLE_QUOTE]s or [CSV_DOUBLE_QUOTE]s.  Also, escaping [CSV_DOUBLE_QUOTE]s in cells
+         * enclosed by [CSV_SINGLE_QUOTE]s and vice versa is not mandatory.  However, these
+         * characters may also be escaped in cells enclosed by quotes, therefore watch out how
+         * [CSV_ESCAPE_CHAR] is used even if the cell is enclosed in quotes.
          *
          * Each cell of the table is considered a [String] value.  To convert data, use another CSV
          * reader or manually parse the result of this method.
@@ -566,29 +610,32 @@ class TableReader : Any {
 
             // Initialise empty solutions arrays for columns and the final solution.  Also,
             // initialise indicators of reaching empty cells of solutions/alternative acceptable
-            // answers in their corresponding columns in  [rawTable].
-            val columnsValuesEnded: HashMap<String, Boolean> = HashMap<String, Boolean>().apply {
+            // answers in their corresponding columns in  [rawTable] (if -1, a non-empty cell has
+            // not yet been reached; otherwise it has been reached in the row at the index given as
+            // the indicator's value).
+            val columnsValuesEnded: HashMap<String, Int> = HashMap<String, Int>().apply {
                 for (column in ASSOCIATIONS_TABLE_COLUMNS_LABELS)
-                    put(column, false)
+                    put(column, -1)
             }
             val columnsValues: HashMap<String, ArrayList<String>> =
                 HashMap<String, ArrayList<String>>().apply {
                     for (column in ASSOCIATIONS_TABLE_COLUMNS_LABELS)
                         put(column, ArrayList())
                 }
-            var solutionValueEnded: Boolean = false
+            var solutionValueEnded: Int = -1
             val solutionValue: ArrayList<String> = ArrayList()
 
             // Check if [rawTable] has at least 6 rows.
             if (rawTable.size < 6)
-                throw IllegalArgumentException(ASSOCIATIONS_TABLE_TOO_SHORT_ERROR_MESSAGE)
+                throw IllegalArgumentException(
+                    ASSOCIATIONS_TABLE_TOO_SHORT_ERROR_MESSAGE.format(rawTable.size)
+                )
 
             // Check if the first row in [rawTable] has exactly 5 cells.
             if (rawTable[0].size != 5)
                 throw IllegalArgumentException(
-                    ASSOCIATIONS_TABLE_ILLEGAL_SHUFFLE_ALLOWING_INDICATOR_ERROR_MESSAGE.format(
-                        ASSOCIATIONS_TABLE_DISALLOW_SHUFFLING,
-                        ASSOCIATIONS_TABLE_ALLOW_SHUFFLING
+                    ASSOCIATIONS_TABLE_SHUFFLE_ALLOWING_INDICATOR_ILLEGAL_LENGTH_ERROR_MESSAGE.format(
+                        rawTable[0].size
                     )
                 )
 
@@ -610,9 +657,10 @@ class TableReader : Any {
                         true
                     )
                     else -> throw IllegalArgumentException(
-                        ASSOCIATIONS_TABLE_ILLEGAL_SHUFFLE_ALLOWING_INDICATOR_ERROR_MESSAGE.format(
+                        ASSOCIATIONS_TABLE_SHUFFLE_ALLOWING_INDICATOR_ILLEGAL_VALUES_ERROR_MESSAGE.format(
                             ASSOCIATIONS_TABLE_DISALLOW_SHUFFLING,
-                            ASSOCIATIONS_TABLE_ALLOW_SHUFFLING
+                            ASSOCIATIONS_TABLE_ALLOW_SHUFFLING,
+                            rawTable[0][j]
                         )
                     )
                 }
@@ -632,9 +680,10 @@ class TableReader : Any {
                     true
                 )
                 else -> throw IllegalArgumentException(
-                    ASSOCIATIONS_TABLE_ILLEGAL_SHUFFLE_ALLOWING_INDICATOR_ERROR_MESSAGE.format(
+                    ASSOCIATIONS_TABLE_SHUFFLE_ALLOWING_INDICATOR_ILLEGAL_VALUES_ERROR_MESSAGE.format(
                         ASSOCIATIONS_TABLE_DISALLOW_SHUFFLING,
-                        ASSOCIATIONS_TABLE_ALLOW_SHUFFLING
+                        ASSOCIATIONS_TABLE_ALLOW_SHUFFLING,
+                        rawTable[0][4]
                     )
                 )
             }
@@ -644,20 +693,31 @@ class TableReader : Any {
                 // Check if the row is of the same length as row 2.
                 if (rawTable[i].size != rawTable[1].size)
                     throw IllegalArgumentException(
-                        ASSOCIATIONS_TABLE_FIRST_FOUR_ROWS_FORMAT_ERROR_MESSAGE
+                        ASSOCIATIONS_TABLE_FIRST_FOUR_ROWS_INCONSISTENT_LENGTH_ERROR_MESSAGE.format(
+                            2,
+                            rawTable[1].size,
+                            i + 1,
+                            rawTable[i].size
+                        )
                     )
 
                 // Check the length of the row and the content of the 5th cell if it exists.
                 when (rawTable[i].size) {
-                    4 -> { }
+                    4 -> Unit
                     5 -> {
                         if (rawTable[i][4] != String())
                             throw IllegalArgumentException(
-                                ASSOCIATIONS_TABLE_FIRST_FOUR_ROWS_FORMAT_ERROR_MESSAGE
+                                ASSOCIATIONS_TABLE_FIRST_FOUR_ROWS_ILLEGAL_NON_EMPTY_LAST_CELL_ERROR_MESSAGE.format(
+                                    i + 1,
+                                    rawTable[i][4]
+                                )
                             )
                     }
                     else -> throw IllegalArgumentException(
-                        ASSOCIATIONS_TABLE_FIRST_FOUR_ROWS_FORMAT_ERROR_MESSAGE
+                        ASSOCIATIONS_TABLE_FIRST_FOUR_ROWS_ILLEGAL_LENGTH_ERROR_MESSAGE.format(
+                            i + 1,
+                            rawTable[i].size
+                        )
                     )
                 }
 
@@ -671,25 +731,36 @@ class TableReader : Any {
             }
 
             // Extract solutions/alternative acceptable answers from rows 6 until the end
-            // (inclusive) in [rawtable].
+            // (inclusive) in [rawTable].
             for (i in 5 until rawTable.size) {
                 // Check if the row has exactly 5 cells.
                 if (rawTable[i].size != 5)
                     throw IllegalArgumentException(
-                        ASSOCIATIONS_TABLE_SOLUTIONS_ILLEGAL_LENGTH_ERROR_MESSAGE
+                        ASSOCIATIONS_TABLE_SOLUTIONS_ILLEGAL_LENGTH_ERROR_MESSAGE.format(
+                            i + 1,
+                            rawTable[i].size
+                        )
                     )
 
                 // Extract answers for solutions of columns.
                 for (j in 0 until 4)
                     when (rawTable[i][j]) {
                         // Indicate that the column has reached an empty cell.
-                        String() -> columnsValuesEnded[ASSOCIATIONS_TABLE_COLUMNS_LABELS[j]] = true
+                        String() -> {
+                            if (columnsValuesEnded[ASSOCIATIONS_TABLE_COLUMNS_LABELS[j]]!! == -1)
+                                columnsValuesEnded[ASSOCIATIONS_TABLE_COLUMNS_LABELS[j]] = i
+                        }
 
                         else -> {
                             // Check if the column has previously reached an empty cell.
-                            if (columnsValuesEnded[ASSOCIATIONS_TABLE_COLUMNS_LABELS[j]]!!)
+                            if (columnsValuesEnded[ASSOCIATIONS_TABLE_COLUMNS_LABELS[j]]!! != -1)
                                 throw IllegalArgumentException(
-                                    ASSOCIATIONS_TABLE_SOLUTIONS_LATE_ENTRY_ERROR_MESSAGE
+                                    ASSOCIATIONS_TABLE_SOLUTIONS_LATE_ENTRY_ERROR_MESSAGE.format(
+                                        j + 1,
+                                        i + 1,
+                                        columnsValuesEnded[ASSOCIATIONS_TABLE_COLUMNS_LABELS[j]]!! +
+                                            1
+                                    )
                                 )
 
                             // Add the answer to [columnsValues].
@@ -700,13 +771,20 @@ class TableReader : Any {
                     }
                 when (rawTable[i][4]) {
                     // Indicate that the final solution has reached an empty cell.
-                    String() -> solutionValueEnded = true
+                    String() -> {
+                        if (solutionValueEnded == -1)
+                            solutionValueEnded = i
+                    }
 
                     else -> {
                         // Check if the final solution has previously reached an empty cell.
-                        if (solutionValueEnded)
+                        if (solutionValueEnded != -1)
                             throw IllegalArgumentException(
-                                ASSOCIATIONS_TABLE_SOLUTIONS_LATE_ENTRY_ERROR_MESSAGE
+                                ASSOCIATIONS_TABLE_SOLUTIONS_LATE_ENTRY_ERROR_MESSAGE.format(
+                                    5,
+                                    i + 1,
+                                    solutionValueEnded + 1
+                                )
                             )
 
                         // Add the answer to [solutionValue].
@@ -798,6 +876,11 @@ class TableReader : Any {
         }
     }
 
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //  CONSTRUCTORS                                                                              //
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     /**
      * The empty constructor is private.
      *
@@ -808,9 +891,16 @@ class TableReader : Any {
     /**
      * The copy constructor is private.
      *
+     * @param other Original [TableReader] to copy.
+     *
      */
     private constructor(other: TableReader) {
     }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //  OVERRIDDEN METHODS OF [Any]                                                                //
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
      * Get the hash code value of the instance of [TableReader].
