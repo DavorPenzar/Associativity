@@ -1,8 +1,10 @@
 package com.example.associativity
 
 import android.content.Context
-import android.os.*
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.os.Handler
+import android.os.IBinder
+import android.os.Looper
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -10,14 +12,14 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ScrollView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import java.lang.Integer.min
+import java.nio.file.Paths
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 import kotlin.math.abs
 
 /**
@@ -64,6 +66,8 @@ class MainActivity : AppCompatActivity() {
     /**
      * The companion object of the class [MainActivity].
      *
+     * @property GAME_TABLES_DIRECTORY Relative assets path for the directory with game tables.  **Note: It is not guaranteed that this path ends with a path separator.  To join paths use [Paths.get] method.**
+     *
      * @property COMMA_DELIMITER String between items separated by a comma—a comma followed by a single whitespace, i. e. `", "`.
      *
      * @property TIME_SPACE_DELIMITER String between days and hours in time's string representation—a single whitespace, i. e. `" "`.
@@ -95,8 +99,10 @@ class MainActivity : AppCompatActivity() {
     private companion object {
 
         ////////////////////////////////////////////////////////////////////////////////////////////
-        //  LABELS FOR [onSaveInstanceState] AND [onRestoreInstanceState] METHODS                 //
+        //  PRIVATE CONSTANTS                                                                     //
         ////////////////////////////////////////////////////////////////////////////////////////////
+
+        private const val GAME_TABLES_DIRECTORY: String = "game_tables/"
 
         private const val COMMA_DELIMITER: String = ", "
 
@@ -104,6 +110,10 @@ class MainActivity : AppCompatActivity() {
         private const val TIME_COLON_DELIMITER: String = ":"
         private const val HOURS_FORMAT: String = "%02d"
         private const val MINUTES_SECONDS_FORMAT: String = "%02d%s%06.3f"
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //  LABELS FOR [onSaveInstanceState] AND [onRestoreInstanceState] METHODS                 //
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
         private const val SUFFIX_OPEN: String = "Open"
         private const val SUFFIX_VALUE: String = "Value"
@@ -571,6 +581,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
+     * Read a random table with solutions from the assets.
+     *
+     * The method returns a random table read from a file in [GAME_TABLES_DIRECTORY] subdirectory
+     * of the assets directory using [TableReader.readAssociationsTable] method.
+     *
+     * @return A random table with solutions from the assets.
+     *
+     */
+    private fun importRandomGameTable(): Bundle {
+        return TableReader.readAssociationsTable(
+            assets.open(
+                Paths.get(
+                    GAME_TABLES_DIRECTORY,
+                    assets.list(GAME_TABLES_DIRECTORY)!!.random()
+                ).toString()
+            )
+        )
+    }
+
+    /**
      * Initialise the game table.
      *
      * Game freshness is set to `false`, all cells, all columns's solutions and the final solution
@@ -599,68 +629,28 @@ class MainActivity : AppCompatActivity() {
 
         changeFinalOpennes(false)
 
-        // Populate the game table and the solution.
+        // Import a random game table with solutions.
 
-        // Hardcoded values of the game table, the columns' solutions and the main solution.
-        run {
-            // Cells.
-            editCellValue(resources.getString(R.string.cell_A1), "glad")
-            editCellValue(resources.getString(R.string.cell_A2), "jeftino")
-            editCellValue(resources.getString(R.string.cell_A3), "kebab")
-            editCellValue(resources.getString(R.string.cell_A4), "McDonald's")
-            editCellValue(resources.getString(R.string.cell_B1), "car")
-            editCellValue(resources.getString(R.string.cell_B2), "časna sestra")
-            editCellValue(resources.getString(R.string.cell_B3), "jug")
-            editCellValue(resources.getString(R.string.cell_B4), "ptica")
-            editCellValue(resources.getString(R.string.cell_C1), "but")
-            editCellValue(resources.getString(R.string.cell_C2), "dim")
-            editCellValue(resources.getString(R.string.cell_C3), "meso")
-            editCellValue(resources.getString(R.string.cell_C4), "Pik Vrbovec")
-            editCellValue(resources.getString(R.string.cell_D1), "bolest")
-            editCellValue(resources.getString(R.string.cell_D2), "energija")
-            editCellValue(resources.getString(R.string.cell_D3), "Kelvin")
-            editCellValue(resources.getString(R.string.cell_D4), "živa")
+        val readTable: Bundle = importRandomGameTable()
 
-            // Columns' solutions.
-            editColumnValue(
-                resources.getString(R.string.column_A),
-                arrayOf(
-                    "brza hrana",
-                    "fast food",
-                    "brzogriz"
-                )
-            )
-            editColumnValue(resources.getString(R.string.column_B), arrayOf("pingvin"))
-            editColumnValue(resources.getString(R.string.column_C), arrayOf("šunka", "sunka"))
-            editColumnValue(resources.getString(R.string.column_D), arrayOf("temperatura"))
+        // Populate the game table and solutions with the values from [readTable].
 
-            // Final solution.
-            editFinalValue(
-                arrayOf(
-                    "topli sendvič",
-                    "topli sendvic",
-                    "topli sandwich",
-                    "topla dvokriška",
-                    "topla dvokriska"
-                )
-            )
-        }
+        for (cell in arrayOfCells())
+            editCellValue(cell, readTable.getString(cell)!!)
+
+        for (column in arrayOfColumns())
+            editColumnValue(column, readTable.getStringArray(column)!!)
+
+        editFinalValue(readTable.getStringArray(resources.getString(R.string.sol))!!)
 
         // Shuffle the table where allowed.
 
-        // Initialise the allowing of shuffling to `false`s.
+        // Read shuffling allowings from [readTable].
         val shuffleColumns: HashMap<String, Boolean> = HashMap<String, Boolean>().apply {
             for (column in arrayOfColumns())
-                put(column, false)
+                put(column, readTable.getBoolean(column))
         }
-        var shuffleFinal: Boolean = false
-
-        // Hardcoded allowing of all columns and the columns themselves to be shuffled.
-        run {
-            for (column in arrayOfColumns())
-                shuffleColumns[column] = true
-            shuffleFinal = true
-        }
+        val shuffleFinal: Boolean = readTable.getBoolean(resources.getString(R.string.sol))
 
         // Actually shuffle the table with the given allowing parameters.
         shuffleTable(shuffleColumns, shuffleFinal)
@@ -2101,7 +2091,7 @@ class MainActivity : AppCompatActivity() {
             resetProperties()
 
             // Recover the state of the stopwatch, but do not restart it yet if needed.
-            printStopwatchTime(getString(STOPWATCH_PRINT) as String)
+            printStopwatchTime(getString(STOPWATCH_PRINT)!!)
             changeStopwatchStartness(getBoolean(STOPWATCH_STARTNESS))
             changeStopwatchStopness(getBoolean(STOPWATCH_STOPNESS))
             changeStopwatchDuration(Duration.of(getLong(STOPWATCH_DURATION), ChronoUnit.MILLIS))
@@ -2115,7 +2105,7 @@ class MainActivity : AppCompatActivity() {
                 // Recover the state of the game table.
                 for (cell in arrayOfCells()) {
                     changeCellOpennes(cell, getBoolean(appendSuffix(cell, SUFFIX_OPEN)))
-                    editCellValue(cell, getString(appendSuffix(cell, SUFFIX_VALUE)) as String)
+                    editCellValue(cell, getString(appendSuffix(cell, SUFFIX_VALUE))!!)
 
                     if (isCellOpen(cell))
                         openCell(cell, false)
@@ -2126,8 +2116,7 @@ class MainActivity : AppCompatActivity() {
                     changeColumnOpennes(column, getBoolean(appendSuffix(column, SUFFIX_OPEN)))
                     editColumnValue(
                         column,
-                        getStringArray(appendSuffix(column, SUFFIX_VALUE))
-                                as Array<String>,
+                        getStringArray(appendSuffix(column, SUFFIX_VALUE))!!,
                         false
                     )
 
@@ -2137,33 +2126,26 @@ class MainActivity : AppCompatActivity() {
 
                 // Recover the state of the final solution.
 
-                changeFinalOpennes(
-                    getBoolean(appendSuffix(resources.getString(R.string.sol), SUFFIX_OPEN))
-                )
-                editFinalValue(
-                    getStringArray(
-                        appendSuffix(resources.getString(R.string.sol), SUFFIX_VALUE)
-                    ) as Array<String>,
-                    false
-                )
+                changeFinalOpennes(getBoolean(appendSuffix(resources.getString(R.string.sol), SUFFIX_OPEN)))
+                editFinalValue(getStringArray(appendSuffix(resources.getString(R.string.sol), SUFFIX_VALUE))!!, false)
 
                 if (isFinalOpen())
                     openFinal(recursiveOpen = false, displayContent = false)
             }
 
             // Recover the text displayed in [textViewCurrent] and redesplay it.
-            displayCurrentText(getString(CURRENT_TEXT) as String)
+            displayCurrentText(getString(CURRENT_TEXT)!!)
 
             // If the guess dialog has been open, recover its state and reopen it.
             if (getBoolean(GUESS_OPENNESS)) {
                 changeGuessGivingUpAllowness(getBoolean(GUESS_GIVE_UP))
 
-                changeGuessTarget(getString(GUESS_TARGET) as String)
+                changeGuessTarget(getString(GUESS_TARGET)!!)
 
                 val guessTarget: String = retrieveGuessTarget()
 
-                displayElaborateGuessHint(getString(GUESS_HINT_ELABORATE) as String)
-                displayBriefGuessHint(getString(GUESS_HINT_BRIEF) as String)
+                displayElaborateGuessHint(getString(GUESS_HINT_ELABORATE)!!)
+                displayBriefGuessHint(getString(GUESS_HINT_BRIEF)!!)
 
                 if (arrayOfColumns().contains(guessTarget))
                     bindButtonGuessToColumn(guessTarget)
