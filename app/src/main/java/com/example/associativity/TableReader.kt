@@ -164,6 +164,8 @@ class TableReader : Any {
          *
          * @return The constructed mixed label.
          *
+         * @see appendSuffix
+         *
          */
         public fun shuffleAllowingLabel(label: String): String {
             return appendSuffix(label, SUFFIX_ASSOCIATIONS_TABLE_SHUFFLE)
@@ -287,6 +289,8 @@ class TableReader : Any {
          *
          * @throws IllegalArgumentException If [precedingLine] is negative.
          * @throws IOException [IOException]s thrown by the [FileReader] used in the method are not caught, and additional [IOException]s may be thrown by the method itself if the CSV [file] is not formatted properly.
+         *
+         * @see escapeExpression
          *
          */
         public fun readCSV(
@@ -548,6 +552,34 @@ class TableReader : Any {
         /**
          * Read a CSV file.
          *
+         * The method is equivalent to calling `readCSV(FileReader(fileDescriptor), file.path, 0)`
+         * without catching any exceptions, only the [FileReader] is explicitly closed.
+         *
+         * @param fileDescriptor [FileDescriptor] of the file from which to read the CSV table.
+         *
+         * @return The table written in the CSV file described by [fileDescriptor].
+         *
+         */
+        public fun readCSV(
+            fileDescriptor: FileDescriptor,
+            originName: String = CSV_DEFAULT_ORIGIN_NAME
+        ): Array<Array<String>> {
+            // Open the CSV file to read.
+            val fileReader: FileReader = FileReader(fileDescriptor)
+
+            // Read the CSV file.
+            val table: Array<Array<String>> = readCSV(fileReader, originName, 0)
+
+            // Close the CSV [file].
+            fileReader.close()
+
+            // Return the CSV table read from the CSV [file].
+            return table
+        }
+
+        /**
+         * Read a CSV file.
+         *
          * The method is equivalent to calling `readCSV(FileReader(file), file.path, 0)` without
          * catching any exceptions, only the [FileReader] is explicitly closed.
          *
@@ -566,7 +598,7 @@ class TableReader : Any {
             // Close the CSV [file].
             fileReader.close()
 
-            // Return the CSV table read from [file].
+            // Return the CSV table read from the CSV [file].
             return table
         }
 
@@ -833,6 +865,8 @@ class TableReader : Any {
          *
          * @return [Bundle] of extracted and sorted information.
          *
+         * @see readCSV
+         *
          */
         public fun readAssociationsTable(
             reader: Reader,
@@ -855,6 +889,8 @@ class TableReader : Any {
          *
          * @return [Bundle] of extracted and sorted information.
          *
+         * @see readCSV
+         *
          */
         public fun readAssociationsTable(
             inputStream: InputStream,
@@ -865,7 +901,24 @@ class TableReader : Any {
         }
 
         /**
-         * Read an associations game from a raw table.
+         * Read an associations game from a raw table in a file.
+         *
+         * The method returns `readAssociationsTable(readCSV(fileDescriptor))` without catching any
+         * exceptions.
+         *
+         * @param fileDescriptor [FileDescriptor] of the CSV file containing the raw table of information for an associations game.
+         *
+         * @return [Bundle] of extracted and sorted information.
+         *
+         * @see readCSV
+         *
+         */
+        public fun readAssociationsTable(fileDescriptor: FileDescriptor): Bundle {
+            return readAssociationsTable(readCSV(fileDescriptor))
+        }
+
+        /**
+         * Read an associations game from a raw table in a file.
          *
          * The method returns `readAssociationsTable(readCSV(file))` without catching any exceptions.
          *
@@ -873,19 +926,23 @@ class TableReader : Any {
          *
          * @return [Bundle] of extracted and sorted information.
          *
+         * @see readCSV
+         *
          */
         public fun readAssociationsTable(file: File): Bundle {
             return readAssociationsTable(readCSV(file))
         }
 
         /**
-         * Read an associations game from a raw table.
+         * Read an associations game from a raw table in a file.
          *
          * The method returns `readAssociationsTable(readCSV(fileName))` without catching any exceptions.
          *
          * @param fileName The name of the CSV file containing the raw table of information for an associations game.
          *
          * @return [Bundle] of extracted and sorted information.
+         *
+         * @see readCSV
          *
          */
         public fun readAssociationsTable(fileName: String): Bundle {
