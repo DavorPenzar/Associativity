@@ -64,10 +64,10 @@ class MainActivity : AppCompatActivity() {
     /**
      * The companion object of the class [MainActivity].
      *
-     * @property COMMA_DELIMITER String between items separated by a comma---a comma followed by a single whitespace, i. e. `", "`.
+     * @property COMMA_DELIMITER String between items separated by a comma—a comma followed by a single whitespace, i. e. `", "`.
      *
-     * @property TIME_SPACE_DELIMITER String between days and hours in time's string representation---a single whitespace, i. e. `" "`.
-     * @property TIME_COLON_DELIMITER String between hours, minutes and seconds in time's string representation---a colon, i. e. `":"`.
+     * @property TIME_SPACE_DELIMITER String between days and hours in time's string representation—a single whitespace, i. e. `" "`.
+     * @property TIME_COLON_DELIMITER String between hours, minutes and seconds in time's string representation—a colon, i. e. `":"`.
      * @property HOURS_FORMAT String format for hours in time's string representation.
      * @property MINUTES_SECONDS_FORMAT String format for minutes and seconds in time's string representation.
      *
@@ -507,7 +507,7 @@ class MainActivity : AppCompatActivity() {
      * **Note: Before calling the method, be sure to manually adapt other things.  For instance, if
      * [stopwatch] is set to `true`, be sure that the stopwatch is not running, i. e. call
      * [stopStopwatch] or [resetStopwatch] beforehand.  Also, reset the graphical UI where
-     * needed---for instance, if guess dialog is open, it will not be closed after calling this
+     * needed—for instance, if guess dialog is open, it will not be closed after calling this
      * method, although [isOpenGuessDialog] will return `false`.**
      *
      * @param rowsAndColumns If `true`, reset [labelOne], [labelTwo], [labelThree] and [labelFour], and [labelA], [labelB], [labelC] and [labelD].
@@ -581,7 +581,7 @@ class MainActivity : AppCompatActivity() {
      * return.**
      *
      * **Note: Currently the game table, the columns' solutions and the main solution are
-     * hardcoded---this should be changed to read from an external file.**
+     * hardcoded—this should be changed to read from an external file.**
      *
      */
     private fun initialiseTable() {
@@ -679,7 +679,7 @@ class MainActivity : AppCompatActivity() {
      *
      * **Note: This method shuffles only the values returned by [cellValue] and [columnValue]
      * methods as the method should be called only when the game table is being initialised,
-     * therefore it is assumed that all cells and columns are closed---that the shuffling is
+     * therefore it is assumed that all cells and columns are closed—that the shuffling is
      * irrelevant to the graphical UI.**
      *
      * @param shuffleColumns If a column maps to `true`, its cells are shuffled.
@@ -854,7 +854,7 @@ class MainActivity : AppCompatActivity() {
      *
      * **Note: This method merely changes what [isGameFresh] method will return.  To actually
      * refresh a game the graphical UI must be reset and the game table must be initialised among
-     * other things---use [prepareNewGame] method to do that.**
+     * other things—use [prepareNewGame] method to do that.**
      *
      * @param freshness New freshness of the game.
      *

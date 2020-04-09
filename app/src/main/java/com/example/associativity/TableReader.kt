@@ -94,11 +94,11 @@ class TableReader : Any {
         private const val ASSOCIATIONS_TABLE_SHUFFLE_ALLOWING_INDICATOR_ILLEGAL_VALUES_ERROR_MESSAGE: String =
             "The first row of the association table must contain only \"%s\" (to disallow shuffling) and \"%s\" (to allow shuffling), but a cell \"%s\" was encountered."
         private const val ASSOCIATIONS_TABLE_FIRST_FOUR_ROWS_INCONSISTENT_LENGTH_ERROR_MESSAGE: String =
-            "Rows 2 -- 5 (inclusive) of the association table must be of the same length, but row %d contains %d cells and row %d contains %d cells."
+            "Rows 2 – 5 (inclusive) of the association table must be of the same length, but row %d contains %d cells and row %d contains %d cells."
         private const val ASSOCIATIONS_TABLE_FIRST_FOUR_ROWS_ILLEGAL_LENGTH_ERROR_MESSAGE: String =
-            "Rows 2 -- 5 (inclusive) of the association table must contain either 4 or 5 cells, but row %d contains %d cells."
+            "Rows 2 – 5 (inclusive) of the association table must contain either 4 or 5 cells, but row %d contains %d cells."
         private const val ASSOCIATIONS_TABLE_FIRST_FOUR_ROWS_ILLEGAL_NON_EMPTY_LAST_CELL_ERROR_MESSAGE: String =
-            "If rows 2 -- 5 (inclusive) of the association table contain 5 cells, the 5th cell must be empty, but row %d contains \"%s\" as the last cell."
+            "If rows 2 – 5 (inclusive) of the association table contain 5 cells, the 5th cell must be empty, but row %d contains \"%s\" as the last cell."
         private const val ASSOCIATIONS_TABLE_SOLUTIONS_ILLEGAL_LENGTH_ERROR_MESSAGE: String =
             "Rows 6 until the end (inclusive) of the association table must contain exactly 5 cells, but row %d contains %d cells."
         private const val ASSOCIATIONS_TABLE_SOLUTIONS_LATE_ENTRY_ERROR_MESSAGE: String =
@@ -225,7 +225,7 @@ class TableReader : Any {
          *
          * The quotations, separator and escaping character of CSV files are explained by
          * [CSV_SINGLE_QUOTE], [CSV_DOUBLE_QUOTE], [CSV_SEPARATOR] and [CSV_ESCAPE_CHAR].  Lines
-         * containing only whitespaces---checked by calling [Char.isWhitespace] method---are ignored
+         * containing only whitespaces—checked by calling [Char.isWhitespace] method—are ignored
          * (this includes empty lines).  The value of each cell in the table is trimmed by calling
          * [String.trim] method, unless the cell was enclosed in quotes and whitespaces were inside
          * the quotes.
@@ -565,7 +565,7 @@ class TableReader : Any {
          * 2. the first row (index `0`) must be of length of exactly 5 cells each of which may be either [ASSOCIATIONS_TABLE_DISALLOW_SHUFFLING] or [ASSOCIATIONS_TABLE_ALLOW_SHUFFLING],
          * 3. rows 2 to 5 (inclusive) (indices `1` to `4`) must be of the same length which may be either 4 or 5 cells and, if the length is 5 cells, the 5th cell must be empty (an empty [String]),
          * 4. rows 6 until the end (inclusive) (indices `5` to `rawTable.size - 1`) must be of length of exactly 5 cells,
-         * 5. if `rawTable[i][j]` is an empty cell for `5 <= i < rawTable.size` and `0 <= j < 5`, then `rawTable[i + k][j]` must also be empty for every `0 <= k < rawTable.size - i - 1` (if a cell is empty in one of those rows, each consecutive row must have an empty cell in the corresponding column---values must be aggregated at the top).
+         * 5. if `rawTable[i][j]` is an empty cell for `5 <= i < rawTable.size` and `0 <= j < 5`, then `rawTable[i + k][j]` must also be empty for every `0 <= k < rawTable.size - i - 1` (if a cell is empty in one of those rows, each consecutive row must have an empty cell in the corresponding column—values must be aggregated at the top).
          * If the conditions above are not satisfied, an [IllegalArgumentException] is thrown.
          *
          * Columns of [rawTable] are the following (0-indexed, as is usual in *Kotlin*):
