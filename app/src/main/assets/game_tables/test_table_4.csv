@@ -7,8 +7,8 @@ vjera          , Rubikon                , Napoleon Bonaparte , Sjeverna srednja 
 
 svetinja       , Rim                    , imperij            , Germania                , Sveto Rimsko Carstvo Njamačkoga Naroda
 svetost        , Rimsko Carstvo         , carstvo            , Germanija               , Sveto Rimsko Carstvo Njemackoga Naroda
-               , RC                     , carevina           , Njemačka                , Sveto Rimsko Carstvo Njemačkog Naroda
-               , Zapadno Rimsko Carstvo ,                    , Njemacka                , Sveto Rimsko Carstvo Njemackog Naroda
-               , ZRC                    ,                    ,                         , Sveto Rimsko Carstvo
-               , grad Rim               ,                    ,                         ,
+sveto          , RC                     , carevina           , Njemačka                , Sveto Rimsko Carstvo Njemačkog Naroda
+sveta          , Zapadno Rimsko Carstvo ,                    , Njemacka                , Sveto Rimsko Carstvo Njemackog Naroda
+sveti          , ZRC                    ,                    ,                         , Sveto Rimsko Carstvo
+svet           , grad Rim               ,                    ,                         ,
                , Roma                   ,                    ,                         ,
