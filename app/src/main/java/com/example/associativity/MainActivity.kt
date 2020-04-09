@@ -645,15 +645,15 @@ class MainActivity : AppCompatActivity() {
 
         // Shuffle the table where allowed.
 
-        // Read shuffling allowings from [readTable].
-        val shuffleColumns: HashMap<String, Boolean> = HashMap<String, Boolean>().apply {
-            for (column in arrayOfColumns())
-                put(column, readTable.getBoolean(column))
-        }
-        val shuffleFinal: Boolean = readTable.getBoolean(resources.getString(R.string.sol))
-
-        // Actually shuffle the table with the given allowing parameters.
-        shuffleTable(shuffleColumns, shuffleFinal)
+        shuffleTable(
+            HashMap<String, Boolean>().apply {
+                for (column in arrayOfColumns())
+                    put(column, readTable.getBoolean(TableReader.shuffleAllowingLabel(column)))
+            },
+            readTable.getBoolean(
+                TableReader.shuffleAllowingLabel(resources.getString(R.string.sol))
+            )
+        )
 
         // Set the game to non-fresh.
 

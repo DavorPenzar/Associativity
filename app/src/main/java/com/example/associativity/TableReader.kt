@@ -115,7 +115,7 @@ class TableReader : Any {
         private val ASSOCIATIONS_TABLE_COLUMNS_LABELS: Array<String> = arrayOf("A", "B", "C", "D")
         private const val ASSOCIATIONS_TABLE_SOLUTION_LABEL: String = "Sol"
 
-        private const val SUFFIX_ASSOCIATIONS_TABLE_SHUFFLE: String = "Shuffle"
+        public const val SUFFIX_ASSOCIATIONS_TABLE_SHUFFLE: String = "Shuffle"
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -153,6 +153,33 @@ class TableReader : Any {
          */
         private fun appendSuffix(label: String, suffix: String): String {
             return label + suffix
+        }
+
+        /**
+         * Construct a label for saving permutation allowing in [readAssociationsTable] from a column's or the final solution's label.
+         *
+         * The method returns `appendSuffix(label, SUFFIX_ASSOCIATIONS_TABLE_SHUFFLE)`.
+         *
+         * @param label An element's label.
+         *
+         * @return The constructed mixed label.
+         *
+         */
+        public fun shuffleAllowingLabel(label: String): String {
+            return appendSuffix(label, SUFFIX_ASSOCIATIONS_TABLE_SHUFFLE)
+        }
+
+        /**
+         * Construct a cell's label for saving values in [readAssociationsTable] from the row's and the column's labels.
+         *
+         * @param row Row's label.
+         * @param column Column's label.
+         *
+         * @return Cell's label.
+         *
+         */
+        public fun joinRowAndColumnLabels(row: String, column: String): String {
+            return column + row
         }
 
 
@@ -643,17 +670,11 @@ class TableReader : Any {
             for (j in 0 until 4)
                 when (rawTable[0][j]) {
                     ASSOCIATIONS_TABLE_DISALLOW_SHUFFLING -> table.putBoolean(
-                        appendSuffix(
-                            ASSOCIATIONS_TABLE_COLUMNS_LABELS[j],
-                            SUFFIX_ASSOCIATIONS_TABLE_SHUFFLE
-                        ),
+                        shuffleAllowingLabel(ASSOCIATIONS_TABLE_COLUMNS_LABELS[j]),
                         false
                     )
                     ASSOCIATIONS_TABLE_ALLOW_SHUFFLING -> table.putBoolean(
-                        appendSuffix(
-                            ASSOCIATIONS_TABLE_COLUMNS_LABELS[j],
-                            SUFFIX_ASSOCIATIONS_TABLE_SHUFFLE
-                        ),
+                        shuffleAllowingLabel(ASSOCIATIONS_TABLE_COLUMNS_LABELS[j]),
                         true
                     )
                     else -> throw IllegalArgumentException(
@@ -666,17 +687,11 @@ class TableReader : Any {
                 }
             when (rawTable[0][4]) {
                 ASSOCIATIONS_TABLE_DISALLOW_SHUFFLING -> table.putBoolean(
-                    appendSuffix(
-                        ASSOCIATIONS_TABLE_SOLUTION_LABEL,
-                        SUFFIX_ASSOCIATIONS_TABLE_SHUFFLE
-                    ),
+                    shuffleAllowingLabel(ASSOCIATIONS_TABLE_SOLUTION_LABEL),
                     false
                 )
                 ASSOCIATIONS_TABLE_ALLOW_SHUFFLING -> table.putBoolean(
-                    appendSuffix(
-                        ASSOCIATIONS_TABLE_SOLUTION_LABEL,
-                        SUFFIX_ASSOCIATIONS_TABLE_SHUFFLE
-                    ),
+                    shuffleAllowingLabel(ASSOCIATIONS_TABLE_SOLUTION_LABEL),
                     true
                 )
                 else -> throw IllegalArgumentException(
@@ -724,8 +739,10 @@ class TableReader : Any {
                 // Extract values of cells in the row.
                 for (j in 0 until 4)
                     table.putString(
-                        ASSOCIATIONS_TABLE_COLUMNS_LABELS[j] +
+                        joinRowAndColumnLabels(
                             ASSOCIATIONS_TABLE_ROWS_LABELS[i - 1],
+                            ASSOCIATIONS_TABLE_COLUMNS_LABELS[j]
+                        ),
                         rawTable[i][j]
                     )
             }
