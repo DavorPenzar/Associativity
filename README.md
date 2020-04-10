@@ -93,13 +93,13 @@ XXXXXX,XXXXX,XXXXX,XXXXXX,XXXXXXXXX
 
 In both formats shown commas at the end of the rows 2 &ndash; 5 may be omitted but, if a final comma is omitted in at least one of the rows, final commas must be omitted in all of them. All 4 formats are supported and will result in the same game table.
 
-**Nota bene. Although solutions in the example above are masked, if you mask the solutions in your [*CSV* file](http://wikipedia.org/wiki/Comma-separated_values) the actual solutions will be *XXXXX* and so on. The app cannot *magically* read your mind, nor is any machine-learning algorithm for solving implemented in the app, to fill in the solutions automatically.**
+**Nota bene. Although solutions in the example above are masked, if you mask the solutions in your [*CSV* file](http://wikipedia.org/wiki/Comma-separated_values) the actual solutions will be *XXXXX* and so on. The app cannot *magically* read your mind, nor is any [machine-learning algorithm](http://en.wikipedia.org/wiki/Machine_learning) for solving implemented in the app, to fill in the solutions automatically. The latter option, the realistic one, seems like an interesting project, but requires expertise in [NLP](http://en.wikipedia.org/wiki/Natural_language_processing), general culture, culture/language/location-specific knowledge and constant updates for trending knowledge.**
 
 ### Producing a Game Table Using Spreadsheet Software
 
 The easiest way to create a [*CSV* file](http://wikipedia.org/wiki/Comma-separated_values) of a game table is using a spreadsheet software such as [Google Sheets](http://google.com/sheets/about/), [Microsoft Office Excel](http://products.office.com/excel) or [LibreOffice Calc](http://libreoffice.org/discover/calc/). In the software of your choice enter the game table as
 
-|       | A         | B             | C      | D            | E         |
+|       | **A**     | **B**         | **C**  | **D**        | **E**     |
 | :---: | :---------| :-------------| :------| :------------| :---------|
 | **1** | 1         | 1             | 0      | 1            | 1         |
 | **2** | sheet     | ice           | Mary   | Google Drive |           |
