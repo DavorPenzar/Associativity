@@ -268,6 +268,10 @@ class TableReader : Any {
          * Each cell of the table is considered a [String] value.  To convert data, use another CSV
          * reader or manually parse the result of this method.
          *
+         * The only NA value is an empty cell.  Cells containing the usual NA indicators, such as
+         * `"NA"`, `"na"`, `"NaN"`, `"nan"` etc., are parsed as non-empty strings (for instance,
+         * `"NA"` results in a cell containing the string `"NA"`).
+         *
          * The resulting two-dimensional array is the matrix of cells in the table represented by
          * the CSV read from [bufferedReader].  The first dimension represents the rows of the
          * table, while the second one represents its columns.  Therefore to get the cell in the
