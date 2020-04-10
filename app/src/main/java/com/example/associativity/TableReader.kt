@@ -289,9 +289,9 @@ class TableReader : Any {
          * **Note: the method does not check if all rows have the same number of columns.  The
          * number of columns in each row is *n* + 1, where *n* >= 0 is the number of actual
          * separators appearing in the line representing the row (this does not include escaped
-         * separator characters and separators inside quotations).  Putting a [CSV_SEPARATOR] in the
+         * separator characters and separators inside quotations).  Putting a [CSV_SEPARATOR] at the
          * beginning of a line will result in an empty cell at the row's beginning, while putting it
-         * in the end will result in an empty cell at the row's end.**
+         * at the end will result in an empty cell at the row's end.**
          *
          * @param bufferedReader [BufferedReader] from which to read the CSV table.
          * @param originName The name or the path of the origin of [bufferedReader].  If the table is read from a file, this parameter should be set to the file's name or its path.  This argument is used to explain errors when throwing exceptions.
@@ -429,7 +429,7 @@ class TableReader : Any {
                         // In case of no quotes environment:
                         0 -> when (s) {
                             CSV_SINGLE_QUOTE -> {
-                                // Opening quotes are allowed only in the beginning of a [cell].
+                                // Opening quotes are allowed only at the beginning of a [cell].
                                 // Throw an exception if the [cell] is not empty.
                                 if (cell.isNotEmpty())
                                     throw IOException(
@@ -445,7 +445,7 @@ class TableReader : Any {
                             }
 
                             CSV_DOUBLE_QUOTE -> {
-                                // Opening quotes are allowed only in the beginning of a [cell].
+                                // Opening quotes are allowed only at the beginning of a [cell].
                                 // Throw an exception if the [cell] is not empty.
                                 if (cell.isNotEmpty())
                                     throw IOException(
