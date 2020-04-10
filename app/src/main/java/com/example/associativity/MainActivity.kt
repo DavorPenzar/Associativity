@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity() {
         //  PRIVATE CONSTANTS                                                                     //
         ////////////////////////////////////////////////////////////////////////////////////////////
 
-        private const val GAME_TABLES_DIRECTORY: String = "game_tables/"
+        private const val GAME_TABLES_DIRECTORY: String = "game_tables"
 
         private const val COMMA_DELIMITER: String = ", "
 

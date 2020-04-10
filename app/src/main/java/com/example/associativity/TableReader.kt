@@ -7,8 +7,8 @@ import java.io.*
  * Read a table of information for an associations game.
  *
  * The format of the table is defined in [readAssociationsTable].  This class also provides an
- * interface to read information from a CSV file, and the format of the CSV files is defined in
- * [readCSV] and [escapeExpression].
+ * interface to read information from a CSV file, and the format of supported CSV files is defined
+ * in [readCSV] and [escapeExpression].
  *
  * **Note: This class cannot be instantiated.  All methods of the class are defined in its companion
  * object.**
@@ -196,13 +196,14 @@ class TableReader : Any {
          * * `"b"` to a backspace, i. e. `"\b"`,
          * * `"t"` to a horizontal tab, i. e. `"\t"`,
          * * `"v"` to a vertical tab, i. e. `"\v"`,
-         * * `"n"` to a newline, i. e. `"\n"`,
+         * * `"n"` to a line break, i. e. `"\n"`,
          * * `"r"` to a carriage return, i. e. `"\r"`,
          * * `"f"` to a page break, i. e. `"\f"`,
          * * `"a"` to an alert (a bell), i. e. `"\a"`,
          * * `"\'"` to a single quote, i. e. `"\'"`,
          * * `"\""` to double quotes, i. e. `"\""`,
          * * `"\\"` to a backslash, i. e. `"\\"`,
+         * * `"e"` to the escaping character which is the backslash, i. e. `"\\"`,
          * * `","` to a comma, i. e. `","`.
          *
          * **Note: The initial escaping character [escapeExpression] *must* not be passed in
@@ -234,6 +235,7 @@ class TableReader : Any {
                 "\'" -> "\'"
                 "\"" -> "\""
                 "\\" -> "\\"
+                "e" -> "\\"
                 "," -> ","
                 else -> throw IllegalArgumentException(
                     ILLEGAL_ESCAPE_CHAR_ERROR_MESSAGE.format(expression)
@@ -268,14 +270,14 @@ class TableReader : Any {
          * Escaping a [CSV_SEPARATOR] is not mandatory if the cell is enclosed in
          * [CSV_SINGLE_QUOTE]s or [CSV_DOUBLE_QUOTE]s.  Also, escaping [CSV_DOUBLE_QUOTE]s in cells
          * enclosed by [CSV_SINGLE_QUOTE]s and vice versa is not mandatory.  However, these
-         * characters may also be escaped in cells enclosed by quotes, therefore watch out how
+         * characters may also be escaped in cells enclosed by quotes, therefore be careful how
          * [CSV_ESCAPE_CHAR] is used even if the cell is enclosed in quotes.
          *
          * Each cell of the table is considered a [String] value.  To convert data, use another CSV
          * reader or manually parse the result of this method.
          *
-         * The only NA value is an empty cell.  Cells containing the usual NA indicators, such as
-         * `"NA"`, `"na"`, `"NaN"`, `"nan"` etc., are parsed as non-empty strings (for instance,
+         * The only *NA* value is an empty cell.  Cells containing the usual *NA* indicators, such
+         * as `"NA"`, `"na"`, `"NaN"`, `"nan"` etc., are parsed as non-empty strings (for instance,
          * `"NA"` results in a cell containing the string `"NA"`).
          *
          * The resulting two-dimensional array is the matrix of cells in the table represented by
