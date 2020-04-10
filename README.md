@@ -32,6 +32,7 @@ The format of the *CSV* files supported by the implemented parser is extensively
 | :----------------: |---------------: |---------------: | :-----------------: | :---------------|---------------: |---------------: |
 | `'b'`              | *98*            | *62*            | `'\b'`              | backspace       | *8*             | *8*             |
 | `'t'`              | *116*           | *74*            | `'\t'`              | horizontal tab  | *9*             | *9*             |
+| `'v'`              | *118*           | *76*            | `'\v'`              | vertical tab    | *11*            | *B*             |
 | `'n'`              | *110*           | *6E*            | `'\n'`              | line break      | *10*            | *A*             |
 | `'r'`              | *114*           | *72*            | `'\r'`              | carriage return | *13*            | *D*             |
 | `'f'`              | *102*           | *66*            | `'\f'`              | page break      | *12*            | *C*             |
