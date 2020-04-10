@@ -193,10 +193,13 @@ class TableReader : Any {
          * Parse an escaping expression.
          *
          * Valid escaping expressions and their parsed results are:
-         * * `"t"` to a tab, i. e. `"\t"`,
          * * `"b"` to a backspace, i. e. `"\b"`,
+         * * `"t"` to a horizontal tab, i. e. `"\t"`,
+         * * `"v"` to a vertical tab, i. e. `"\v"`,
          * * `"n"` to a newline, i. e. `"\n"`,
          * * `"r"` to a carriage return, i. e. `"\r"`,
+         * * `"f"` to a page break, i. e. `"\f"`,
+         * * `"a"` to an alert (a bell), i. e. `"\a"`,
          * * `"\'"` to a single quote, i. e. `"\'"`,
          * * `"\""` to double quotes, i. e. `"\""`,
          * * `"\\"` to a backslash, i. e. `"\\"`,
@@ -221,10 +224,13 @@ class TableReader : Any {
 
             // Parse [expression] and return the result.
             return when (expression) {
-                "t" -> "\t"
                 "b" -> "\b"
+                "t" -> "\t"
+                "v" -> (11).toChar().toString()
                 "n" -> "\n"
                 "r" -> "\r"
+                "f" -> (12).toChar().toString()
+                "a" -> (7).toChar().toString()
                 "\'" -> "\'"
                 "\"" -> "\""
                 "\\" -> "\\"
