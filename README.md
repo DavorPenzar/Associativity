@@ -104,18 +104,18 @@ In both formats shown commas at the end of rows 2 &ndash; 5 may be omitted, but,
 
 The easiest way to create a [*CSV* file](http://en.wikipedia.org/wiki/Comma-separated_values) of a game table is using a spreadsheet software such as [*Google Sheets*](http://google.com/sheets/about/), [*Microsoft Office Excel*](http://products.office.com/excel) or [*LibreOffice Calc*](http://libreoffice.org/discover/calc/). In the software of your choice enter the game table as
 
-|            | **A**     | **B**         | **C**  | **D**        | **E**     | **F** | **&hellip;** |
-| :--------: | :---------| :-------------| :------| :------------| :---------| :---- | :----------: |
-| **1**      | 1         | 1             | 0      | 1            | 1         |       |              |
-| **2**      | sheet     | ice           | Mary   | Google Drive |           |       |              |
-| **3**      | cellulose | Christmas     | had    | storm        |           |       |              |
-| **4**      | science   | flakes        | a      | sky          |           |       |              |
-| **5**      | printer   | mountain tops | little | steam        |           |       |              |
-| **6**      | XXXXX     | XXXX          | XXXX   | XXXXX        | XXXXX     |       |              |
-| **7**      | XXXXXX    | XXXXX         | XXXXX  | XXXXXX       | XXXXXXXXX |       |              |
-| **8**      |           | XXXXXXX       |        | XXXXXX       |           |       |              |
-| **9**      |           |               |        |              |           |       |              |
-| **&vellip; |           |               |        |              |           |       |              |
+|              | **A**     | **B**         | **C**  | **D**        | **E**     | **F** | **&hellip;** |
+| :----------: | :---------| :-------------| :------| :------------| :---------| :---- | :----------: |
+| **1**        | 1         | 1             | 0      | 1            | 1         |       |              |
+| **2**        | sheet     | ice           | Mary   | Google Drive |           |       |              |
+| **3**        | cellulose | Christmas     | had    | storm        |           |       |              |
+| **4**        | science   | flakes        | a      | sky          |           |       |              |
+| **5**        | printer   | mountain tops | little | steam        |           |       |              |
+| **6**        | XXXXX     | XXXX          | XXXX   | XXXXX        | XXXXX     |       |              |
+| **7**        | XXXXXX    | XXXXX         | XXXXX  | XXXXXX       | XXXXXXXXX |       |              |
+| **8**        |           | XXXXXXX       |        | XXXXXX       |           |       |              |
+| **9**        |           |               |        |              |           |       |              |
+| **&vellip;** |           |               |        |              |           |       |              |
 
 Again, be sure to add actual solutions, not strings such as *XXXXX*, in rows 6 until the end. Of course, if your game table is a *kinky* one and one of the solutions or an alternative acceptable answer is *XXX*, then you should put *XXX* as the answer in the corresponding column. Keep in mind that the final solution and its alternative acceptable answers are placed in the column *E* in from the sixth row downward.
 
