@@ -9,11 +9,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
-import android.widget.EditText
-import android.widget.ScrollView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import java.lang.Integer.min
 import java.nio.file.Paths
@@ -35,6 +31,7 @@ import kotlin.math.abs
  * @property labelC Label of the column C of cells in the game table in [resources].
  * @property labelD Label of the column D of cells in the game table in [resources].
  *
+ * @property gameDifficulty Game's difficulty level.
  * @property gameFreshness Game's freshness state (if `true`, the game table should be initialised with new values and all cells closed as when starting the app or starting a new game).
  *
  * @property stopwatchStartness If the stopwatch has started, `true`; `false` otherwise.
@@ -66,8 +63,6 @@ class MainActivity : AppCompatActivity() {
     /**
      * The companion object of the class [MainActivity].
      *
-     * @property GAME_TABLES_DIRECTORY Relative assets path for the directory with game tables.  **Note: It is not guaranteed that this path ends with a path separator.  To join paths use [Paths.get] method.**
-     *
      * @property COMMA_DELIMITER String between items separated by a comma—a comma followed by a single whitespace, i. e. `", "`.
      *
      * @property TIME_SPACE_DELIMITER String between days and hours in time's string representation—a single whitespace, i. e. `" "`.
@@ -78,6 +73,7 @@ class MainActivity : AppCompatActivity() {
      * @property SUFFIX_OPEN Suffix for labels of cells, columns and solution to save their openness in [onSaveInstanceState] method.
      * @property SUFFIX_VALUE Suffix for labels of cells, columns and solution to save their values in [onSaveInstanceState] method.
      *
+     * @property GAME_DIFFICULTY Label to save difficulty level of the game in [onSaveInstanceState] method.
      * @property GAME_FRESHNESS Label to save freshness of the game in [onSaveInstanceState] method.
      *
      * @property STOPWATCH_STARTNESS Label to save whether or not the stopwatch has started in [onSaveInstanceState] method.
@@ -95,14 +91,14 @@ class MainActivity : AppCompatActivity() {
      * @property GUESS_HINT_BRIEF Label to save the brief hint of guessing in [onSaveInstanceState] method.
      * @property GUESS_INPUT Label to save the typed guess in [editTextEnterGuess] in [onSaveInstanceState] method.
      *
+     * @property GAME_TABLES_DEFAULT_DIRECTORY Relative assets path for the directory with game tables.  **Note: It is not guaranteed that this path ends with a path separator.  To join paths use [Paths.get] method.**
+     *
      */
-    private companion object {
+    public companion object {
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         //  PRIVATE CONSTANTS                                                                     //
         ////////////////////////////////////////////////////////////////////////////////////////////
-
-        private const val GAME_TABLES_DIRECTORY: String = "game_tables"
 
         private const val COMMA_DELIMITER: String = ", "
 
@@ -111,6 +107,7 @@ class MainActivity : AppCompatActivity() {
         private const val HOURS_FORMAT: String = "%02d"
         private const val MINUTES_SECONDS_FORMAT: String = "%02d%s%06.3f"
 
+
         ////////////////////////////////////////////////////////////////////////////////////////////
         //  LABELS FOR [onSaveInstanceState] AND [onRestoreInstanceState] METHODS                 //
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -118,6 +115,7 @@ class MainActivity : AppCompatActivity() {
         private const val SUFFIX_OPEN: String = "Open"
         private const val SUFFIX_VALUE: String = "Value"
 
+        private const val GAME_DIFFICULTY: String = "gameDifficulty"
         private const val GAME_FRESHNESS: String = "isFresh"
 
         private const val STOPWATCH_STARTNESS: String = "hasStopwatchStarted"
@@ -134,6 +132,13 @@ class MainActivity : AppCompatActivity() {
         private const val GUESS_HINT_ELABORATE: String = "guessElaborateHint"
         private const val GUESS_HINT_BRIEF: String = "guessBriefHint"
         private const val GUESS_INPUT: String = "guess"
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //  PUBLIC CONSTANTS                                                                      //
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+        public const val GAME_TABLES_DEFAULT_DIRECTORY: String = "game_tables"
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -245,6 +250,24 @@ class MainActivity : AppCompatActivity() {
             // Return `false` if the [guess] was not found.
             return false
         }
+
+        /**
+         * Construct the path of a subdirectory of the desired difficulty level in the root directory of game tables.
+         *
+         * The resulting path is of the same *relativity level* as the given [rootDirectory] path.
+         *
+         * @param rootDirectory The root directory of the game tables sorted in subdirectories by their difficulty level.
+         * @param difficultyLevel Difficulty level of the desired game table.
+         *
+         * @return The path of the subdirectory of game tables of the desired difficulty level.
+         *
+         */
+        public fun constructDifficultyLevelSubdirectoryPath(
+            rootDirectory: String,
+            difficultyLevel: Int
+        ): String {
+            return Paths.get(rootDirectory, difficultyLevel.toString()).toString()
+        }
     }
 
 
@@ -261,6 +284,8 @@ class MainActivity : AppCompatActivity() {
     private var labelB: String = String()
     private var labelC: String = String()
     private var labelD: String = String()
+
+    private var gameDifficulty: Int = 0
 
     private var gameFreshness: Boolean = true
 
@@ -433,7 +458,7 @@ class MainActivity : AppCompatActivity() {
      * @return The label of the element represented by the [button].
      *
      */
-    private fun retrieveCellGameElementLabel(button: Button): String {
+    private fun retrieveGameElementLabel(button: Button): String {
         return button.tag.toString()
     }
 
@@ -490,25 +515,6 @@ class MainActivity : AppCompatActivity() {
             resources.getString(R.string.id),
             packageName
         )
-    }
-
-    /**
-     * Reinstantiate the activity's layout.
-     * 
-     * **Note: This method does not start a new game, use [prepareNewGame] to do that instead which,
-     * given the right parameters, will in turn call this method.**
-     * 
-     */
-    private fun reinstatiate() {
-        // Destroy the old layout and construct a new one.
-        findViewById<ConstraintLayout>(R.id.constraintLayoutApplication).apply {
-            invalidate()
-            requestLayout()
-        }
-        setContentView(R.layout.activity_main)
-
-        // Make [editTextEnterGuess]' IME action done to be clicking [buttonGuess].
-        connectEditTextEnterGuessAndButtonGuess()
     }
 
 
@@ -616,8 +622,12 @@ class MainActivity : AppCompatActivity() {
     /**
      * Read a random table with solutions from the assets.
      *
-     * The method returns a random table read from a file in [GAME_TABLES_DIRECTORY] subdirectory
-     * of the assets directory using [TableReader.readAssociationsTable] method.
+     * The method returns a random table read from a file in the appropriate subdirectory of the
+     * of the assets directory (found using [constructDifficultyLevelSubdirectoryPath] method) using
+     * [TableReader.readAssociationsTable] method.
+     *
+     * @param rootDirectory The root directory of the game tables sorted in subdirectories by their difficulty level.
+     * @param difficultyLevel Difficulty level of the desired game table.
      *
      * @return A random table with solutions from the assets.
      *
@@ -625,15 +635,28 @@ class MainActivity : AppCompatActivity() {
      * @see TableReader.readAssociationsTable
      *
      */
-    private fun importRandomGameTable(): Bundle {
-        return TableReader.readAssociationsTable(
-            assets.open(
-                Paths.get(
-                    GAME_TABLES_DIRECTORY,
-                    assets.list(GAME_TABLES_DIRECTORY)!!.random()
-                ).toString()
-            )
+    private fun importRandomGameTable(
+        rootDirectory: String = GAME_TABLES_DEFAULT_DIRECTORY,
+        difficultyLevel: Int = 0
+    ): Bundle {
+        // Get the path of the desired directory.
+        val directory: String = constructDifficultyLevelSubdirectoryPath(
+            rootDirectory,
+            difficultyLevel
         )
+
+        // Read and return a random game table.  In case of an exception, [finish] [this] activity.
+        return try {
+            TableReader.readAssociationsTable(
+                assets.open(Paths.get(directory, assets.list(directory)!!.random()).toString())
+            )
+        } catch (exception: Exception) {
+            // Finish the activity using [finish] method.
+            finish()
+
+            // For the code to compile, "return" an empty [Bundle].
+            Bundle()
+        }
     }
 
     /**
@@ -646,11 +669,14 @@ class MainActivity : AppCompatActivity() {
      * [cellValue], [isColumnOpen], [columnValue], [isFinalOpen] and [finalValue] methods will
      * return.**
      *
-     * **Note: Currently the game table, the columns' solutions and the main solution are
-     * hardcoded—this should be changed to read from an external file.**
+     * @param rootDirectory The root directory of the game tables sorted in subdirectories by their difficulty level.
+     * @param difficultyLevel Difficulty level of the desired game table.
      *
      */
-    private fun initialiseTable() {
+    private fun initialiseTable(
+        rootDirectory: String = GAME_TABLES_DEFAULT_DIRECTORY,
+        difficultyLevel: Int = 0
+    ) {
         // Set the game to fresh and reset the game table's and solutions' properties.
 
         resetProperties(gameFreshness = true, gameTableAndSolutions = true)
@@ -667,7 +693,7 @@ class MainActivity : AppCompatActivity() {
 
         // Import a random game table with solutions.
 
-        val readTable: Bundle = importRandomGameTable()
+        val readTable: Bundle = importRandomGameTable(rootDirectory, difficultyLevel)
 
         // Populate the game table and solutions with the values from [readTable].
 
@@ -791,66 +817,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Start a new game.
-     *
-     * **Note: This method needs not to be called on the startup of the app because [onStart] and
-     * [onPause] methods will initialise a new game if no game has been initialised yet.**
-     *
-     * If a game has already been started (even if it has ended by solving the final solution or
-     * giving up on it), [destroyPrevious] should be set to `true` to destroy everything from the
-     * previous game.  This also destroys the old content view and sets a new one.  It is safe to
-     * set [destroyPrevious] even if a previous game did not exist.
-     *
-     * If [initialise] is `false`, the game will be fresh after the method returns.  Otherwise the
-     * game will not be fresh as [initialiseTable] method will be called which sets the freshness to
-     * `false`.
-     *
-     * @param destroyPrevious If `true`, the old game is destroyed first (if it has existed at all).
-     * @param initialise If `true`, the new game is initialised via [initialiseTable] method.
-     *
-     * @see initialiseTable
-     *
-     */
-    private fun prepareNewGame(destroyPrevious: Boolean = true, initialise: Boolean = true) {
-        // Reset the stopwatch.
-        resetStopwatch()
-
-        // Set game's freshness to `true`.
-        changeGameFreshness(true)
-
-        // Reconstruct the layout of the previous game if needed.
-        if (destroyPrevious)
-            reinstatiate()
-
-        // Reset inner properties.
-        resetProperties(
-            rowsAndColumns = true,
-            gameFreshness = true,
-            stopwatch = true,
-            guessDialog = true,
-            gameTableAndSolutions = true
-        )
-
-        // Initialise rows' and columns' labels.
-        initialiseRowsAndColumns()
-
-        // Initialise the stopwatch handler.
-        initialiseStopwatchHandler()
-
-        // Initialise the new game if needed.
-        if (initialise)
-            initialiseTable()
-    }
-
-    /**
      * Make [editTextEnterGuess]' IME action done to be clicking [buttonGuess].
      *
      */
     private fun connectEditTextEnterGuessAndButtonGuess() {
-        findViewById<EditText>(R.id.editTextEnterGuess).setOnEditorActionListener { _, actionId, _ ->
+        editTextEnterGuess.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
-                    findViewById<Button>(R.id.buttonGuess).performClick()
+                    buttonGuess.performClick()
 
                     true
                 }
@@ -861,8 +835,46 @@ class MainActivity : AppCompatActivity() {
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-    //  GAME FRESHNESS                                                                            //
+    //  GAME DIFFICULTY AND FRESHNESS                                                             //
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Check the game's difficulty level.
+     *
+     * Valid game difficulty levels are:
+     * * `0` for "custom" (game tables read from the subdirectory of custom game tables),
+     * * `1` for "easy",
+     * * `2` for "medium",
+     * * `3` for "hard.
+     * Specifying a different difficulty level in [changeGameDifficulty] will not throw an
+     * exception, but initialising a game table using [initialiseTable] method might fail.
+     *
+     * @return Current difficulty level.
+     *
+     * @see changeGameDifficulty
+     * @see initialiseTable
+     * @see onCreate
+     *
+     */
+    private fun whatGameDifficulty(): Int {
+        return gameDifficulty
+    }
+
+    /**
+     * Change the game's difficulty level.
+     *
+     * **Note: This method merely changes what [whatGameDifficulty] method will return.  To actually
+     * play a game of a different dificulty start [MainActivity] with a proper [Intent].
+     *
+     * @param difficulty New game's difficulty level.
+     *
+     * @see whatGameDifficulty
+     * @see onCreate
+     *
+     */
+    private fun changeGameDifficulty(difficulty: Int) {
+        gameDifficulty = difficulty
+    }
 
     /**
      * Check if the game is fresh.
@@ -907,16 +919,16 @@ class MainActivity : AppCompatActivity() {
     /**
      * On-click method for [buttonNewGame].
      *
-     * A new game is started by calling [prepareNewGame] with destroying the previous game and
-     * initialising a new one.
+     * The button finishes [this] activity and brings the user back to the previous activity.  The
+     * previous activity should be a [LauncherActivity].
      *
      * @param it The button [buttonNewGame].
      *
-     * @see prepareNewGame
+     * @see LauncherActivity
      *
      */
     public fun newGame(it: View) {
-        prepareNewGame()
+        finish()
     }
 
 
@@ -1057,7 +1069,7 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun retrieveStopwatchTime(): String {
-        return findViewById<TextView>(R.id.textViewStopwatch).text.toString()
+        return textViewStopwatch.text.toString()
     }
 
     /**
@@ -1069,7 +1081,7 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun printStopwatchTime(time: String?) {
-        findViewById<TextView>(R.id.textViewStopwatch).text = time
+        textViewStopwatch.text = time
     }
 
     /**
@@ -1233,7 +1245,7 @@ class MainActivity : AppCompatActivity() {
         changeGuesDialogOpenness(true)
 
         // Actually open the guess dialog.
-        findViewById<ScrollView>(R.id.scrollViewGuessDialog).visibility = View.VISIBLE
+        scrollViewGuessDialog.visibility = View.VISIBLE
     }
 
     /**
@@ -1245,10 +1257,10 @@ class MainActivity : AppCompatActivity() {
      */
     private fun closeGuessDialog() {
         // Close the input method.
-        closeInputMethod(findViewById<EditText>(R.id.editTextEnterGuess).windowToken)
+        closeInputMethod(editTextEnterGuess.windowToken)
 
         // Actually close the guess dialog.
-        findViewById<ScrollView>(R.id.scrollViewGuessDialog).visibility = View.GONE
+        scrollViewGuessDialog.visibility = View.GONE
 
         // Clear [editTextEnterGuess].
         typeGuess(String())
@@ -1323,8 +1335,8 @@ class MainActivity : AppCompatActivity() {
      */
     private fun retrieveGuessHint(elaborate: Boolean = true): String {
         return when (elaborate) {
-            true -> findViewById<TextView>(R.id.textViewHint).text.toString()
-            else -> findViewById<EditText>(R.id.editTextEnterGuess).hint.toString()
+            true -> textViewHint.text.toString()
+            else -> editTextEnterGuess.hint.toString()
         }
     }
 
@@ -1344,7 +1356,7 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun displayElaborateGuessHint(hint: String?, target: String? = null) {
-        findViewById<TextView>(R.id.textViewHint).text = when (target) {
+        textViewHint.text = when (target) {
             null -> hint
             else -> resources.getString(R.string.display_two_items, target, hint)
         }
@@ -1359,7 +1371,7 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun displayBriefGuessHint(hint: String?) {
-        findViewById<EditText>(R.id.editTextEnterGuess).hint = hint
+        editTextEnterGuess.hint = hint
     }
 
     /**
@@ -1369,7 +1381,7 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun retrieveGuess(): String {
-        return findViewById<EditText>(R.id.editTextEnterGuess).text.toString()
+        return editTextEnterGuess.text.toString()
     }
 
     /**
@@ -1381,7 +1393,7 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun typeGuess(guess: String?) {
-        findViewById<EditText>(R.id.editTextEnterGuess).setText(guess)
+        editTextEnterGuess.setText(guess)
     }
 
     /**
@@ -1408,7 +1420,7 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun retrieveCurrentText(): String {
-        return findViewById<TextView>(R.id.textViewCurrent).text.toString()
+        return textViewCurrent.text.toString()
     }
 
     /**
@@ -1427,7 +1439,7 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun displayCurrentText(text: String?, origin: String? = null) {
-        findViewById<TextView>(R.id.textViewCurrent).text = when (origin) {
+        textViewCurrent.text = when (origin) {
             null -> text
             else -> resources.getString(R.string.display_two_items, origin, text)
         }
@@ -1923,7 +1935,7 @@ class MainActivity : AppCompatActivity() {
      *
      */
     public fun clickOnClosedCell(it: View) {
-        openCell(retrieveCellGameElementLabel(it as Button))
+        openCell(retrieveGameElementLabel(it as Button))
     }
 
     /**
@@ -1945,7 +1957,7 @@ class MainActivity : AppCompatActivity() {
      *
      */
     public fun clickOnOpenCell(it: View) {
-        val cell: String = retrieveCellGameElementLabel(it as Button)
+        val cell: String = retrieveGameElementLabel(it as Button)
 
         displayCurrentText(cellValue(cell), cell)
     }
@@ -1976,7 +1988,7 @@ class MainActivity : AppCompatActivity() {
      */
     public fun clickOnClosedColumn(it: View) {
         // Get the column's label.
-        val column: String = retrieveCellGameElementLabel(it as Button)
+        val column: String = retrieveGameElementLabel(it as Button)
 
         // Get the array of cells' labels in the [column].
         val cells: Array<String> = arrayOfCells(column)
@@ -2019,7 +2031,7 @@ class MainActivity : AppCompatActivity() {
      *
      */
     public fun clickOnOpenColumn(it: View) {
-        val column: String = retrieveCellGameElementLabel(it as Button)
+        val column: String = retrieveGameElementLabel(it as Button)
 
         displayCurrentText(columnValue(column)[0], column)
     }
@@ -2189,7 +2201,7 @@ class MainActivity : AppCompatActivity() {
      */
     private fun bindButtonGuessToColumn(column: String) {
         // Set on-click method of [buttonGuess].
-        findViewById<Button>(R.id.buttonGuess).setOnClickListener {
+        buttonGuess.setOnClickListener {
             if (guessColumn(column,retrieveGuess()))
                 openColumn(column)
             else
@@ -2201,26 +2213,26 @@ class MainActivity : AppCompatActivity() {
         // Act accordingly on [buttonGiveUp].
         if (isGuessGivingUpAllowed()) {
             // Enable the button.
-            findViewById<Button>(R.id.buttonGiveUp).apply {
+            buttonGiveUp.apply {
                 isClickable = true
                 isEnabled = true
             }
 
             // Set on-click method.
-            findViewById<Button>(R.id.buttonGiveUp).setOnClickListener {
+            buttonGiveUp.setOnClickListener {
                 openColumn(column)
 
                 closeGuessDialog()
             }
         }
         else {
-            findViewById<Button>(R.id.buttonGiveUp).apply {
+            buttonGiveUp.apply {
                 // Remove [onClick]
                 setOnClickListener(null)
 
                 // Disable the button.
                 isEnabled = false
-                isClickable = true
+                isClickable = false
             }
         }
     }
@@ -2245,7 +2257,7 @@ class MainActivity : AppCompatActivity() {
      */
     private fun bindButtonGuessToFinal() {
         // Set on-click method of [buttonGuess].
-        findViewById<Button>(R.id.buttonGuess).setOnClickListener {
+        buttonGuess.setOnClickListener {
             if (guessFinal(retrieveGuess()))
                 openFinal()
             else
@@ -2257,26 +2269,26 @@ class MainActivity : AppCompatActivity() {
         // Act accordingly on [buttonGiveUp].
         if (isGuessGivingUpAllowed()) {
             // Enable the button.
-            findViewById<Button>(R.id.buttonGiveUp).apply {
+            buttonGiveUp.apply {
                 isClickable = true
                 isEnabled = true
             }
 
             // Set on-click method.
-            findViewById<Button>(R.id.buttonGiveUp).setOnClickListener {
+            buttonGiveUp.setOnClickListener {
                 openFinal()
 
                 closeGuessDialog()
             }
         }
         else {
-            findViewById<Button>(R.id.buttonGiveUp).apply {
+            buttonGiveUp.apply {
                 // Remove [onClick]
                 setOnClickListener(null)
 
                 // Disable the button.
                 isEnabled = false
-                isClickable = true
+                isClickable = false
             }
         }
     }
@@ -2346,6 +2358,9 @@ class MainActivity : AppCompatActivity() {
 
         // Save the game state.
         outState.apply {
+            // Save the game's difficulty level.
+            putInt(GAME_DIFFICULTY, whatGameDifficulty())
+
             // Save the game's freshness.
             putBoolean(GAME_FRESHNESS, isGameFresh())
 
@@ -2423,6 +2438,9 @@ class MainActivity : AppCompatActivity() {
             // Clear properties.
             resetProperties()
 
+            // Set the game's difficulty level.
+            changeGameDifficulty(savedInstanceState.getInt(GAME_DIFFICULTY))
+
             // Recover the state of the stopwatch, but do not restart it yet if needed.
             printStopwatchTime(getString(STOPWATCH_PRINT)!!)
             changeStopwatchStartness(getBoolean(STOPWATCH_STARTNESS))
@@ -2498,10 +2516,22 @@ class MainActivity : AppCompatActivity() {
     /**
      * Perform initialisation of all fragments.
      *
-     * Only the game freshness is recovered from [savedInstanceState] (if not `null`).  All other
-     * restoration is done in [onRestoreInstanceState] method.
+     * In case [savedInstanceState] is `null`, the game's difficulty level is read from [intent]
+     * (the default value being `1`).  The activity is started from [LauncherActivity] which should
+     * provide a proper [intent].
+     *
+     * Only the game's difficulty level and freshness are recovered from [savedInstanceState] (if
+     * not `null`).  All other restoration is done in [onRestoreInstanceState] method.  A fresh game
+     * is initialised in [onResume] method.
      *
      * @param savedInstanceState If the activity is being re-initialised after previously being shut down then this [Bundle] contains the data it most recently supplied in [onSaveInstanceState] method.  **Note: Otherwise it is `null`.**
+     *
+     * @see LauncherActivity
+     * @see onSaveInstanceState
+     * @see onRestoreInstanceState
+     * @see onStart
+     * @see onPostCreate
+     * @see onResume
      *
      */
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -2526,9 +2556,14 @@ class MainActivity : AppCompatActivity() {
         // Initialise the stopwatch handler.
         initialiseStopwatchHandler()
 
-        // If [savedInstanceState] is not `null`, recover the game's freshness.
-        if (savedInstanceState != null)
+        // If [savedInstanceState] is not `null`, recover the game's freshness; otherwise get the
+        // desired difficulty level from [intent].
+        if (savedInstanceState != null) {
+            changeGameDifficulty(savedInstanceState.getInt(GAME_DIFFICULTY))
             changeGameFreshness(savedInstanceState.getBoolean(GAME_FRESHNESS))
+        }
+        else
+            changeGameDifficulty(intent.getIntExtra(resources.getString(R.string.difficulty), 0))
     }
 
     /**
@@ -2545,22 +2580,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Dispatch `onStart()` to all fragments and initialise the game if it is fresh.
-     *
-     * @see initialiseTable
+     * Dispatch `onStart()` to all fragments.
      *
      */
     override fun onStart() {
         super.onStart()
-
-        // If the game is fresh, initialise it.
-        if (isGameFresh())
-            initialiseTable()
     }
 
     /**
      * Dispatch `onResume()` to fragments, initialise the game if it is fresh and restart the stopwatch if needed.
      *
+     * If the game has to bee initialised, the difficulty level is retrieved by calling
+     * [whatGameDifficulty] method.
+     *
+     * @see whatGameDifficulty
      * @see initialiseTable
      * @see hasStopwatchStarted
      * @see hasStopwatchStopped
@@ -2572,7 +2605,7 @@ class MainActivity : AppCompatActivity() {
 
         // If the game is fresh, initialise it.
         if (isGameFresh())
-            initialiseTable()
+            initialiseTable(difficultyLevel = whatGameDifficulty())
 
         // If the stopwatch needs to be restarted, restart it.
         if (hasStopwatchStarted() && !hasStopwatchStopped())

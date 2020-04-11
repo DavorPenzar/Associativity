@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="difficulty_level_int_0">0</integer>
+    <integer name="difficulty_level_int_1">1</integer>
+    <integer name="difficulty_level_int_2">2</integer>
+    <integer name="difficulty_level_int_3">3</integer>
+
+    <integer-array name="difficulty_levels_int">
+        <item>@integer/difficulty_level_int_0</item>
+        <item>@integer/difficulty_level_int_1</item>
+        <item>@integer/difficulty_level_int_2</item>
+        <item>@integer/difficulty_level_int_3</item>
+    </integer-array>
+
+    <integer name="difficulty_label_int_0">@integer/difficulty_level_int_0</integer>
+    <integer name="difficulty_label_int_1">@integer/difficulty_level_int_1</integer>
+    <integer name="difficulty_label_int_2">@integer/difficulty_level_int_2</integer>
+    <integer name="difficulty_label_int_3">@integer/difficulty_level_int_3</integer>
+
+    <integer-array name="difficulty_labels_int">
+        <item>@integer/difficulty_label_int_0</item>
+        <item>@integer/difficulty_label_int_1</item>
+        <item>@integer/difficulty_label_int_2</item>
+        <item>@integer/difficulty_label_int_3</item>
+    </integer-array>
+</resources>

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="true">Asocijativnost</string>
+    <string name="app_description" translatable="true">Čuvena igra asocijacija</string>
+
+    <string name="choose_difficulty" translatable="true">Odaberi razinu</string>
     <string name="column" translatable="true">stupac</string>
     <string name="correct" translatable="true">Točno! \ud83d\ude0a</string>
     <plurals name="days" translatable="true">
@@ -8,6 +11,10 @@
         <item quantity="few">%d dana</item>
         <item quantity="other">% dana</item>
     </plurals>
+    <string name="difficulty_level_0" translatable="true">Vlastito</string>
+    <string name="difficulty_level_1" translatable="true">Jednostavno</string>
+    <string name="difficulty_level_2" translatable="true">Srednje</string>
+    <string name="difficulty_level_3" translatable="true">Teško</string>
     <string name="dismiss" translatable="true">Odustani</string>
     <string name="game" translatable="true">igra</string>
     <string name="give_up" translatable="true">Predaj se</string>

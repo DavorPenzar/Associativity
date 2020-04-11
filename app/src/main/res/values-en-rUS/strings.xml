@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="true">Associativity</string>
+    <string name="app_description" translatable="true">The famous associations game</string>
+
+    <string name="choose_difficulty" translatable="true">Choose difficulty level</string>
     <string name="column" translatable="true">column</string>
     <string name="correct" translatable="true">Correct! \ud83d\ude0a</string>
     <plurals name="days" translatable="true">
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>
     </plurals>
+    <string name="difficulty_level_0" translatable="true">Custom</string>
+    <string name="difficulty_level_1" translatable="true">Easy</string>
+    <string name="difficulty_level_2" translatable="true">Medium</string>
+    <string name="difficulty_level_3" translatable="true">Hard</string>
     <string name="dismiss" translatable="true">Dismiss</string>
     <string name="game" translatable="true">game</string>
     <string name="give_up" translatable="true">Give up</string>
