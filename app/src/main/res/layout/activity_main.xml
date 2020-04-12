@@ -391,7 +391,7 @@
                         android:gravity="center"
                         android:onClick="clickOnClosedFinal"
                         android:tag="@string/sol"
-                        android:text="@string/solution" />
+                        android:text="@string/game_table_solution" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -440,7 +440,7 @@
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:onClick="clickOnDismiss"
-                        android:text="@string/dismiss" />
+                        android:text="@string/guess_dialog_dismiss" />
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -479,7 +479,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:ems="10"
-                        android:hint="@string/try_guess"
+                        android:hint="@string/guess_dialog_try"
                         android:imeOptions="actionDone"
                         android:importantForAutofill="no"
                         android:inputType="text|textAutoComplete|textAutoCorrect" />
@@ -510,7 +510,7 @@
                         android:clickable="false"
                         android:enabled="false"
                         android:gravity="center"
-                        android:text="@string/give_up" />
+                        android:text="@string/guess_dialog_give_up" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -527,7 +527,7 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="@string/try_guess" />
+                        android:text="@string/guess_dialog_try" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

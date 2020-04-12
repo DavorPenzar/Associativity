@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="array" translatable="false">array</string>
     <string name="id" translatable="false">id</string>
+    <string name="integer" translatable="false">integer</string>
     <string name="string" translatable="false">string</string>
+    <string name="array" translatable="false">array</string>
 
     <string name="button" translatable="false">button</string>
     <string name="edit_text" translatable="false">editText</string>

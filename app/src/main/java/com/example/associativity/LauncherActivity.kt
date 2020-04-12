@@ -9,7 +9,11 @@ import androidx.appcompat.app.AppCompatActivity
 /**
  * The game launcher activity.
  *
+ * See [MainActivity] to understand difficulty level labels.
+ *
  * @property difficultiesEnabled Mapping from difficulty level's labels to their enablings.
+ *
+ * @see MainActivity
  *
  */
 class LauncherActivity : AppCompatActivity() {
@@ -261,7 +265,7 @@ class LauncherActivity : AppCompatActivity() {
 
         // Create an [intent] for starting [MainActivity]
         val intent: Intent = Intent(this, MainActivity::class.java).apply {
-            putExtra(resources.getString(R.string.difficulty), difficulty)
+            putExtra(resources.getString(R.string.dif), difficulty)
         }
 
         // Start [MainActivity].
@@ -332,7 +336,15 @@ class LauncherActivity : AppCompatActivity() {
         resetProperties()
 
         // Initialise external storage for defining custom game tables.
-        MainActivity.initialiseStorage(MainActivity.GAME_TABLES_DEFAULT_DIRECTORY, filesDir)
+        MainActivity.initialiseStorage(
+            MainActivity.GAME_TABLES_DEFAULT_DIRECTORY,
+            filesDir,
+            resources.getString(R.string.custom_game_tables_readme_filename),
+            resources.getString(
+                R.string.custom_game_tables_readme,
+                MainActivity.GAME_TABLES_DEFAULT_DIRECTORY
+            )
+        )
 
         // Disable difficulty levels for which no game tables are provided.
         if (savedInstanceState == null)

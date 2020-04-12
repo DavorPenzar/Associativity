@@ -82,7 +82,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:text="@string/choose_difficulty" />
+                    android:text="@string/difficulty_choose" />
             </LinearLayout>
 
             <LinearLayout
@@ -92,27 +92,6 @@
                 android:layout_gravity="center"
                 android:gravity="start|center_horizontal"
                 android:orientation="vertical">
-
-                <LinearLayout
-                    android:id="@+id/linearLayout0"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:tag="@string/difficulty_label_0">
-
-                    <Button
-                        android:id="@+id/button0"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:onClick="launchNewGame"
-                        android:tag="@string/difficulty_label_0"
-                        android:text="@string/difficulty_level_0" />
-                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/linearLayout1"
@@ -175,6 +154,27 @@
                         android:onClick="launchNewGame"
                         android:tag="@string/difficulty_label_3"
                         android:text="@string/difficulty_level_3" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linearLayout0"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:tag="@string/difficulty_label_0">
+
+                    <Button
+                        android:id="@+id/button0"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:onClick="launchNewGame"
+                        android:tag="@string/difficulty_label_0"
+                        android:text="@string/difficulty_level_0" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

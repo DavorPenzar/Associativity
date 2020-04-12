@@ -1,26 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="true">Asocijativnost</string>
+    <string name="app_name" translatable="true">Associjativnost</string>
     <string name="app_description" translatable="true">Čuvena igra asocijacija</string>
 
-    <string name="choose_difficulty" translatable="true">Odaberi razinu</string>
-    <string name="column" translatable="true">stupac</string>
-    <string name="correct" translatable="true">Točno! \ud83d\ude0a</string>
-    <plurals name="days" translatable="true">
-        <item quantity="one">%d dan</item>
-        <item quantity="few">%d dana</item>
-        <item quantity="other">% dana</item>
-    </plurals>
+    <string name="custom_game_tables_readme" translatable="true">Vlastite igraće tablice stavi u direktorij (mapu) \"%s\".\n\nOtvori https://github.com/DavorPenzar/Associativity/blob/master/README.md da vidiš kako napraviti vlastite igraće tablice.</string>
+
+    <string name="difficulty_choose" translatable="true">Odaberi razinu težine</string>
     <string name="difficulty_level_0" translatable="true">Vlastito</string>
     <string name="difficulty_level_1" translatable="true">Jednostavno</string>
     <string name="difficulty_level_2" translatable="true">Srednje</string>
     <string name="difficulty_level_3" translatable="true">Teško</string>
-    <string name="dismiss" translatable="true">Odustani</string>
-    <string name="game" translatable="true">igra</string>
-    <string name="give_up" translatable="true">Predaj se</string>
+
     <string name="new_game" translatable="true">Nova igra</string>
-    <string name="open" translatable="true">otvoreno</string>
-    <string name="solution" translatable="true">Rješenje</string>
-    <string name="try_guess" translatable="true">Pokušaj</string>
-    <string name="wrong" translatable="true">Pogrešno! \ud83d\ude1e</string>
+    <string name="game" translatable="true">Igra</string>
+
+    <plurals name="stopwatch_days" translatable="true">
+        <item quantity="one">%d dan</item>
+        <item quantity="few">%d dana</item>
+        <item quantity="other">%d dana</item>
+    </plurals>
+
+    <string name="game_table_row" translatable="true">Redak</string>
+    <string name="game_table_column" translatable="true">Stupac</string>
+    <string name="game_table_solution" translatable="true">Rješenje</string>
+    <string name="game_table_closed" translatable="true">Zatvoreno</string>
+    <string name="game_table_open" translatable="true">Otvoreno</string>
+
+    <string name="guess_dialog_dismiss" translatable="true">Odustani</string>
+    <string name="guess_dialog_give_up" translatable="true">Predaj se</string>
+    <string name="guess_dialog_try" translatable="true">Pokušaj</string>
+
+    <string name="guess_dialog_feedback_correct" translatable="true">Točno! %s</string>
+    <string name="guess_dialog_feedback_wrong" translatable="true">Pogrešno! %s</string>
 </resources>

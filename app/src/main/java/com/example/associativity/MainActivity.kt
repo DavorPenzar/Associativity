@@ -12,6 +12,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.BufferedWriter
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -27,6 +28,15 @@ import kotlin.math.abs
 
 /**
  * Main activity of the application.
+ *
+ * Difficulty levels labels are:
+ * * 1 for "easy",
+ * * 2 for "medium",
+ * * 3 for "hard",
+ * * 0 for "custom" (custom game tables put in external storage).
+ * It is not guaranteed that opening other difficulty levels will not throw an exception.  It is
+ * also not guaranteed that opening game tables from a root directory other than
+ * [GAME_TABLES_DEFAULT_DIRECTORY] will not throw an exception.
  *
  * @property labelOne Label of the first row of cells in the game table in [resources].
  * @property labelTwo Label of the second row of cells in the game table in [resources].
@@ -416,11 +426,23 @@ class MainActivity : AppCompatActivity() {
         /**
          * Initialise external storage for defining custom game tables.
          *
+         * If [readmeFilename] is `null`, no README file is created.  Otherwise [readmeText] must
+         * not be `null` and [readmeText] is written as contents of the README file written in
+         * [filesDir] with the filename [readmeFilename].  A new line is appended to [readmeText]
+         * even if it already ends with a new line.
+         *
          * @param rootDirectory Path of the root directory of game tables.
          * @param filesDir Main external storage directory.
+         * @param readmeFilename Filename of the README file to create in [filesDir].
+         * @param readmeText Text of the README file.
          *
          */
-        public fun initialiseStorage(rootDirectory: String, filesDir: File) {
+        public fun initialiseStorage(
+            rootDirectory: String,
+            filesDir: File,
+            readmeFilename: String? = null,
+            readmeText: String? = null
+        ) {
             // Construct the path of the [subdirectory] of custom game tables.
             val subdirectory: String = Paths.get(
                 filesDir.path,
@@ -450,6 +472,20 @@ class MainActivity : AppCompatActivity() {
                 }
             )
                 File(subdirectory).mkdirs()
+
+            // Open README file to write.
+            if (readmeFilename != null) {
+                val readmeWriter: BufferedWriter = File(
+                    Paths.get(filesDir.path, readmeFilename).toString()
+                ).bufferedWriter()
+
+                // Write README file.
+                readmeWriter.write(readmeText!!)
+                readmeWriter.newLine()
+
+                // Close README file.
+                readmeWriter.close()
+            }
         }
     }
 
@@ -530,9 +566,9 @@ class MainActivity : AppCompatActivity() {
 
         // Initialise the expression as a sign or an empty string.
         var timeExpression = when (milliseconds < 0L) {
-            true -> resources.getString(R.string.sign_minus)
+            true -> resources.getString(R.string.stopwatch_sign_minus)
             else -> when (includeSign) {
-                true -> resources.getString(R.string.sign_plus)
+                true -> resources.getString(R.string.stopwatch_sign_plus)
                 else -> String()
             }
         }
@@ -544,7 +580,7 @@ class MainActivity : AppCompatActivity() {
             val absoluteDaysInt: Int = absoluteDays.toInt()
 
             timeExpression += (
-                    resources.getQuantityString(R.plurals.days, absoluteDaysInt, absoluteDaysInt) +
+                    resources.getQuantityString(R.plurals.stopwatch_days, absoluteDaysInt, absoluteDaysInt) +
                             TIME_SPACE_DELIMITER
                     )
         }
@@ -1024,14 +1060,6 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * Check the game's difficulty level.
-     *
-     * Valid game difficulty levels are:
-     * * `0` for "custom" (game tables read from the subdirectory of custom game tables),
-     * * `1` for "easy",
-     * * `2` for "medium",
-     * * `3` for "hard.
-     * Specifying a different difficulty level in [changeGameDifficulty] will not throw an
-     * exception, but initialising a game table using [initialiseTable] method might fail.
      *
      * @return Current difficulty level.
      *
@@ -1542,7 +1570,7 @@ class MainActivity : AppCompatActivity() {
     private fun displayElaborateGuessHint(hint: String?, target: String? = null) {
         textViewHint.text = when (target) {
             null -> hint
-            else -> resources.getString(R.string.display_two_items, target, hint)
+            else -> resources.getString(R.string.display_parent_child_items, target, hint)
         }
     }
 
@@ -1625,7 +1653,7 @@ class MainActivity : AppCompatActivity() {
     private fun displayCurrentText(text: String?, origin: String? = null) {
         textViewCurrent.text = when (origin) {
             null -> text
-            else -> resources.getString(R.string.display_two_items, origin, text)
+            else -> resources.getString(R.string.display_parent_child_items, origin, text)
         }
     }
 
@@ -1887,7 +1915,7 @@ class MainActivity : AppCompatActivity() {
         // Open all cells in the [column] first if needed.
         if (recursiveOpen)
             for (cell in arrayOfCells(column))
-                openCell(cell, displayContent)
+                openCell(cell, displayContent = false)
 
         // Get the [column]'s main solution.
         val value: String = columnValue(column)[0]
@@ -2042,7 +2070,7 @@ class MainActivity : AppCompatActivity() {
         // Open all columns' solutions and cells first if needed.
         if (recursiveOpen)
             for (column in arrayOfColumns())
-                openColumn(column, true, displayContent)
+                openColumn(column, recursiveOpen = true, displayContent = false)
 
         // Get the main final solution.
         val value: String = finalValue()[0]
@@ -2085,7 +2113,7 @@ class MainActivity : AppCompatActivity() {
         val button: Button = findViewById(idOfFinal())
 
         // Set the [button]'s text to the solution string and set it to closed.
-        button.text = resources.getString(R.string.solution)
+        button.text = resources.getString(R.string.game_table_solution)
         changeFinalOpennes(false)
 
         // Change [onClick] of the [button].
@@ -2262,7 +2290,7 @@ class MainActivity : AppCompatActivity() {
 
         // Act accordingly.
         if (n == 0)
-            displayCurrentText(resources.getString(R.string.solution))
+            displayCurrentText(resources.getString(R.string.game_table_solution))
         else
             offerFinalGuess(open.copyOf(n), n == open.size)
     }
@@ -2351,7 +2379,7 @@ class MainActivity : AppCompatActivity() {
 
         // Display hints.
         displayElaborateGuessHint(hint!!.joinToString(COMMA_DELIMITER))
-        displayBriefGuessHint(resources.getString(R.string.solution))
+        displayBriefGuessHint(resources.getString(R.string.game_table_solution))
 
         // Allow or disallow giving up.
         changeGuessGivingUpAllowness(offerGivingUp)
@@ -2386,10 +2414,22 @@ class MainActivity : AppCompatActivity() {
     private fun bindButtonGuessToColumn(column: String) {
         // Set on-click method of [buttonGuess].
         buttonGuess.setOnClickListener {
-            if (guessColumn(column,retrieveGuess()))
-                openColumn(column)
+            if (guessColumn(column,retrieveGuess())) {
+                openColumn(column, displayContent = false)
+                displayCurrentText(
+                    resources.getString(
+                        R.string.guess_dialog_feedback_correct,
+                        resources.getString(R.string.guess_dialog_feedback_smiley_face)
+                    )
+                )
+            }
             else
-                displayCurrentText(resources.getString(R.string.wrong))
+                displayCurrentText(
+                    resources.getString(
+                        R.string.guess_dialog_feedback_wrong,
+                        resources.getString(R.string.guess_dialog_feedback_sad_face)
+                    )
+                )
 
             closeGuessDialog()
         }
@@ -2442,10 +2482,22 @@ class MainActivity : AppCompatActivity() {
     private fun bindButtonGuessToFinal() {
         // Set on-click method of [buttonGuess].
         buttonGuess.setOnClickListener {
-            if (guessFinal(retrieveGuess()))
-                openFinal()
+            if (guessFinal(retrieveGuess())) {
+                openFinal(displayContent = false)
+                displayCurrentText(
+                    resources.getString(
+                        R.string.guess_dialog_feedback_correct,
+                        resources.getString(R.string.guess_dialog_feedback_smiley_face)
+                    )
+                )
+            }
             else
-                displayCurrentText(resources.getString(R.string.wrong))
+                displayCurrentText(
+                    resources.getString(
+                        R.string.guess_dialog_feedback_wrong,
+                        resources.getString(R.string.guess_dialog_feedback_sad_face)
+                    )
+                )
 
             closeGuessDialog()
         }
@@ -2747,7 +2799,7 @@ class MainActivity : AppCompatActivity() {
             changeGameFreshness(savedInstanceState.getBoolean(GAME_FRESHNESS))
         }
         else
-            changeGameDifficulty(intent.getIntExtra(resources.getString(R.string.difficulty), 0))
+            changeGameDifficulty(intent.getIntExtra(resources.getString(R.string.dif), 0))
     }
 
     /**

@@ -3,44 +3,56 @@
     <string name="app_name" translatable="true">Associativity</string>
     <string name="app_description" translatable="true">The famous associations game</string>
 
-    <string name="choose_difficulty" translatable="true">Choose difficulty level</string>
-    <string name="column" translatable="true">column</string>
-    <string name="correct" translatable="true">Correct! \ud83d\ude0a</string>
-    <plurals name="days" translatable="true">
-        <item quantity="one">%d day</item>
-        <item quantity="other">%d days</item>
-    </plurals>
-    <string name="difficulty" translatable="false">difficulty</string>
+    <string name="custom_game_tables_readme_filename" translatable="false">README.txt</string>
+    <string name="custom_game_tables_readme" translatable="true">Put custom game tables into \"%s\" directory (folder).\n\nFollow https://github.com/DavorPenzar/Associativity/blob/master/README.md to see how to create custom game tables.</string>
+
+    <string name="display_parent_child_items" translatable="false">%1$s: %2$s</string>
+
+    <string name="dif" translatable="false">Dif</string>
+    <string name="difficulty_choose" translatable="true">Choose difficulty level</string>
     <string name="difficulty_label_0" translatable="false">0</string>
     <string name="difficulty_label_1" translatable="false">1</string>
     <string name="difficulty_label_2" translatable="false">2</string>
     <string name="difficulty_label_3" translatable="false">3</string>
+    <string name="difficulty_level_0" translatable="true">Custom</string>
+    <string name="difficulty_level_1" translatable="true">Easy</string>
+    <string name="difficulty_level_2" translatable="true">Medium</string>
+    <string name="difficulty_level_3" translatable="true">Hard</string>
     <string-array name="difficulty_labels" translatable="false">
         <item>@string/difficulty_label_0</item>
         <item>@string/difficulty_label_1</item>
         <item>@string/difficulty_label_2</item>
         <item>@string/difficulty_label_3</item>
     </string-array>
-    <string name="difficulty_level_0" translatable="true">Custom</string>
-    <string name="difficulty_level_1" translatable="true">Easy</string>
-    <string name="difficulty_level_2" translatable="true">Medium</string>
-    <string name="difficulty_level_3" translatable="true">Hard</string>
     <string-array name="difficulty_levels" translatable="false">
         <item>@string/difficulty_level_0</item>
         <item>@string/difficulty_level_1</item>
         <item>@string/difficulty_level_2</item>
         <item>@string/difficulty_level_3</item>
     </string-array>
-    <string name="dismiss" translatable="true">Dismiss</string>
-    <string name="display_two_items" translatable="false">%1$s: %2$s</string>
-    <string name="game" translatable="true">game</string>
-    <string name="give_up" translatable="true">Give up</string>
-    <string name="hms_time_delimiter" translatable="false">:</string>
+
     <string name="new_game" translatable="true">New game</string>
-    <string name="open" translatable="true">open</string>
-    <string name="sign_minus" translatable="false">-</string>
-    <string name="sign_plus" translatable="false">+</string>
-    <string name="solution" translatable="true">Solution</string>
-    <string name="try_guess" translatable="true">Try</string>
-    <string name="wrong" translatable="true">Wrong! \ud83d\ude1e</string>
+    <string name="game" translatable="true">Game</string>
+
+    <string name="stopwatch_sign_minus" translatable="false">-</string>
+    <string name="stopwatch_sign_plus" translatable="false">+</string>
+    <plurals name="stopwatch_days" translatable="true">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+
+    <string name="game_table_row" translatable="true">Row</string>
+    <string name="game_table_column" translatable="true">Column</string>
+    <string name="game_table_solution" translatable="true">Solution</string>
+    <string name="game_table_closed" translatable="true">Closed</string>
+    <string name="game_table_open" translatable="true">Open</string>
+
+    <string name="guess_dialog_dismiss" translatable="true">Dismiss</string>
+    <string name="guess_dialog_give_up" translatable="true">Give up</string>
+    <string name="guess_dialog_try" translatable="true">Try</string>
+
+    <string name="guess_dialog_feedback_smiley_face" translatable="false">\ud83d\ude0a</string>
+    <string name="guess_dialog_feedback_sad_face" translatable="false">\ud83d\ude1e</string>
+    <string name="guess_dialog_feedback_correct" translatable="true">Correct! %s</string>
+    <string name="guess_dialog_feedback_wrong" translatable="true">Wrong! %s</string>
 </resources>
