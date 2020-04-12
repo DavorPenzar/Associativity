@@ -1,6 +1,7 @@
 package com.example.associativity
 
 import android.content.Context
+import android.content.res.AssetManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
@@ -11,7 +12,13 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.File
+import java.io.IOException
+import java.io.InputStream
 import java.lang.Integer.min
+import java.nio.file.DirectoryStream
+import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.time.Duration
 import java.time.LocalDateTime
@@ -256,17 +263,152 @@ class MainActivity : AppCompatActivity() {
          *
          * The resulting path is of the same *relativity level* as the given [rootDirectory] path.
          *
+         * If [difficultyLevel] is `0`, the resulting path directs to the external storage;
+         * otherwise it directs to an assets subdirectory.
+         *
+         * As 0 is considered a custom difficulty level located on the external storage, if
+         * [difficultyLevel] is `0`, the constructed directory is the same as [rootDirectory].
+         * Otherwise a subdirectory is chosen according to the value of [difficultyLevel].
+         *
          * @param rootDirectory The root directory of the game tables sorted in subdirectories by their difficulty level.
          * @param difficultyLevel Difficulty level of the desired game table.
          *
          * @return The path of the subdirectory of game tables of the desired difficulty level.
          *
          */
-        public fun constructDifficultyLevelSubdirectoryPath(
+        private fun constructDifficultyLevelSubdirectoryPath(
             rootDirectory: String,
             difficultyLevel: Int
         ): String {
-            return Paths.get(rootDirectory, difficultyLevel.toString()).toString()
+            return when (difficultyLevel) {
+                0 -> rootDirectory
+                else -> Paths.get(rootDirectory, difficultyLevel.toString()).toString()
+            }
+        }
+
+        /**
+         * Open a random game table with solutions.
+         *
+         * The method returns a random table read from a file in the appropriate subdirectory of
+         * game tables (from the external storage or the [assets]).
+         *
+         * If [difficultyLevel] is `0`, [filesDir] must not be `null` but has to be a valid path to
+         * external storage; otherwise [assets] must not be `null` but be a valid [AssetManager].
+         *
+         * @param rootDirectory The root directory of the game tables sorted in subdirectories by their difficulty level.
+         * @param difficultyLevel Difficulty level of the desired game table.
+         *
+         * @return [InputStream] of a random game table from the appropriate subdirectory.
+         *
+         * @see TableReader
+         * @see TableReader.readAssociationsTable
+         * @see importRandomGameTable
+         * @see constructDifficultyLevelSubdirectoryPath
+         * @see isGameTablesSubdirectoryNonEmpty
+         *
+         */
+        private fun randomGameTable(
+            rootDirectory: String,
+            difficultyLevel: Int,
+            filesDir: File? = null,
+            assets: AssetManager? = null
+        ): InputStream {
+            return when (difficultyLevel) {
+                0 -> {
+                    // Get the path of the external storage [subdirectory].
+                    val subdirectory: String = Paths.get(
+                        filesDir!!.path,
+                        constructDifficultyLevelSubdirectoryPath(
+                            rootDirectory,
+                            difficultyLevel
+                        )
+                    ).toString()
+
+                    // Open external storage [subdirectory].
+                    val directoryStream: DirectoryStream<Path> = Files.newDirectoryStream(
+                        Paths.get(subdirectory)
+                    )
+
+                    // Get the array of paths of items in [directoryStream].
+                    val items: Array<String> = (
+                        ArrayList<String>().apply {
+                            for (item in directoryStream)
+                                add(item.toString())
+                        }
+                    ).toArray(arrayOf())
+
+                    // Close [directoryStream].
+                    directoryStream.close()
+
+                    // Open and return a random item in [items].
+                    return File(items.random()).inputStream()
+                }
+                else -> {
+                    // Get the path of the assets [subdirectory].
+                    val subdirectory: String = constructDifficultyLevelSubdirectoryPath(
+                        rootDirectory,
+                        difficultyLevel
+                    )
+
+                    // Open and return a random table in the assets [subdirectory].
+                    assets!!.open(
+                        Paths.get(subdirectory, assets.list(subdirectory)!!.random()).toString()
+                    )
+                }
+            }
+        }
+
+        /**
+         * Check if a game tables subdirectory is empty.
+         *
+         * If [difficultyLevel] is `0`, [filesDir] must not be `null` but has to be a valid path to
+         * external storage; otherwise [assets] must not be `null` but be a valid [AssetManager].
+         *
+         * @param rootDirectory The root directory of the game tables sorted in subdirectories by their difficulty level.
+         * @param difficultyLevel Difficulty level of the desired game table.
+         *
+         * @return If the sought subdirectory exists and is not empty, `true`; `false` otherwise.
+         *
+         */
+        public fun isGameTablesSubdirectoryNonEmpty(
+            rootDirectory: String,
+            difficultyLevel: Int,
+            filesDir: File? = null,
+            assets: AssetManager? = null
+        ): Boolean {
+            return try {
+                when (difficultyLevel) {
+                    0 -> {
+                        // Open external storage directory.
+                        val directoryStream: DirectoryStream<Path> = Files.newDirectoryStream(
+                            Paths.get(
+                                filesDir!!.path,
+                                constructDifficultyLevelSubdirectoryPath(
+                                    rootDirectory,
+                                    difficultyLevel
+                                )
+                            )
+                        )
+
+                        // Check if [directoryStream] is non-empty.
+                        val nonEmpty: Boolean = directoryStream.iterator().hasNext()
+
+                        // Close [directoryStream].
+                        directoryStream.close()
+
+                        // Return [nonEmpty].
+                        nonEmpty
+                    }
+                    else -> {
+                        // Return non-emptiness of the [assets] subdirectory.
+                        assets!!.list(
+                            constructDifficultyLevelSubdirectoryPath(rootDirectory, difficultyLevel)
+                        )!!.isNotEmpty()
+                    }
+                }
+            } catch (exception: IOException) {
+                false
+            }
         }
     }
 
@@ -620,43 +762,44 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Read a random table with solutions from the assets.
+     * Read a random table with solutions.
      *
-     * The method returns a random table read from a file in the appropriate subdirectory of the
-     * of the assets directory (found using [constructDifficultyLevelSubdirectoryPath] method) using
-     * [TableReader.readAssociationsTable] method.
+     * The method reads from `randomGameTable(rootDirectory, difficultyLevel, filesDir, assets)`
+     * using [TableReader.readAssociationsTable] and closes the [InputStream].  The table that was
+     * read is then returned.
      *
      * @param rootDirectory The root directory of the game tables sorted in subdirectories by their difficulty level.
      * @param difficultyLevel Difficulty level of the desired game table.
      *
-     * @return A random table with solutions from the assets.
+     * @return A random table with solutions.
      *
      * @see TableReader
      * @see TableReader.readAssociationsTable
+     * @see constructDifficultyLevelSubdirectoryPath
+     * @see isGameTablesSubdirectoryNonEmpty
+     * @see randomGameTable
      *
      */
     private fun importRandomGameTable(
         rootDirectory: String = GAME_TABLES_DEFAULT_DIRECTORY,
         difficultyLevel: Int = 0
     ): Bundle {
-        // Get the path of the desired directory.
-        val directory: String = constructDifficultyLevelSubdirectoryPath(
+        // Open a random game table of the chosen difficulty level.
+        val inputStream: InputStream = randomGameTable(
             rootDirectory,
-            difficultyLevel
+            difficultyLevel,
+            filesDir,
+            assets
         )
 
-        // Read and return a random game table.  In case of an exception, [finish] [this] activity.
-        return try {
-            TableReader.readAssociationsTable(
-                assets.open(Paths.get(directory, assets.list(directory)!!.random()).toString())
-            )
-        } catch (exception: Exception) {
-            // Finish the activity using [finish] method.
-            finish()
+        // Read the table from [inputStream].
+        val table: Bundle = TableReader.readAssociationsTable(inputStream)
 
-            // For the code to compile, "return" an empty [Bundle].
-            Bundle()
-        }
+        // Close [inputStream].
+        inputStream.close()
+
+        // Return [table].
+        return table
     }
 
     /**
@@ -864,7 +1007,7 @@ class MainActivity : AppCompatActivity() {
      * Change the game's difficulty level.
      *
      * **Note: This method merely changes what [whatGameDifficulty] method will return.  To actually
-     * play a game of a different dificulty start [MainActivity] with a proper [Intent].
+     * play a game of a different difficulty start [MainActivity] with a proper [Intent].
      *
      * @param difficulty New game's difficulty level.
      *
@@ -2227,7 +2370,7 @@ class MainActivity : AppCompatActivity() {
         }
         else {
             buttonGiveUp.apply {
-                // Remove [onClick]
+                // Remove on-click method.
                 setOnClickListener(null)
 
                 // Disable the button.
@@ -2283,7 +2426,7 @@ class MainActivity : AppCompatActivity() {
         }
         else {
             buttonGiveUp.apply {
-                // Remove [onClick]
+                // Remove on-click method.
                 setOnClickListener(null)
 
                 // Disable the button.
@@ -2564,6 +2707,14 @@ class MainActivity : AppCompatActivity() {
         }
         else
             changeGameDifficulty(intent.getIntExtra(resources.getString(R.string.difficulty), 0))
+
+        textViewCurrent.text = Paths.get(
+            filesDir.path,
+            constructDifficultyLevelSubdirectoryPath(
+                GAME_TABLES_DEFAULT_DIRECTORY,
+                0
+            )
+        ).toString()
     }
 
     /**
@@ -2645,7 +2796,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Called after [onStop] when the current activity is being re-displayed to the user (the user has navigated back to it).
+     * Call after [onStop] when the current activity is being re-displayed to the user (the user has navigated back to it).
      *
      * The method will be followed by [onStart] and then [onResume].
      *
