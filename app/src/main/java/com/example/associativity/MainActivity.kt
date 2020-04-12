@@ -270,7 +270,7 @@ class MainActivity : AppCompatActivity() {
          * [difficultyLevel] is `0`, the constructed directory is the same as [rootDirectory].
          * Otherwise a subdirectory is chosen according to the value of [difficultyLevel].
          *
-         * @param rootDirectory The root directory of the game tables sorted in subdirectories by their difficulty level.
+         * @param rootDirectory Path of the root directory of game tables.
          * @param difficultyLevel Difficulty level of the desired game table.
          *
          * @return The path of the subdirectory of game tables of the desired difficulty level.
@@ -295,7 +295,7 @@ class MainActivity : AppCompatActivity() {
          * If [difficultyLevel] is `0`, [filesDir] must not be `null` but has to be a valid path to
          * external storage; otherwise [assets] must not be `null` but be a valid [AssetManager].
          *
-         * @param rootDirectory The root directory of the game tables sorted in subdirectories by their difficulty level.
+         * @param rootDirectory Path of the root directory of game tables.
          * @param difficultyLevel Difficulty level of the desired game table.
          *
          * @return [InputStream] of a random game table from the appropriate subdirectory.
@@ -310,8 +310,8 @@ class MainActivity : AppCompatActivity() {
         private fun randomGameTable(
             rootDirectory: String,
             difficultyLevel: Int,
-            filesDir: File? = null,
-            assets: AssetManager? = null
+            assets: AssetManager? = null,
+            filesDir: File? = null
         ): InputStream {
             return when (difficultyLevel) {
                 0 -> {
@@ -364,8 +364,10 @@ class MainActivity : AppCompatActivity() {
          * If [difficultyLevel] is `0`, [filesDir] must not be `null` but has to be a valid path to
          * external storage; otherwise [assets] must not be `null` but be a valid [AssetManager].
          *
-         * @param rootDirectory The root directory of the game tables sorted in subdirectories by their difficulty level.
+         * @param rootDirectory Path of the root directory of game tables.
          * @param difficultyLevel Difficulty level of the desired game table.
+         * @param filesDir Main external storage directory.
+         * @param assets [AssetManager] of the activity.
          *
          * @return If the sought subdirectory exists and is not empty, `true`; `false` otherwise.
          *
@@ -373,8 +375,8 @@ class MainActivity : AppCompatActivity() {
         public fun isGameTablesSubdirectoryNonEmpty(
             rootDirectory: String,
             difficultyLevel: Int,
-            filesDir: File? = null,
-            assets: AssetManager? = null
+            assets: AssetManager? = null,
+            filesDir: File? = null
         ): Boolean {
             return try {
                 when (difficultyLevel) {
@@ -409,6 +411,45 @@ class MainActivity : AppCompatActivity() {
             } catch (exception: IOException) {
                 false
             }
+        }
+
+        /**
+         * Initialise external storage for defining custom game tables.
+         *
+         * @param rootDirectory Path of the root directory of game tables.
+         * @param filesDir Main external storage directory.
+         *
+         */
+        public fun initialiseStorage(rootDirectory: String, filesDir: File) {
+            // Construct the path of the [subdirectory] of custom game tables.
+            val subdirectory: String = Paths.get(
+                filesDir.path,
+                constructDifficultyLevelSubdirectoryPath(rootDirectory, 0)
+            ).toString()
+
+            // If [subdirectory] does not exist or exists but is not a directory, create it.
+            if (
+                when (Files.exists(Paths.get(subdirectory))) {
+                    true -> {
+                        // Open the [subdirectory]
+                        val file: File = File(subdirectory)
+
+                        // If [file] is not a directory, delete it and set `true`.  Otherwise set
+                        // `false`.
+                        if (file.isDirectory)
+                            false
+                        else {
+                            // Delete [file].
+                            file.delete()
+
+                            // Set `true`.
+                            true
+                        }
+                    }
+                    else -> true
+                }
+            )
+                File(subdirectory).mkdirs()
         }
     }
 
@@ -788,8 +829,8 @@ class MainActivity : AppCompatActivity() {
         val inputStream: InputStream = randomGameTable(
             rootDirectory,
             difficultyLevel,
-            filesDir,
-            assets
+            assets,
+            filesDir
         )
 
         // Read the table from [inputStream].
@@ -2707,14 +2748,6 @@ class MainActivity : AppCompatActivity() {
         }
         else
             changeGameDifficulty(intent.getIntExtra(resources.getString(R.string.difficulty), 0))
-
-        textViewCurrent.text = Paths.get(
-            filesDir.path,
-            constructDifficultyLevelSubdirectoryPath(
-                GAME_TABLES_DEFAULT_DIRECTORY,
-                0
-            )
-        ).toString()
     }
 
     /**

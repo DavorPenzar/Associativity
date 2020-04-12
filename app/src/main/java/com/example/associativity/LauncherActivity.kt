@@ -148,8 +148,8 @@ class LauncherActivity : AppCompatActivity() {
         return MainActivity.isGameTablesSubdirectoryNonEmpty(
             MainActivity.GAME_TABLES_DEFAULT_DIRECTORY,
             difficulty,
-            filesDir,
-            assets
+            assets,
+            filesDir
         )
     }
 
@@ -330,6 +330,9 @@ class LauncherActivity : AppCompatActivity() {
 
         // Reset inner properties.
         resetProperties()
+
+        // Initialise external storage for defining custom game tables.
+        MainActivity.initialiseStorage(MainActivity.GAME_TABLES_DEFAULT_DIRECTORY, filesDir)
 
         // Disable difficulty levels for which no game tables are provided.
         if (savedInstanceState == null)
