@@ -278,7 +278,8 @@ class TableReader : Any {
          *
          * The only *NA* value is an empty cell.  Cells containing the usual *NA* indicators, such
          * as `"NA"`, `"na"`, `"NaN"`, `"nan"` etc., are parsed as non-empty strings (for instance,
-         * `"NA"` results in a cell containing the string `"NA"`).
+         * `"NA"` results in a cell containing the string `"NA"`).  *NA* cells will be represented
+         * by empty strings, nut by `null` values.
          *
          * The resulting two-dimensional array is the matrix of cells in the table represented by
          * the CSV read from [bufferedReader].  The first dimension represents the rows of the
