@@ -1,4 +1,4 @@
-package com.example.associativity
+package com.penzart.associativity
 
 import android.content.Intent
 import android.os.Bundle
