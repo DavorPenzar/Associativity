@@ -6,6 +6,8 @@ The documentation of classes and methods is given as inline documentation in the
 
 The rest of the [*README.md* file](README.md) explains how to create new game tables. No special computer knowledge is needed for this part and anyone is invited to give it a try &#128077;
 
+Developers wanting to build the app should open the project in [*Android Studio*](http://developer.android.com/studio/). Not only was this project created using the mentioned software meaning the software will know how to build the app, but this is also official [*Android*](http://android.com/)'s development software for creating apps and I highly recommend it for its user-friendliness, even for beginners such as myself (this is my first app).
+
 ##  Defining New Game Tables
 
 New game tables can be defined in [*CSV* files (*comma-separated values*)](http://en.wikipedia.org/wiki/Comma-separated_values). If you are unfamiliar with the format, follow the link, although to produce valid game tables a leading contemporary spreadsheet software will suffice (you may even skip to [**Game Table Format**](#game-table-format)&mdash;however, read the first 5 or so points in [**Supported *CSV* Format**](#supported-csv-format) to see which options to select when producing a table using spreadsheet software (default options will probably be OK)).
