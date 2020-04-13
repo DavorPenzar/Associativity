@@ -107,7 +107,7 @@ In both formats shown commas (and empty cells in the second format) at the end o
 The easiest way to create a [*CSV* file](http://en.wikipedia.org/wiki/Comma-separated_values) of a game table is using a spreadsheet software such as [*Google Sheets*](http://google.com/sheets/about/), [*Microsoft Office Excel*](http://products.office.com/excel) or [*LibreOffice Calc*](http://libreoffice.org/discover/calc/). In the software of your choice enter the game table as
 
 |              | **A**     | **B**         | **C**  | **D**        | **E**     | **F** | **&hellip;** |
-| :----------: | :---------| :-------------| :------| :------------| :---------| :---- | :----------: |
+| :----------: | :---------| :-------------| :------| :------------| :---------| :---- | :------------|
 | **1**        | 1         | 1             | 0      | 1            | 1         |       |              |
 | **2**        | sheet     | ice           | Mary   | Google Drive |           |       |              |
 | **3**        | cellulose | Christmas     | had    | storm        |           |       |              |
@@ -119,7 +119,7 @@ The easiest way to create a [*CSV* file](http://en.wikipedia.org/wiki/Comma-sepa
 | **9**        |           |               |        |              |           |       |              |
 | **&vellip;** |           |               |        |              |           |       |              |
 
-Again, be sure to add actual solutions, not strings such as *XXXXX*, in rows 6 until the end. Of course, if your game table is a *kinky* one and one of the solutions or an alternative acceptable answer is *XXX*, then you *should* put *XXX* as the answer in the corresponding column. Keep in mind that the final solution and its alternative acceptable answers are placed in the column *E* in from the sixth row downward.
+Again, be sure to add actual solutions, not strings such as *XXXXX*, in rows 6 until the end. Of course, if your game table is a *kinky* one and one of the solutions or an alternative acceptable answer is *XXX*, then you *should* put *XXX* as the answer in the corresponding column. Keep in mind that the final solution and its alternative acceptable answers are placed in the column *E* from the sixth row downward.
 
 The next step is to export the sheet to a [*CSV* file](http://en.wikipedia.org/wiki/Comma-separated_values). This is usually done by *File* > *Export as...*/*Save as...*/*Download* (use *Download* in online software such as [*Google Sheets*](http://google.com/sheets/about/) and [*Microsoft Office 365*](http://office.com/)) and choosing [*CSV*](http://en.wikipedia.org/wiki/Comma-separated_values) as the format. As mentioned above, default options will probably be OK, but check [**Supported *CSV* Format**](#supported-csv-format) to see which options to actually select.
 
