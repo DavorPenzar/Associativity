@@ -18,10 +18,10 @@ The format of the [*CSV* files](http://en.wikipedia.org/wiki/Comma-separated_val
 
 1.  The actual extension of the file does not have to be *.csv*/*.CSV*, because the actual filename extension is nothing more but a substring of the filename (see [here](http://en.wikipedia.org/wiki/Filename_extension#Usage)). All filename extensions&mdash;including no extension at all&mdash;are supported; the actual contents of the file are what matters.
 2.  All [*CSV* files](http://en.wikipedia.org/wiki/Comma-separated_values) are considered tables of **strings**&mdash;all numbers, usual date formats and other data types and their respectful usual formats are parsed as strings. For instance, an input of *12345* will not result in an integer with the value of `12345`, i. e. *twelve thousand three hundred forty-five*, but a string `"12345"`, even if all cells in the column are valid integer expressions.
-3.  The separator **must** be a comma, i. e. the character `','` ([ASCII](http://en.wikipedia.org/wiki/ASCII) value *44*, in hex. *2C*).
-4.  Single quotes **must** be regular single quotes, i. e. the character `'\''` ([ASCII](http://en.wikipedia.org/wiki/ASCII) value *39*, in hex. *27*).
-5.  Double quotes **must** be regular double quotes, i. e. the character `'\"'` ([ASCII](http://en.wikipedia.org/wiki/ASCII) value *34*, in hex. *22*).
-6.  Escape character **must** be the backslash, i. e. the character `'\\'` ([ASCII](http://en.wikipedia.org/wiki/ASCII) value *92*, in hex. *5C*).
+3.  The separator **must** be a comma, i. e. the character `','` ([ASCII value](http://en.wikipedia.org/wiki/ASCII) *44*, in hex. *2C*).
+4.  Single quotes **must** be regular single quotes, i. e. the character `'\''` ([ASCII value](http://en.wikipedia.org/wiki/ASCII) *39*, in hex. *27*).
+5.  Double quotes **must** be regular double quotes, i. e. the character `'\"'` ([ASCII value](http://en.wikipedia.org/wiki/ASCII) *34*, in hex. *22*).
+6.  Escape character **must** be the backslash, i. e. the character `'\\'` ([ASCII value](http://en.wikipedia.org/wiki/ASCII) *92*, in hex. *5C*).
 7.  Valid escaping expressions are the esacpe character (see above) **immediately** followed by one of the characters listed in the table directly below this numbered list (naturally, the table also lists the resulting characters).
 8.  The only *NA* (*not assigned*) value is an **empty cell**.  Cells containing the usual *NA* indicators, such as `"NA"`, `"na"`, `"NaN"`, `"nan"` etc., are parsed as non-empty strings (for instance,`"NA"` results in a cell containing the string `"NA"`).
 9.  Escaping a separator is not mandatory if the cell is enclosed in quotes. Also, escaping double quotes in cells enclosed by single quotes and vice versa is not mandatory. However, these characters may also be escaped in cells enclosed by quotes, be careful how the escape character is used even if the cell is enclosed in quotes.
