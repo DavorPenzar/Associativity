@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- Cell labels. -->
 <resources>
     <string name="cell_A1" translatable="false">A1</string>
     <string name="cell_A2" translatable="false">A2</string>

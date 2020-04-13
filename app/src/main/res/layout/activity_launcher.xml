@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- Layout of [LauncherActivity]. -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,6 +9,7 @@
     android:layout_height="match_parent"
     tools:context=".LauncherActivity">
 
+    <!-- Header. -->
     <LinearLayout
         android:id="@+id/linearLayoutHeader"
         android:layout_width="0dp"
@@ -17,6 +20,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <!-- Title. -->
         <LinearLayout
             android:id="@+id/linearLayoutTitle"
             android:layout_width="match_parent"
@@ -33,15 +37,16 @@
                 android:text="@string/app_name" />
         </LinearLayout>
 
+        <!-- Description. -->
         <LinearLayout
-            android:id="@+id/linearLayoutSubtitle"
+            android:id="@+id/linearLayoutDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/textViewSubtitle"
+                android:id="@+id/textViewDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -50,6 +55,7 @@
         </LinearLayout>
     </LinearLayout>
 
+    <!-- Menu. -->
     <ScrollView
         android:id="@+id/scrollViewMenu"
         android:layout_width="0dp"
@@ -68,6 +74,7 @@
             android:gravity="start|center_horizontal"
             android:orientation="vertical">
 
+            <!-- Information provider. -->
             <LinearLayout
                 android:id="@+id/linearLayoutChooseDifficulty"
                 android:layout_width="match_parent"
@@ -85,6 +92,7 @@
                     android:text="@string/difficulty_choose" />
             </LinearLayout>
 
+            <!-- Deifficulty level chooser. -->
             <LinearLayout
                 android:id="@+id/linearLayoutGameDifficulty"
                 android:layout_width="match_parent"

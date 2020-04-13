@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- Names of objects. -->
 <resources>
     <string name="id" translatable="false">id</string>
     <string name="integer" translatable="false">integer</string>
@@ -18,7 +20,7 @@
     <string name="row_underscore" translatable="false">row_</string>
 
     <string name="difficulty_labels" translatable="false">difficulty_labels</string>
-    <string name="difficulty_labels_int" translatable="false">dificulty_labels_int</string>
+    <string name="difficulty_labels_int" translatable="false">difficulty_labels_int</string>
     <string name="difficulty_levels" translatable="false">difficulty_levels</string>
     <string name="difficulty_levels_int" translatable="false">difficulty_levels_int</string>
     <string name="difficulty_label_underscore" translatable="false">difficulty_label_</string>

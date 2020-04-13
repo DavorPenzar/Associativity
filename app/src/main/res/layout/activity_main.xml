@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- Layout of [MainActivity]. -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,6 +9,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!-- Header. -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayoutHeader"
         android:layout_width="0dp"
@@ -15,6 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <!-- "New game" button. -->
         <LinearLayout
             android:id="@+id/linearLayoutNewGame"
             android:layout_width="wrap_content"
@@ -35,6 +39,7 @@
                 android:text="@string/new_game" />
         </LinearLayout>
 
+        <!-- Stopwatch. -->
         <LinearLayout
             android:id="@+id/linearLayoutStopwatch"
             android:layout_width="wrap_content"
@@ -54,6 +59,7 @@
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!-- The game. -->
     <ScrollView
         android:id="@+id/scrollViewMain"
         android:layout_width="0dp"
@@ -72,6 +78,7 @@
             android:gravity="start|center_horizontal"
             android:orientation="vertical">
 
+            <!-- [TextView] for displaying contents. -->
             <LinearLayout
                 android:id="@+id/linearLayoutCurrent"
                 android:layout_width="match_parent"
@@ -87,6 +94,7 @@
                     android:gravity="center" />
             </LinearLayout>
 
+            <!-- Game table and solutions. -->
             <LinearLayout
                 android:id="@+id/linearLayoutGame"
                 style="?android:attr/buttonBarStyle"
@@ -95,6 +103,7 @@
                 android:gravity="start|center_horizontal"
                 android:orientation="vertical">
 
+                <!-- Game table. -->
                 <TableLayout
                     android:id="@+id/tableLayoutGameTable"
                     style="?android:attr/buttonBarStyle"
@@ -319,6 +328,7 @@
                             android:text="@string/cell_D4" />
                     </TableRow>
 
+                    <!-- Columns' solutions. -->
                     <TableRow
                         android:id="@+id/tableRowCol"
                         style="?android:attr/buttonBarStyle"
@@ -374,6 +384,7 @@
                     </TableRow>
                 </TableLayout>
 
+                <!-- Final solution. -->
                 <LinearLayout
                     android:id="@+id/linearLayoutSol"
                     style="?android:attr/buttonBarStyle"
@@ -397,6 +408,7 @@
         </LinearLayout>
     </ScrollView>
 
+    <!-- Guess dialog (hidden by default, shown when needed). -->
     <ScrollView
         android:id="@+id/scrollViewGuessDialog"
         android:layout_width="0dp"
@@ -418,11 +430,13 @@
             android:gravity="start|center_horizontal"
             android:orientation="vertical">
 
+            <!-- Header. -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/linearLayoutGuessDialogHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
+                <!-- "Dismiss" button. -->
                 <LinearLayout
                     android:id="@+id/linearLayoutDismiss"
                     android:layout_width="wrap_content"
@@ -444,6 +458,7 @@
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <!-- Dialog contents. -->
             <LinearLayout
                 android:id="@+id/linearLayoutGuessDisplay"
                 android:layout_width="match_parent"
@@ -451,6 +466,7 @@
                 android:gravity="start|center_horizontal"
                 android:orientation="vertical">
 
+                <!-- Elaborate hint. -->
                 <LinearLayout
                     android:id="@+id/linearLayoutHint"
                     android:layout_width="match_parent"
@@ -466,6 +482,7 @@
                         android:gravity="center" />
                 </LinearLayout>
 
+                <!-- [EditText] for entering guess. -->
                 <LinearLayout
                     android:id="@+id/linearLayoutEnterGuess"
                     android:layout_width="match_parent"
@@ -486,6 +503,7 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- "Give up" and "Try" buttons. -->
             <LinearLayout
                 android:id="@+id/linearLayoutGuessButtons"
                 android:layout_width="match_parent"
@@ -494,6 +512,7 @@
                 android:gravity="start|center_vertical"
                 android:orientation="horizontal">
 
+                <!-- "Give up" button. -->
                 <LinearLayout
                     android:id="@+id/linearLayoutGiveUp"
                     android:layout_width="0dp"
@@ -513,6 +532,7 @@
                         android:text="@string/guess_dialog_give_up" />
                 </LinearLayout>
 
+                <!-- "Try" button. -->
                 <LinearLayout
                     android:id="@+id/linearLayoutGuess"
                     android:layout_width="0dp"

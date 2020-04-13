@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- Main strings. -->
 <resources>
+    <!-- App information. -->
     <string name="app_name" translatable="true">Associativity</string>
     <string name="app_description" translatable="true">The famous associations game</string>
 
+    <!-- README for custom game tables. -->
     <string name="custom_game_tables_readme_filename" translatable="false">README.txt</string>
-    <string name="custom_game_tables_readme" translatable="true">Put custom game tables into \"%s\" directory (folder).\n\nFollow https://github.com/DavorPenzar/Associativity/blob/master/README.md to see how to create custom game tables.</string>
+    <string name="custom_game_tables_readme" translatable="true">Put custom game tables into \"%s\" directory (folder).\n\nFollow http://github.com/DavorPenzar/Associativity/blob/master/README.md to see how to create custom game tables.</string>
 
-    <string name="display_parent_child_items" translatable="false">%1$s: %2$s</string>
-
+    <!-- Difficulty levels and related strings. -->
     <string name="dif" translatable="false">Dif</string>
     <string name="difficulty_choose" translatable="true">Choose difficulty level</string>
     <string name="difficulty_label_0" translatable="false">0</string>
@@ -31,26 +34,29 @@
         <item>@string/difficulty_level_3</item>
     </string-array>
 
+    <!-- Game strings. -->
     <string name="new_game" translatable="true">New game</string>
     <string name="game" translatable="true">Game</string>
 
-    <string name="stopwatch_sign_minus" translatable="false">-</string>
-    <string name="stopwatch_sign_plus" translatable="false">+</string>
+    <!-- Stopwatch strings. -->
     <plurals name="stopwatch_days" translatable="true">
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>
     </plurals>
 
+    <!-- Game table strings. -->
     <string name="game_table_row" translatable="true">Row</string>
     <string name="game_table_column" translatable="true">Column</string>
     <string name="game_table_solution" translatable="true">Solution</string>
     <string name="game_table_closed" translatable="true">Closed</string>
     <string name="game_table_open" translatable="true">Open</string>
 
+    <!-- Guess dialog strings. -->
     <string name="guess_dialog_dismiss" translatable="true">Dismiss</string>
     <string name="guess_dialog_give_up" translatable="true">Give up</string>
     <string name="guess_dialog_try" translatable="true">Try</string>
 
+    <!-- Guess dialog feedback strings. -->
     <string name="guess_dialog_feedback_smiley_face" translatable="false">\ud83d\ude0a</string>
     <string name="guess_dialog_feedback_sad_face" translatable="false">\ud83d\ude1e</string>
     <string name="guess_dialog_feedback_correct" translatable="true">Correct! %s</string>

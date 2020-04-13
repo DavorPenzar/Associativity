@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- Rows labels. -->
 <resources>
     <string name="row" translatable="false">Row</string>
 

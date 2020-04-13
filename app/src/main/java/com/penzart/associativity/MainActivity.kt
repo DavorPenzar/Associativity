@@ -80,7 +80,12 @@ class MainActivity : AppCompatActivity() {
     /**
      * The companion object of the class [MainActivity].
      *
+     * @property SIGN_PLUS String of the positive sign—a single plus, i. e. `"+"`.
+     * @property SIGN_MINUS String of the negative sign—a single minus, i. e. `"-"`.
+     *
      * @property COMMA_DELIMITER String between items separated by a comma—a comma followed by a single whitespace, i. e. `", "`.
+     *
+     * @property DISPLAY_PARENT_CHILD_TEXT String format for displaying parent and child as `"${parent}: ${child}"`.
      *
      * @property TIME_SPACE_DELIMITER String between days and hours in time's string representation—a single whitespace, i. e. `" "`.
      * @property TIME_COLON_DELIMITER String between hours, minutes and seconds in time's string representation—a colon, i. e. `":"`.
@@ -117,7 +122,12 @@ class MainActivity : AppCompatActivity() {
         //  PRIVATE CONSTANTS                                                                     //
         ////////////////////////////////////////////////////////////////////////////////////////////
 
+        private const val SIGN_PLUS: String = "+"
+        private const val SIGN_MINUS: String = "-"
+
         private const val COMMA_DELIMITER: String = ", "
+
+        private const val DISPLAY_PARENT_CHILD_TEXT: String = "%s: %s"
 
         private const val TIME_SPACE_DELIMITER: String = " "
         private const val TIME_COLON_DELIMITER: String = ":"
@@ -565,10 +575,10 @@ class MainActivity : AppCompatActivity() {
         val absoluteDays = absoluteHours / 24L
 
         // Initialise the expression as a sign or an empty string.
-        var timeExpression = when (milliseconds < 0L) {
-            true -> resources.getString(R.string.stopwatch_sign_minus)
+        var timeExpression = when (includeSign) {
+            true -> SIGN_MINUS
             else -> when (includeSign) {
-                true -> resources.getString(R.string.stopwatch_sign_plus)
+                true -> SIGN_PLUS
                 else -> String()
             }
         }
@@ -1570,7 +1580,7 @@ class MainActivity : AppCompatActivity() {
     private fun displayElaborateGuessHint(hint: String?, target: String? = null) {
         textViewHint.text = when (target) {
             null -> hint
-            else -> resources.getString(R.string.display_parent_child_items, target, hint)
+            else -> DISPLAY_PARENT_CHILD_TEXT.format(target, hint)
         }
     }
 
@@ -1653,7 +1663,7 @@ class MainActivity : AppCompatActivity() {
     private fun displayCurrentText(text: String?, origin: String? = null) {
         textViewCurrent.text = when (origin) {
             null -> text
-            else -> resources.getString(R.string.display_parent_child_items, origin, text)
+            else -> DISPLAY_PARENT_CHILD_TEXT.format(origin, text)
         }
     }
 
