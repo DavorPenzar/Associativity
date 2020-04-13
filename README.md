@@ -6,7 +6,7 @@ The documentation of classes and methods is given as inline documentation in the
 
 The rest of the [*README.md* file](README.md) explains how to create new game tables. No special computer knowledge is needed for this part and anyone is invited to give it a try &#128077;
 
-Developers wanting to build the app should open the project in [*Android Studio*](http://developer.android.com/studio/). Not only was this project created using the mentioned software meaning the software will know how to build the app, but this is also official [*Android*](http://android.com/)'s development software for creating apps and I highly recommend it for its user-friendliness, even for beginners such as myself (this is my first app).
+Developers wanting to build the app should open the project in [*Android Studio*](http://developer.android.com/studio/). Not only was this project created using the mentioned software meaning the software will know how to build the app, but this is also official [*Android*'s](http://android.com/) development software for creating apps and I highly recommend it for its user-friendliness, even for beginners such as myself (this is my first app).
 
 ##  Defining New Game Tables
 
