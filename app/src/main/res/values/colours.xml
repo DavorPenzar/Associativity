@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Colour theme was created using http://coolors.co/. -->
+<resources>
+    <color name="firebrick">#B22222</color>
+    <color name="firebrick_pastel">#C04A4A</color>
+    <color name="firebrick_light">#B93636</color>
+    <color name="firebrick_deep">#A21F1F</color>
+    <color name="firebrick_dark">#921C1C</color>
+
+    <color name="deep_space_sparkle">#4A646C</color>
+    <color name="deep_space_sparkle_pastel">#6A8086</color>
+    <color name="deep_space_sparkle_light">#5A7279</color>
+    <color name="deep_space_sparkle_deep">#445B63</color>
+    <color name="deep_space_sparkle_dark">#3d5259</color>
+
+    <color name="peach">#FFE3C6</color>
+    <color name="peach_pastel">#FFE8D0</color>
+    <color name="peach_light">#FFE5CB</color>
+    <color name="peach_deep">#E8CFB4</color>
+    <color name="peach_dark">#D1BAA3</color>
+
+    <color name="tigers_eye">#E08D3C</color>
+    <color name="tigers_eye_pastel">#E5A15F</color>
+    <color name="tigers_eye_light">#E2974D</color>
+    <color name="tigers_eye_deep">#CC8137</color>
+    <color name="tigers_eye_dark">#B87432</color>
+
+    <color name="dark_scarlet">#560319</color>
+    <color name="dark_scarlet_pastel">#743042</color>
+    <color name="dark_scarlet_light">#65192D</color>
+    <color name="dark_scarlet_deep">#4F0317</color>
+    <color name="dark_scarlet_dark">#470315</color>
+
+    <color name="bdazzled_blue">#2E5894</color>
+    <color name="bdazzled_blue_pastel">#5476A7</color>
+    <color name="bdazzled_blue_light">#41679D</color>
+    <color name="bdazzled_blue_deep">#2A5087</color>
+    <color name="bdazzled_blue_dark">#26497A</color>
+
+    <color name="baby_powder">#FEFEFA</color>
+    <color name="baby_powder_pastel">#FEFEFC</color>
+    <color name="baby_powder_light">#FEFEFB</color>
+    <color name="baby_powder_deep">#E7E7E4</color>
+    <color name="baby_powder_dark">#D0D0CD</color>
+
+    <color name="colorPrimary">@color/firebrick</color>
+    <color name="colorPrimaryPastel">@color/firebrick_pastel</color>
+    <color name="colorPrimaryLight">@color/firebrick_light</color>
+    <color name="colorPrimaryDeep">@color/firebrick_deep</color>
+    <color name="colorPrimaryDark">@color/firebrick_dark</color>
+
+    <color name="colorSecondary">@color/deep_space_sparkle</color>
+    <color name="colorSecondaryPastel">@color/deep_space_sparkle_pastel</color>
+    <color name="colorSecondaryLight">@color/deep_space_sparkle_light</color>
+    <color name="colorSecondaryDeep">@color/deep_space_sparkle_deep</color>
+    <color name="colorSecondaryDark">@color/deep_space_sparkle_dark</color>
+
+    <color name="colorTertiary">@color/peach</color>
+    <color name="colorTertiaryPastel">@color/peach_pastel</color>
+    <color name="colorTertiaryLight">@color/peach_light</color>
+    <color name="colorTertiaryDeep">@color/peach_deep</color>
+    <color name="colorTertiaryDark">@color/peach_dark</color>
+
+    <color name="colorQuaternary">@color/dark_scarlet</color>
+    <color name="colorQuaternaryPastel">@color/dark_scarlet_pastel</color>
+    <color name="colorQuaternaryLight">@color/dark_scarlet_light</color>
+    <color name="colorQuaternaryDeep">@color/dark_scarlet_deep</color>
+    <color name="colorQuaternaryDark">@color/dark_scarlet_dark</color>
+
+    <color name="colorAccentPrimary">@color/bdazzled_blue</color>
+    <color name="colorAccentPrimaryPastel">@color/bdazzled_blue_pastel</color>
+    <color name="colorAccentPrimaryLight">@color/bdazzled_blue_light</color>
+    <color name="colorAccentPrimaryDeep">@color/bdazzled_blue_deep</color>
+    <color name="colorAccentPrimaryDark">@color/bdazzled_blue_dark</color>
+
+    <color name="colorAccentSecondary">@color/baby_powder</color>
+    <color name="colorAccentSecondaryPastel">@color/baby_powder_pastel</color>
+    <color name="colorAccentSecondaryLight">@color/baby_powder_light</color>
+    <color name="colorAccentSecondaryDeep">@color/baby_powder_deep</color>
+    <color name="colorAccentSecondaryDark">@color/baby_powder_dark</color>
+
+    <color name="colorAccent">@color/colorAccentPrimary</color>
+    <color name="colorAccentPastel">@color/colorAccentPrimaryPastel</color>
+    <color name="colorAccentLight">@color/colorAccentPrimaryLight</color>
+    <color name="colorAccentDeep">@color/colorAccentPrimaryDeep</color>
+    <color name="colorAccentDark">@color/colorAccentPrimaryDark</color>
+</resources>
