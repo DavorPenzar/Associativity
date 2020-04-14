@@ -1773,7 +1773,9 @@ class MainActivity : AppCompatActivity() {
         // Get the [button] of the [cell].
         val button: Button = findViewById(idOfCell(cell))
 
-        // Display the value of the [cell] in the [button] and set it to open.
+        // Visually change the appearance of the [button], display the value of the [cell] in the
+        // [button] and set it to open.
+        button.background = resources.getDrawable(R.drawable.open_cell_button, theme)
         button.text = value
         changeCellOpennes(cell, true)
 
@@ -1787,33 +1789,6 @@ class MainActivity : AppCompatActivity() {
         // Start the stopwatch if it has not started yet.
         if (!(hasStopwatchStarted() || hasStopwatchStopped()))
             startStopwatch()
-    }
-
-    /**
-     * Close a cell in the game table.
-     *
-     * @param cell Cell's label.
-     *
-     * @see isCellOpen
-     * @see isColumnOpen
-     * @see isFinalOpen
-     * @see openCell
-     * @see openColumn
-     * @see openFinal
-     * @see closeColumn
-     * @see closeFinal
-     *
-     */
-    private fun closeCell(cell: String) {
-        // Get the [button] of the cell.
-        val button: Button = findViewById(idOfCell(cell))
-
-        // Set the [button]'s text to the [cell]'s label and set it to closed.
-        button.text = cell
-        changeCellOpennes(cell, false)
-
-        // Change [onClick] of the [button].
-        button.setOnClickListener(this::clickOnClosedCell)
     }
 
     /**
@@ -1933,7 +1908,9 @@ class MainActivity : AppCompatActivity() {
         // Get the [button] of the [column]'s solution.
         val button: Button = findViewById(idOfColumn(column))
 
-        // Display the [column]'s main solution in the [button] and set it to open.
+        // Visually change the appearance of the [button], display the [column]'s main solution in
+        // the [button] and set it to open.
+        button.background = resources.getDrawable(R.drawable.open_column_button, theme)
         button.text = value
         changeColumnOpennes(column, true)
 
@@ -1943,38 +1920,6 @@ class MainActivity : AppCompatActivity() {
 
         // Change [onClick] of the [button].
         button.setOnClickListener(this::clickOnOpenColumn)
-    }
-
-    /**
-     * Close a column's solution.
-     *
-     * @param column Column's label.
-     *
-     * @see isCellOpen
-     * @see isColumnOpen
-     * @see isFinalOpen
-     * @see openCell
-     * @see openColumn
-     * @see openFinal
-     * @see closeCell
-     * @see closeFinal
-     *
-     */
-    private fun closeColumn(column: String, recursiveClose: Boolean = true) {
-        // Get the [button] of the [column] solution.
-        val button: Button = findViewById(idOfColumn(column))
-
-        // Set the [button]'s text to the [column]'s label and set it to closed.
-        button.text = column
-        changeColumnOpennes(column, false)
-
-        // Change [onClick] of the [button].
-        button.setOnClickListener(this::clickOnClosedColumn)
-
-        // Close all cells in the [column] if needed.
-        if (recursiveClose)
-            for (cell in arrayOfCells(column))
-                closeCell(cell)
     }
 
     /**
@@ -2088,8 +2033,9 @@ class MainActivity : AppCompatActivity() {
         // Get the [button] of the final solution.
         val button: Button = findViewById(idOfFinal())
 
-        // Set the [button]'s text to the actual value of the main final solution and set it to
-        // open.
+        // Visually change the appearance of the [button], display the main final solution in the
+        // [button] and set it to open.
+        button.background = resources.getDrawable(R.drawable.open_solution_button, theme)
         button.text = value
         changeFinalOpennes(true)
 
@@ -2099,43 +2045,6 @@ class MainActivity : AppCompatActivity() {
 
         // Change [onClick] of the [button].
         button.setOnClickListener(this::clickOnOpenFinal)
-    }
-
-    /**
-     * Close the final solution.
-     *
-     * The stopwatch is reset.
-     *
-     * @param recursiveClose If `true`, all columns' solutions and cells are closed as well.
-     *
-     * @see isCellOpen
-     * @see isColumnOpen
-     * @see isFinalOpen
-     * @see openCell
-     * @see openColumn
-     * @see openFinal
-     * @see closeCell
-     * @see closeColumn
-     *
-     */
-    private fun closeFinal(recursiveClose: Boolean = true) {
-        // Get the [button] of the final solution.
-        val button: Button = findViewById(idOfFinal())
-
-        // Set the [button]'s text to the solution string and set it to closed.
-        button.text = resources.getString(R.string.game_table_solution)
-        changeFinalOpennes(false)
-
-        // Change [onClick] of the [button].
-        button.setOnClickListener(this::clickOnClosedFinal)
-
-        // Close all columns' solutions and cells if needed.
-        if (recursiveClose)
-            for (column in arrayOfColumns())
-                closeColumn(column, true)
-
-        // Reset the stopwatch.
-        resetStopwatch()
     }
 
     /**

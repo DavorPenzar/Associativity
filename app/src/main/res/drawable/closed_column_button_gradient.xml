@@ -4,7 +4,8 @@
 
     <gradient
         android:angle="90"
-        android:centerColor="@color/colorAccentSecondary"
-        android:endColor="@color/colorAccentSecondaryLight"
-        android:startColor="@color/colorAccentSecondaryDeep" />
+        android:centerColor="@color/colorSecondary"
+        android:endColor="@color/colorSecondaryLight"
+        android:startColor="@color/colorSecondaryDeep" />
+    <stroke android:color="@android:color/black" android:width="@dimen/border_width_thin" />
 </shape>

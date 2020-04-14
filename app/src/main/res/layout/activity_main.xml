@@ -88,15 +88,18 @@
 
                 <TextView
                     android:id="@+id/textViewCurrent"
+                    style="@style/CurrentTextDisplay"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:gravity="center" />
+                    android:gravity="center"
+                    android:text="@string/app_name" />
             </LinearLayout>
 
             <!-- Game table and solutions. -->
             <LinearLayout
                 android:id="@+id/linearLayoutGame"
+                style="@style/GameTable"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start|center_horizontal"
@@ -615,10 +618,10 @@
 
         <LinearLayout
             android:id="@+id/linearLayoutGuessDialog"
+            style="@style/GuessDialog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@color/shadeWhite100Percent"
             android:gravity="start|center_horizontal"
             android:orientation="vertical">
 
