@@ -47,7 +47,7 @@ The format of the [*CSV* files](http://en.wikipedia.org/wiki/Comma-separated_val
 
 ### Game Table Format
 
-The actual format of tables define game tables is the following:
+The actual format of defining game tables is the following:
 
 1.  The table must contain **at least 6 rows**. Keep reading to see why.
 2.  In general, the table should contain 5 columns (some rows may contain only 4 cells, but that will be explained later). The first 4 columns represent columns *A*, *B*, *C* and *D* of the game table, while the last column represents the final solution.
