@@ -97,7 +97,6 @@
             <!-- Game table and solutions. -->
             <LinearLayout
                 android:id="@+id/linearLayoutGame"
-                style="?android:attr/buttonBarStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start|center_horizontal"
@@ -106,7 +105,6 @@
                 <!-- Game table. -->
                 <TableLayout
                     android:id="@+id/tableLayoutGameTable"
-                    style="?android:attr/buttonBarStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="start|center_horizontal"
@@ -114,280 +112,474 @@
 
                     <TableRow
                         android:id="@+id/tableRow1"
-                        style="?android:attr/buttonBarStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="start|center_vertical"
                         android:orientation="horizontal"
                         android:tag="@string/row_1">
 
-                        <Button
-                            android:id="@+id/buttonA1"
-                            style="?android:attr/buttonBarButtonStyle"
+                        <LinearLayout
+                            android:id="@+id/linearLayoutA1"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:onClick="clickOnClosedCell"
-                            android:tag="@string/cell_A1"
-                            android:text="@string/cell_A1" />
+                            android:orientation="vertical"
+                            android:tag="@string/cell_A1">
 
-                        <Button
-                            android:id="@+id/buttonB1"
-                            style="?android:attr/buttonBarButtonStyle"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:onClick="clickOnClosedCell"
-                            android:tag="@string/cell_B1"
-                            android:text="@string/cell_B1" />
+                            <Button
+                                android:id="@+id/buttonA1"
+                                style="@style/ClosedCellButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:onClick="clickOnClosedCell"
+                                android:tag="@string/cell_A1"
+                                android:text="@string/cell_A1" />
+                        </LinearLayout>
 
-                        <Button
-                            android:id="@+id/buttonC1"
-                            style="?android:attr/buttonBarButtonStyle"
+                        <LinearLayout
+                            android:id="@+id/linearLayoutB1"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:onClick="clickOnClosedCell"
-                            android:tag="@string/cell_C1"
-                            android:text="@string/cell_C1" />
+                            android:orientation="vertical"
+                            android:tag="@string/cell_B1">
 
-                        <Button
-                            android:id="@+id/buttonD1"
-                            style="?android:attr/buttonBarButtonStyle"
+                            <Button
+                                android:id="@+id/buttonB1"
+                                style="@style/ClosedCellButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:onClick="clickOnClosedCell"
+                                android:tag="@string/cell_B1"
+                                android:text="@string/cell_B1" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearLayoutC1"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:onClick="clickOnClosedCell"
-                            android:tag="@string/cell_D1"
-                            android:text="@string/cell_D1" />
+                            android:orientation="vertical"
+                            android:tag="@string/cell_C1">
+
+                            <Button
+                                android:id="@+id/buttonC1"
+                                style="@style/ClosedCellButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:onClick="clickOnClosedCell"
+                                android:tag="@string/cell_C1"
+                                android:text="@string/cell_C1" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearLayoutD1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:tag="@string/cell_D1">
+
+                            <Button
+                                android:id="@+id/buttonD1"
+                                style="@style/ClosedCellButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:onClick="clickOnClosedCell"
+                                android:tag="@string/cell_D1"
+                                android:text="@string/cell_D1" />
+                        </LinearLayout>
                     </TableRow>
 
                     <TableRow
                         android:id="@+id/tableRow2"
-                        style="?android:attr/buttonBarStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="start|center_vertical"
                         android:orientation="horizontal"
                         android:tag="@string/row_2">
 
-                        <Button
-                            android:id="@+id/buttonA2"
-                            style="?android:attr/buttonBarButtonStyle"
+                        <LinearLayout
+                            android:id="@+id/linearLayoutA2"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:onClick="clickOnClosedCell"
-                            android:tag="@string/cell_A2"
-                            android:text="@string/cell_A2" />
+                            android:orientation="vertical"
+                            android:tag="@string/cell_A2">
 
-                        <Button
-                            android:id="@+id/buttonB2"
-                            style="?android:attr/buttonBarButtonStyle"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:onClick="clickOnClosedCell"
-                            android:tag="@string/cell_B2"
-                            android:text="@string/cell_B2" />
+                            <Button
+                                android:id="@+id/buttonA2"
+                                style="@style/ClosedCellButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:onClick="clickOnClosedCell"
+                                android:tag="@string/cell_A2"
+                                android:text="@string/cell_A2" />
+                        </LinearLayout>
 
-                        <Button
-                            android:id="@+id/buttonC2"
-                            style="?android:attr/buttonBarButtonStyle"
+                        <LinearLayout
+                            android:id="@+id/linearLayoutB2"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:onClick="clickOnClosedCell"
-                            android:tag="@string/cell_C2"
-                            android:text="@string/cell_C2" />
+                            android:orientation="vertical"
+                            android:tag="@string/cell_B2">
 
-                        <Button
-                            android:id="@+id/buttonD2"
-                            style="?android:attr/buttonBarButtonStyle"
+                            <Button
+                                android:id="@+id/buttonB2"
+                                style="@style/ClosedCellButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:onClick="clickOnClosedCell"
+                                android:tag="@string/cell_B2"
+                                android:text="@string/cell_B2" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearLayoutC2"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:onClick="clickOnClosedCell"
-                            android:tag="@string/cell_D2"
-                            android:text="@string/cell_D2" />
+                            android:orientation="vertical"
+                            android:tag="@string/cell_C2">
+
+                            <Button
+                                android:id="@+id/buttonC2"
+                                style="@style/ClosedCellButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:onClick="clickOnClosedCell"
+                                android:tag="@string/cell_C2"
+                                android:text="@string/cell_C2" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearLayoutD2"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:tag="@string/cell_D2">
+
+                            <Button
+                                android:id="@+id/buttonD2"
+                                style="@style/ClosedCellButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:onClick="clickOnClosedCell"
+                                android:tag="@string/cell_D2"
+                                android:text="@string/cell_D2" />
+                        </LinearLayout>
                     </TableRow>
 
                     <TableRow
                         android:id="@+id/tableRow3"
-                        style="?android:attr/buttonBarStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="start|center_vertical"
                         android:orientation="horizontal"
                         android:tag="@string/row_3">
 
-                        <Button
-                            android:id="@+id/buttonA3"
-                            style="?android:attr/buttonBarButtonStyle"
+                        <LinearLayout
+                            android:id="@+id/linearLayoutA3"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:onClick="clickOnClosedCell"
-                            android:tag="@string/cell_A3"
-                            android:text="@string/cell_A3" />
+                            android:orientation="vertical"
+                            android:tag="@string/cell_A3">
 
-                        <Button
-                            android:id="@+id/buttonB3"
-                            style="?android:attr/buttonBarButtonStyle"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:onClick="clickOnClosedCell"
-                            android:tag="@string/cell_B3"
-                            android:text="@string/cell_B3" />
+                            <Button
+                                android:id="@+id/buttonA3"
+                                style="@style/ClosedCellButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:onClick="clickOnClosedCell"
+                                android:tag="@string/cell_A3"
+                                android:text="@string/cell_A3" />
+                        </LinearLayout>
 
-                        <Button
-                            android:id="@+id/buttonC3"
-                            style="?android:attr/buttonBarButtonStyle"
+                        <LinearLayout
+                            android:id="@+id/linearLayoutB3"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:onClick="clickOnClosedCell"
-                            android:tag="@string/cell_C3"
-                            android:text="@string/cell_C3" />
+                            android:orientation="vertical"
+                            android:tag="@string/cell_B3">
 
-                        <Button
-                            android:id="@+id/buttonD3"
-                            style="?android:attr/buttonBarButtonStyle"
+                            <Button
+                                android:id="@+id/buttonB3"
+                                style="@style/ClosedCellButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:onClick="clickOnClosedCell"
+                                android:tag="@string/cell_B3"
+                                android:text="@string/cell_B3" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearLayoutC3"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:onClick="clickOnClosedCell"
-                            android:tag="@string/cell_D3"
-                            android:text="@string/cell_D3" />
+                            android:orientation="vertical"
+                            android:tag="@string/cell_C3">
+
+                            <Button
+                                android:id="@+id/buttonC3"
+                                style="@style/ClosedCellButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:onClick="clickOnClosedCell"
+                                android:tag="@string/cell_C3"
+                                android:text="@string/cell_C3" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearLayoutD3"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:tag="@string/cell_D3">
+
+                            <Button
+                                android:id="@+id/buttonD3"
+                                style="@style/ClosedCellButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:onClick="clickOnClosedCell"
+                                android:tag="@string/cell_D3"
+                                android:text="@string/cell_D3" />
+                        </LinearLayout>
                     </TableRow>
 
                     <TableRow
                         android:id="@+id/tableRow4"
-                        style="?android:attr/buttonBarStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="start|center_vertical"
                         android:orientation="horizontal"
                         android:tag="@string/row_4">
 
-                        <Button
-                            android:id="@+id/buttonA4"
-                            style="?android:attr/buttonBarButtonStyle"
+                        <LinearLayout
+                            android:id="@+id/linearLayoutA4"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:onClick="clickOnClosedCell"
-                            android:tag="@string/cell_A4"
-                            android:text="@string/cell_A4" />
+                            android:orientation="vertical"
+                            android:tag="@string/cell_A4">
 
-                        <Button
-                            android:id="@+id/buttonB4"
-                            style="?android:attr/buttonBarButtonStyle"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:onClick="clickOnClosedCell"
-                            android:tag="@string/cell_B4"
-                            android:text="@string/cell_B4" />
+                            <Button
+                                android:id="@+id/buttonA4"
+                                style="@style/ClosedCellButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:onClick="clickOnClosedCell"
+                                android:tag="@string/cell_A4"
+                                android:text="@string/cell_A4" />
+                        </LinearLayout>
 
-                        <Button
-                            android:id="@+id/buttonC4"
-                            style="?android:attr/buttonBarButtonStyle"
+                        <LinearLayout
+                            android:id="@+id/linearLayoutB4"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:onClick="clickOnClosedCell"
-                            android:tag="@string/cell_C4"
-                            android:text="@string/cell_C4" />
+                            android:orientation="vertical"
+                            android:tag="@string/cell_B4">
 
-                        <Button
-                            android:id="@+id/buttonD4"
-                            style="?android:attr/buttonBarButtonStyle"
+                            <Button
+                                android:id="@+id/buttonB4"
+                                style="@style/ClosedCellButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:onClick="clickOnClosedCell"
+                                android:tag="@string/cell_B4"
+                                android:text="@string/cell_B4" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearLayoutC4"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:onClick="clickOnClosedCell"
-                            android:tag="@string/cell_D4"
-                            android:text="@string/cell_D4" />
+                            android:orientation="vertical"
+                            android:tag="@string/cell_C4">
+
+                            <Button
+                                android:id="@+id/buttonC4"
+                                style="@style/ClosedCellButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:onClick="clickOnClosedCell"
+                                android:tag="@string/cell_C4"
+                                android:text="@string/cell_C4" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearLayoutD4"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:tag="@string/cell_D4">
+
+                            <Button
+                                android:id="@+id/buttonD4"
+                                style="@style/ClosedCellButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:onClick="clickOnClosedCell"
+                                android:tag="@string/cell_D4"
+                                android:text="@string/cell_D4" />
+                        </LinearLayout>
                     </TableRow>
 
                     <!-- Columns' solutions. -->
                     <TableRow
                         android:id="@+id/tableRowCol"
-                        style="?android:attr/buttonBarStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="start|center_vertical"
                         android:orientation="horizontal"
                         android:tag="@string/col">
 
-                        <Button
-                            android:id="@+id/buttonA"
-                            style="?android:attr/buttonBarButtonStyle"
+                        <LinearLayout
+                            android:id="@+id/linearLayoutA"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:onClick="clickOnClosedColumn"
-                            android:tag="@string/column_A"
-                            android:text="@string/column_A" />
+                            android:orientation="vertical"
+                            android:tag="@string/column_A">
 
-                        <Button
-                            android:id="@+id/buttonB"
-                            style="?android:attr/buttonBarButtonStyle"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:onClick="clickOnClosedColumn"
-                            android:tag="@string/column_B"
-                            android:text="@string/column_B" />
+                            <Button
+                                android:id="@+id/buttonA"
+                                style="@style/ClosedColumnButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:onClick="clickOnClosedColumn"
+                                android:tag="@string/column_A"
+                                android:text="@string/column_A" />
+                        </LinearLayout>
 
-                        <Button
-                            android:id="@+id/buttonC"
-                            style="?android:attr/buttonBarButtonStyle"
+                        <LinearLayout
+                            android:id="@+id/linearLayoutB"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:onClick="clickOnClosedColumn"
-                            android:tag="@string/column_C"
-                            android:text="@string/column_C" />
+                            android:orientation="vertical"
+                            android:tag="@string/column_B">
 
-                        <Button
-                            android:id="@+id/buttonD"
-                            style="?android:attr/buttonBarButtonStyle"
+                            <Button
+                                android:id="@+id/buttonB"
+                                style="@style/ClosedColumnButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:onClick="clickOnClosedColumn"
+                                android:tag="@string/column_B"
+                                android:text="@string/column_B" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearLayoutC"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:onClick="clickOnClosedColumn"
-                            android:tag="@string/column_D"
-                            android:text="@string/column_D" />
+                            android:orientation="vertical"
+                            android:tag="@string/column_C">
+
+                            <Button
+                                android:id="@+id/buttonC"
+                                style="@style/ClosedColumnButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:onClick="clickOnClosedColumn"
+                                android:tag="@string/column_C"
+                                android:text="@string/column_C" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearLayoutD"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:tag="@string/column_D">
+
+                            <Button
+                                android:id="@+id/buttonD"
+                                style="@style/ClosedColumnButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:onClick="clickOnClosedColumn"
+                                android:tag="@string/column_D"
+                                android:text="@string/column_D" />
+                        </LinearLayout>
                     </TableRow>
                 </TableLayout>
 
                 <!-- Final solution. -->
                 <LinearLayout
                     android:id="@+id/linearLayoutSol"
-                    style="?android:attr/buttonBarStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -395,7 +587,7 @@
 
                     <Button
                         android:id="@+id/buttonSol"
-                        style="?android:attr/buttonBarButtonStyle"
+                        style="@style/ClosedSolutionButton"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
