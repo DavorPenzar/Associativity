@@ -2,6 +2,14 @@
 
 <!-- Colour theme was created using http://coolors.co/. -->
 <resources>
+    <color name="black">#000000</color>
+    <color name="blackish_grey">#404040</color>
+    <color name="grey">#808080</color>
+    <color name="dark_grey">#A9A9A9</color>
+    <color name="silver">#C0C0C0</color>
+    <color name="light_grey">#D3D3D3</color>
+    <color name="white">#FFFFFF</color>
+
     <color name="firebrick">#B22222</color>
     <color name="firebrick_pastel">#C04A4A</color>
     <color name="firebrick_light">#B93636</color>
@@ -62,11 +70,17 @@
     <color name="colorTertiaryDeep">@color/peach_deep</color>
     <color name="colorTertiaryDark">@color/peach_dark</color>
 
-    <color name="colorQuaternary">@color/dark_scarlet</color>
-    <color name="colorQuaternaryPastel">@color/dark_scarlet_pastel</color>
-    <color name="colorQuaternaryLight">@color/dark_scarlet_light</color>
-    <color name="colorQuaternaryDeep">@color/dark_scarlet_deep</color>
-    <color name="colorQuaternaryDark">@color/dark_scarlet_dark</color>
+    <color name="colorQuaternary">@color/tigers_eye</color>
+    <color name="colorQuaternaryPastel">@color/tigers_eye_pastel</color>
+    <color name="colorQuaternaryLight">@color/tigers_eye_light</color>
+    <color name="colorQuaternaryDeep">@color/tigers_eye_deep</color>
+    <color name="colorQuaternaryDark">@color/tigers_eye_dark</color>
+
+    <color name="colorQuinary">@color/dark_scarlet</color>
+    <color name="colorQuinaryPastel">@color/dark_scarlet_pastel</color>
+    <color name="colorQuinaryLight">@color/dark_scarlet_light</color>
+    <color name="colorQuinaryDeep">@color/dark_scarlet_deep</color>
+    <color name="colorQuinaryDark">@color/dark_scarlet_dark</color>
 
     <color name="colorAccentPrimary">@color/bdazzled_blue</color>
     <color name="colorAccentPrimaryPastel">@color/bdazzled_blue_pastel</color>

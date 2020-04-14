@@ -14,11 +14,9 @@
 
         <!-- Letter "A". -->
         <path
-            android:fillAlpha="1"
-            android:fillColor="#000000"
+            android:fillColor="@color/colorQuaternary"
             android:pathData="M57.534,196.4 L135.134,53.6h18.8l17.6,142.8h-17.6l-5.4,-44.4h-48.2l-23.2,44.4zM108.934,136h37.8l-3.2,-30q-0.8,-7.6 -1.6,-16.8 -0.6,-9.2 -0.8,-16.2h-0.6q-3.2,7.6 -7.4,16.4 -4.2,8.6 -8.8,17.4z"
             android:strokeWidth="1.08"
-            android:strokeAlpha="1"
-            android:strokeColor="#00ffff" />
+            android:strokeColor="@color/black" />
     </group>
 </vector>
