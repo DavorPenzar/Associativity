@@ -110,7 +110,7 @@ class LauncherActivity : AppCompatActivity() {
      *
      * @param button A difficulty level choosing button
      *
-     * @return The difficulty level label represented by the [button].
+     * @return The difficulty level label represented by [button].
      *
      */
     private fun retrieveGameDifficulty(button: Button): Int {
@@ -208,7 +208,7 @@ class LauncherActivity : AppCompatActivity() {
      *
      */
     private fun enableDifficulty(difficulty: Int) {
-        // Get the [button] for choosing the [difficulty] level.
+        // Get [button] for choosing the [difficulty] level.
         val button: Button = findViewById(idOfButton(difficulty))
 
         // Enable [button].

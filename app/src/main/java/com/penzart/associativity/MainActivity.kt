@@ -263,18 +263,18 @@ class MainActivity : AppCompatActivity() {
          * @param guess The given guess.
          * @param acceptables Acceptable answers.
          *
-         * @return If the [guess] is an acceptable solution, `true`; `false` otherwise.
+         * @return If [guess] is an acceptable solution, `true`; `false` otherwise.
          *
          * @see fixAcceptables
          *
          */
         private fun isAcceptable(guess: String, acceptables: Array<String>): Boolean {
-            // Try to find the [guess] among [acceptables], case-insensitively.
+            // Try to find [guess] among [acceptables], case-insensitively.
             for (acceptable in acceptables)
                 if (guess.equals(acceptable, true))
                     return true
 
-            // Return `false` if the [guess] was not found.
+            // Return `false` if [guess] was not found.
             return false
         }
 
@@ -310,7 +310,7 @@ class MainActivity : AppCompatActivity() {
          * Open a random game table with solutions.
          *
          * The method returns a random table read from a file in the appropriate subdirectory of
-         * game tables (from the external storage or the [assets]).
+         * game tables (from the external storage or [assets]).
          *
          * If [difficultyLevel] is `0`, [filesDir] must not be `null` but has to be a valid path to
          * external storage; otherwise [assets] must not be `null` but be a valid [AssetManager].
@@ -453,7 +453,7 @@ class MainActivity : AppCompatActivity() {
             readmeFilename: String? = null,
             readmeText: String? = null
         ) {
-            // Construct the path of the [subdirectory] of custom game tables.
+            // Construct the path of [subdirectory] of custom game tables.
             val subdirectory: String = Paths.get(
                 filesDir.path,
                 constructDifficultyLevelSubdirectoryPath(rootDirectory, 0)
@@ -463,7 +463,7 @@ class MainActivity : AppCompatActivity() {
             if (
                 when (Files.exists(Paths.get(subdirectory))) {
                     true -> {
-                        // Open the [subdirectory]
+                        // Open [subdirectory].
                         val file: File = File(subdirectory)
 
                         // If [file] is not a directory, delete it and set `true`.  Otherwise set
@@ -684,7 +684,7 @@ class MainActivity : AppCompatActivity() {
      *
      * @param button A game button.
      *
-     * @return The label of the element represented by the [button].
+     * @return The label of the element represented by [button].
      *
      */
     private fun retrieveGameElementLabel(button: Button): String {
@@ -696,7 +696,7 @@ class MainActivity : AppCompatActivity() {
      *
      * @param cell Label of the cell.
      *
-     * @return Id of the button of the [cell].
+     * @return Id of the button of [cell].
      *
      * @see idOfColumn
      * @see idOfFinal
