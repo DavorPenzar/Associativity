@@ -132,7 +132,7 @@ class MainActivity : AppCompatActivity() {
         private const val TIME_SPACE_DELIMITER: String = " "
         private const val TIME_COLON_DELIMITER: String = ":"
         private const val HOURS_FORMAT: String = "%02d"
-        private const val MINUTES_SECONDS_FORMAT: String = "%02d%s%06.3f"
+        private const val MINUTES_SECONDS_FORMAT: String = "%02d%s%04.1f"
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -851,9 +851,10 @@ class MainActivity : AppCompatActivity() {
     /**
      * Read a random table with solutions.
      *
-     * The method reads from `randomGameTable(rootDirectory, difficultyLevel, filesDir, assets)`
-     * using [TableReader.readAssociationsTable] and closes the [InputStream].  The table that was
-     * read is then returned.
+     * The method reads from
+     * `randomGameTable(rootDirectory, difficultyLevel, getExternalFilesDir(null), assets)` using
+     * [TableReader.readAssociationsTable] and closes the [InputStream].  The table that was read is
+     * then returned.
      *
      * @param rootDirectory The root directory of the game tables sorted in subdirectories by their difficulty level.
      * @param difficultyLevel Difficulty level of the desired game table.
@@ -876,7 +877,7 @@ class MainActivity : AppCompatActivity() {
             rootDirectory,
             difficultyLevel,
             assets,
-            filesDir
+            getExternalFilesDir(null)
         )
 
         // Read the table from [inputStream].

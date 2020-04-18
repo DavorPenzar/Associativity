@@ -139,7 +139,7 @@ class LauncherActivity : AppCompatActivity() {
      * Check if a difficulty level's assets subdirectory is non-empty meaning the difficulty level should be enabled.
      *
      * The method returns
-     * `MainActivity.isGameTablesSubdirectoryNonEmpty(MainActivity.GAME_TABLES_DEFAULT_DIRECTORY, difficulty, filesDir, assets)`.
+     * `MainActivity.isGameTablesSubdirectoryNonEmpty(MainActivity.GAME_TABLES_DEFAULT_DIRECTORY, difficulty, getExternalFilesDir(null), assets)`.
      *
      * @param difficulty Difficulty level label.
      *
@@ -153,7 +153,7 @@ class LauncherActivity : AppCompatActivity() {
             MainActivity.GAME_TABLES_DEFAULT_DIRECTORY,
             difficulty,
             assets,
-            filesDir
+            getExternalFilesDir(null)
         )
     }
 
@@ -338,7 +338,7 @@ class LauncherActivity : AppCompatActivity() {
         // Initialise external storage for defining custom game tables.
         MainActivity.initialiseStorage(
             MainActivity.GAME_TABLES_DEFAULT_DIRECTORY,
-            filesDir,
+            getExternalFilesDir(null)!!,
             resources.getString(R.string.custom_game_tables_readme_filename),
             resources.getString(
                 R.string.custom_game_tables_readme,
