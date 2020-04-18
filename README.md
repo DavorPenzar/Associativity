@@ -123,6 +123,8 @@ The easiest way to create a [*CSV* file](http://en.wikipedia.org/wiki/Comma-sepa
 
 Again, be sure to add actual solutions, not strings such as *XXXXX*, in rows 6 until the end. Of course, if your game table is a *kinky* one and one of the solutions or an alternative acceptable answer is *XXX*, then you *should* put *XXX* as the answer in the corresponding column. Keep in mind that the final solution and its alternative acceptable answers are placed in the column *E* from the sixth row downward.
 
+Examples of valid game tables are provided in [*examples/game_tables* subdirectory](examples/game_tables). These game tables are the same as the above, but the solutions are unmasked. Note that only the [*CSV* table](http://en.wikipedia.org/wiki/Comma-separated_values) is readable by the app, the other formats are provided merely to show how to define such tables in various spreadsheet software.
+
 The next step is to export the sheet to a [*CSV* file](http://en.wikipedia.org/wiki/Comma-separated_values). This is usually done by *File* > *Export as&hellip;*/*Save as&hellip;*/*Download&hellip;* and choosing [*CSV*](http://en.wikipedia.org/wiki/Comma-separated_values) as the format. As mentioned above, default options will probably be OK, but check [**Supported *CSV* Format**](#supported-csv-format) to see which options to actually select.
 
 ### Adding Game Tables to the App
