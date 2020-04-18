@@ -1678,7 +1678,7 @@ class MainActivity : AppCompatActivity() {
      *
      * @param cell Cell's label.
      *
-     * @return If the [cell] is open, `true`; `false` otherwise.
+     * @return If [cell] is open, `true`; `false` otherwise.
      *
      * @see isColumnOpen
      * @see isFinalOpen
@@ -1704,7 +1704,7 @@ class MainActivity : AppCompatActivity() {
      * cell call [openCell] method which will in turn call this method among doing other things.**
      *
      * @param cell Cell's label.
-     * @param openness New openness of the [cell].
+     * @param openness New openness of [cell].
      *
      * @see isCellOpen
      * @see isColumnOpen
@@ -1739,10 +1739,10 @@ class MainActivity : AppCompatActivity() {
     /**
      * Set a cell's value.
      *
-     * If the old value of the [cell] is displayed somewhere, the display will not be updated.
+     * If the old value of [cell] is displayed somewhere, the display will not be updated.
      *
      * @param cell Cell's label.
-     * @param value New value of the [cell].
+     * @param value New value of [cell].
      *
      * @see cellValue
      *
@@ -1768,14 +1768,14 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun openCell(cell: String, displayContent: Boolean = true) {
-        // Get the [value] of the [cell].
+        // Get [value] of [cell].
         val value: String = cellValue(cell)
 
-        // Get the [button] of the [cell].
+        // Get [button] of [cell].
         val button: Button = findViewById(idOfCell(cell))
 
-        // Visually change the appearance of the [button], display the value of the [cell] in the
-        // [button] and set it to open.
+        // Visually change the appearance of [button], display the value of [cell] in  [button] and
+        // set it to open.
         button.background = resources.getDrawable(R.drawable.open_cell_button, theme)
         button.text = value
         changeCellOpennes(cell, true)
@@ -1784,7 +1784,7 @@ class MainActivity : AppCompatActivity() {
         if (displayContent)
             displayCurrentText(value, cell)
 
-        // Change [onClick] of the [button].
+        // Change [onClick] of [button].
         button.setOnClickListener(this::clickOnOpenCell)
 
         // Start the stopwatch if it has not started yet.
@@ -1898,7 +1898,7 @@ class MainActivity : AppCompatActivity() {
         recursiveOpen: Boolean = true,
         displayContent: Boolean = true
     ) {
-        // Open all cells in the [column] first if needed.
+        // Open all cells in [column] first if needed.
         if (recursiveOpen)
             for (cell in arrayOfCells(column))
                 openCell(cell, displayContent = false)
@@ -1906,11 +1906,11 @@ class MainActivity : AppCompatActivity() {
         // Get the [column]'s main solution.
         val value: String = columnValue(column)[0]
 
-        // Get the [button] of the [column]'s solution.
+        // Get [button] of the [column]'s solution.
         val button: Button = findViewById(idOfColumn(column))
 
-        // Visually change the appearance of the [button], display the [column]'s main solution in
-        // the [button] and set it to open.
+        // Visually change the appearance of [button], display the [column]'s main solution in
+        // [button] and set it to open.
         button.background = resources.getDrawable(R.drawable.open_column_button, theme)
         button.text = value
         changeColumnOpennes(column, true)
@@ -1919,7 +1919,7 @@ class MainActivity : AppCompatActivity() {
         if (displayContent)
             displayCurrentText(value, column)
 
-        // Change [onClick] of the [button].
+        // Change [onClick] of [button].
         button.setOnClickListener(this::clickOnOpenColumn)
     }
 
@@ -2031,11 +2031,11 @@ class MainActivity : AppCompatActivity() {
         // Get the main final solution.
         val value: String = finalValue()[0]
 
-        // Get the [button] of the final solution.
+        // Get [button] of the final solution.
         val button: Button = findViewById(idOfFinal())
 
-        // Visually change the appearance of the [button], display the main final solution in the
-        // [button] and set it to open.
+        // Visually change the appearance of [button], display the main final solution in [button]
+        // and set it to open.
         button.background = resources.getDrawable(R.drawable.open_solution_button, theme)
         button.text = value
         changeFinalOpennes(true)
@@ -2044,7 +2044,7 @@ class MainActivity : AppCompatActivity() {
         if (displayContent)
             displayCurrentText(value)
 
-        // Change [onClick] of the [button].
+        // Change [onClick] of [button].
         button.setOnClickListener(this::clickOnOpenFinal)
     }
 
@@ -2098,10 +2098,10 @@ class MainActivity : AppCompatActivity() {
      * On-click method for buttons of closed columns' solutions in the game table.
      *
      * When called,
-     * 1. if any of the column's cells is open, the [offerColumnGuess] method is called
+     * 1. if any of the column's cells is open, [offerColumnGuess] method is called
      * 2. otherwise column's label is displayed in [textViewCurrent].
      *
-     * If the [offerColumnGuess] method is called, the argument `offerGivingUp` will be set to
+     * If [offerColumnGuess] method is called, the argument `offerGivingUp` will be set to
      * `true` if and only if all cells in the column are opened.
      *
      * @param it The button of the column's solution (instance of [Button] class).
@@ -2122,13 +2122,13 @@ class MainActivity : AppCompatActivity() {
         // Get the column's label.
         val column: String = retrieveGameElementLabel(it as Button)
 
-        // Get the array of cells' labels in the [column].
+        // Get the array of cells' labels in [column].
         val cells: Array<String> = arrayOfCells(column)
 
-        // Initialise the array of open values in the [column].
+        // Initialise the array of open values in [column].
         val open: Array<String> = Array(cells.size) { String() }
 
-        // Of all the cells in the [column], copy only the values of open among them into the array
+        // Of all the cells in [column], copy only the values of open among them into the array
         // [open].  The variable [n] represents their quantity.
 
         var n: Int = 0
@@ -2172,11 +2172,11 @@ class MainActivity : AppCompatActivity() {
      * On-click method for the button of closed final solution.
      *
      * When called,
-     * 1. if any of the columns' solutions is opened, the [offerFinalGuess] method is called
+     * 1. if any of the columns' solutions is opened, [offerFinalGuess] method is called
      * 2. otherwise the solution string is displayed in [textViewCurrent].
      *
-     * If the [offerColumnGuess] method is called, the argument `offerGivingUp` will be set to
-     * `true` if and only if all columns are opened.
+     * If [offerColumnGuess] method is called, the argument `offerGivingUp` will be set to `true` if
+     * and only if all columns are opened.
      *
      * @param it The button of the column's solution (instance of [Button] class).
      *
@@ -2248,7 +2248,7 @@ class MainActivity : AppCompatActivity() {
      * The guess dialog is opened with correct parameters.
      *
      * @param column Column's label.
-     * @param hint Array of values of open cells in the [column].
+     * @param hint Array of values of open cells in [column].
      * @param offerGivingUp If `true`, [buttonGiveUp] is enabled.
      *
      * @see clickOnClosedCell
@@ -2315,12 +2315,12 @@ class MainActivity : AppCompatActivity() {
      * Make [buttonGuess] respond to guessing a column's solution.
      *
      * When clicked, it is checked whether or not the guess typed in [editTextEnterGuess] is correct
-     * or not.  If it is correct, the [column] and its solution are opened, otherwise the player is
+     * or not.  If it is correct, [column] and its solution are opened, otherwise the player is
      * informed their guess was wrong by displaying the message in [textViewCurrent].  In the end
      * the guess dialog is closed.
      *
-     * Also, clicking [buttonGiveUp] will automatically open the [column] and its solution if the
-     * button is enabled (if [isGuessGivingUpAllowed] returns `true`).
+     * Also, clicking [buttonGiveUp] will automatically open [column] and its solution if the button
+     * is enabled (if [isGuessGivingUpAllowed] method returns `true`).
      *
      * @param column Column's label.
      *
@@ -2390,7 +2390,7 @@ class MainActivity : AppCompatActivity() {
      * [textViewCurrent].  In the end the guess dialog is closed.
      *
      * Also, clicking [buttonGiveUp] will automatically open the complete game table and the final
-     * solution if the button is enabled (if [isGuessGivingUpAllowed] returns `true`).
+     * solution if the button is enabled (if [isGuessGivingUpAllowed] method returns `true`).
      *
      * @see clickOnClosedCell
      * @see clickOnClosedColumn

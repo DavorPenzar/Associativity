@@ -260,6 +260,9 @@ class TableReader : Any {
         /**
          * Read a CSV input.
          *
+         * **Note: Unlike other CSV parsers, this particular CSV parser allows escaping expressions
+         * such as when setting string literals in C-family programming languages.**
+         *
          * The quotations, separator and escaping character of CSV files are explained by
          * [CSV_SINGLE_QUOTE], [CSV_DOUBLE_QUOTE], [CSV_SEPARATOR] and [CSV_ESCAPE_CHAR].  Lines
          * containing only whitespaces—checked by calling [Char.isWhitespace] method—are ignored
@@ -357,7 +360,7 @@ class TableReader : Any {
                 // `while`-loop.
                 val line: String = bufferedReader.readLine() ?: break
 
-                // Initialise the [row].
+                // Initialise [row].
                 val row: ArrayList<String> = ArrayList()
 
                 // Initialise [cell] builders.
@@ -376,26 +379,37 @@ class TableReader : Any {
                 var expectCellEnd: Boolean = false
                 var escaping: Boolean = false
 
-                // Read the line.
-                for (j in line.indices) {
+                // Read [line].
+                loop@ for (j in line.indices) {
                     // Get the current character as a [Char] and a [String].
                     val c: Char = line[j]
                     val s = c.toString()
 
-                    // Ignore leading or trailing whitespaces.  If a non-whitespace is read,
-                    // indicate that the line is not empty.
-                    if (c.isWhitespace()) {
-                        if ((cell.isEmpty() && insideQuotes == 0) || expectCellEnd)
-                            continue
-                    }
-                    else
-                        emptyLine = false
+                    // If double quotes were previously read after double quotes had already been
+                    // open, check if double double quotes have appeared.
+                    if (insideQuotes == -2)
+                        when (s) {
+                            // If double double quotes have appeared, add double quotes to [cell].
+                            CSV_DOUBLE_QUOTE -> {
+                                // Reset [insideQuotes] to `2`.
+                                insideQuotes = 2
 
-                    // Check if a separator or the end of the line were expected but were not found.
-                    if (expectCellEnd && s != CSV_SEPARATOR)
-                        throw IOException(
-                            CSV_EXPECTED_CELL_END_ERROR_MESSAGE.format(originName, i, j + 1)
-                        )
+                                // Add double quotes to [cell].
+                                cell.append(CSV_DOUBLE_QUOTE)
+
+                                // Continue to the next character.
+                                continue@loop
+                            }
+
+                            // Otherwise end [cell].
+                            else -> {
+                                // Close double quotes.
+                                insideQuotes = 0
+
+                                // Expect the end of [cell].
+                                expectCellEnd = true
+                            }
+                        }
 
                     // If an escaping expression is expected, parse it.
                     if (escaping) {
@@ -416,13 +430,28 @@ class TableReader : Any {
                         continue
                     }
 
+                    // Ignore leading or trailing whitespaces.  If a non-whitespace is read,
+                    // indicate that [line] is not empty.
+                    if (c.isWhitespace()) {
+                        if ((cell.isEmpty() && insideQuotes == 0) || expectCellEnd)
+                            continue
+                    }
+                    else
+                        emptyLine = false
+
+                    // Check if a separator or the end of the line were expected but were not found.
+                    if (expectCellEnd && s != CSV_SEPARATOR)
+                        throw IOException(
+                            CSV_EXPECTED_CELL_END_ERROR_MESSAGE.format(originName, i, j + 1)
+                        )
+
                     // If an escaping character is found, indicate the escaping command.
                     if (s == CSV_ESCAPE_CHAR) {
                         // Set the indicator of an escaping command to `true`.
                         escaping = true
 
                         // Continue to the next character.
-                        continue
+                        continue@loop
                     }
 
                     // Act accordingly to quotes environment.
@@ -430,8 +459,8 @@ class TableReader : Any {
                         // In case of no quotes environment:
                         0 -> when (s) {
                             CSV_SINGLE_QUOTE -> {
-                                // Opening quotes are allowed only at the beginning of a [cell].
-                                // Throw an exception if the [cell] is not empty.
+                                // Opening quotes are allowed only at the beginning of [cell].
+                                // Throw an exception if [cell] is not empty.
                                 if (cell.isNotEmpty())
                                     throw IOException(
                                         CSV_ILLEGAL_QUOTES_ERROR_MESSAGE.format(
@@ -447,7 +476,7 @@ class TableReader : Any {
 
                             CSV_DOUBLE_QUOTE -> {
                                 // Opening quotes are allowed only at the beginning of a [cell].
-                                // Throw an exception if the [cell] is not empty.
+                                // Throw an exception if [cell] is not empty.
                                 if (cell.isNotEmpty())
                                     throw IOException(
                                         CSV_ILLEGAL_QUOTES_ERROR_MESSAGE.format(
@@ -462,61 +491,58 @@ class TableReader : Any {
                             }
 
                             CSV_SEPARATOR -> {
-                                // Insert the [cell] in the [row] list of cells.
+                                // Insert [cell] in the [row] list of cells.
                                 insertCellInRow(row, cell, expectCellEnd)
 
-                                // Do not necessarily expect the end of the [cell] any more.
+                                // Do not necessarily expect the end of [cell] any more.
                                 expectCellEnd = false
 
                                 // Initialise a new [cell].
                                 cell = StringBuilder()
                             }
 
-                            // Otherwise just add the character to the [cell].
+                            // Otherwise just add the character to [cell].
                             else -> cell.append(s)
                         }
 
                         1 -> when (s) {
+                            // If a single quote have appeared, end [cell].
                             CSV_SINGLE_QUOTE -> {
                                 // Close single quotes.
                                 insideQuotes = 0
 
-                                // Expect the end of the [cell].
+                                // Expect the end of [cell].
                                 expectCellEnd = true
                             }
 
-                            // Otherwise just add the character to the [cell].
+                            // Otherwise just add the character to [cell].
                             else -> cell.append(s)
                         }
 
                         2 -> when (s) {
-                            CSV_DOUBLE_QUOTE -> {
-                                // Close double quotes.
-                                insideQuotes = 0
+                            // If double quotes have appeared, indicate the second double quotes by
+                            // setting [insideQuotes] to `-2`.
+                            CSV_DOUBLE_QUOTE -> insideQuotes = -2
 
-                                // Expect the end of the [cell].
-                                expectCellEnd = true
-                            }
-
-                            // Otherwise just add the character to the [cell].
+                            // Otherwise just add the character to [cell].
                             else -> cell.append(s)
                         }
                     }
                 }
 
-                // Check if the [line] ended while inside quotes or while expecting an escaping
+                // Check if [line] ended while inside quotes or while expecting an escaping
                 // expression.
-                if (insideQuotes != 0 || escaping)
+                if (!(insideQuotes == 0 || insideQuotes == -2) || escaping)
                     throw IllegalArgumentException(
                         CSV_UNEXPECTED_LINE_END_ERROR_MESSAGE.format(originName, i, line.length)
                     )
 
-                // If the [line] is not empty, add the [row] to the [table].
+                // If [line] is not empty, add [row] to [table].
                 if (!emptyLine)
                     insertRowInTable(table, insertCellInRow(row, cell, expectCellEnd))
             }
 
-            // Return the [table] as a two-dimensional [Array].
+            // Return [table] as a two-dimensional [Array].
             return table.toArray(arrayOf())
         }
 
