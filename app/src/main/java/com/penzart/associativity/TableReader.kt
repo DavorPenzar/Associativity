@@ -190,9 +190,9 @@ class TableReader : Any {
         ////////////////////////////////////////////////////////////////////////////////////////////
 
         /**
-         * Parse an escaping expression.
+         * Parse an escaped expression.
          *
-         * Valid escaping expressions and their parsed results are:
+         * Valid escaped expressions and their parsed results are:
          * * `"b"` to a backspace, i. e. `"\b"`,
          * * `"t"` to a horizontal tab, i. e. `"\t"`,
          * * `"v"` to a vertical tab, i. e. `"\v"`,
@@ -207,15 +207,15 @@ class TableReader : Any {
          * * `","` to a comma, i. e. `","`.
          *
          * **Note: The initial escaping character [escapeExpression] *must* not be passed in
-         * [expression], only the actual escaping expression should be passed.  For instance, to
+         * [expression], only the actual escaped expression should be passed.  For instance, to
          * parse `"\\n"`, pass only `"n"` as the argument [expression], not the complete string
          * `"\\n"`.**
          *
-         * @param expression Escaping expression to parse.
+         * @param expression Escaped expression to parse.
          *
          * @return The parsed result of the escaping expression.
          *
-         * @throws IllegalArgumentException If [expression] is not a single-character string or if the escaping expression is not valid.
+         * @throws IllegalArgumentException If [expression] is not a single-character string or if the escaped expression is not valid.
          *
          */
         public fun escapeExpression(expression: String): String {
@@ -244,13 +244,13 @@ class TableReader : Any {
         }
 
         /**
-         * Parse an escaping character.
+         * Parse an escaped character.
          *
          * The method returns `escapeExpression(c.toString())` without catching any exceptions.
          *
-         * @param c Escaping character to parse.
+         * @param c Escaped character to parse.
          *
-         * @return The parsed result of the escaping expression.
+         * @return The parsed result of the escaped character.
          *
          */
         public fun escapeExpression(c: Char): String {
@@ -260,8 +260,8 @@ class TableReader : Any {
         /**
          * Read a CSV input.
          *
-         * **Note: Unlike other CSV parsers, this particular CSV parser allows escaping expressions
-         * such as when setting string literals in C-family programming languages.**
+         * **Note: Unlike other CSV parsers, this particular CSV parser allows escape sequneces
+         * such as when writing string literals in C-family programming languages.**
          *
          * The quotations, separator and escaping character of CSV files are explained by
          * [CSV_SINGLE_QUOTE], [CSV_DOUBLE_QUOTE], [CSV_SEPARATOR] and [CSV_ESCAPE_CHAR].  Lines
@@ -370,11 +370,11 @@ class TableReader : Any {
                 var emptyLine: Boolean = true
 
                 // Initialise indicators of quotes, expectation of the end of a cell and escaping
-                // commands.  If [insideQuotes] is 0, the current character is not inside quotes;
-                // if it is 1, the current character is inside single quotes (or the terminating
-                // single quote); if it is 2, the current character is inside double quotes (or the
-                // terminating double quotes).  After closing quotes, the end of the cell is
-                // expected.
+                // commands.  If [insideQuotes] is `0`, the current character is not inside quotes;
+                // if it is `1`, the current character is inside single quotes (or the terminating
+                // single quote); if it is `2`, the current character is inside double quotes (or
+                // the  terminating double quotes); if it is -2, double quotes were found inside
+                // opened double quotes.  After closing quotes, the end of the cell is  expected.
                 var insideQuotes: Int = 0
                 var expectCellEnd: Boolean = false
                 var escaping: Boolean = false
@@ -411,7 +411,7 @@ class TableReader : Any {
                             }
                         }
 
-                    // If an escaping expression is expected, parse it.
+                    // If an escaped expression is expected, parse it.
                     if (escaping) {
                         // Try to parse the expression.  In case of a fail, throw an [IOException].
                         try {
@@ -530,7 +530,7 @@ class TableReader : Any {
                     }
                 }
 
-                // Check if [line] ended while inside quotes or while expecting an escaping
+                // Check if [line] ended while inside quotes or while expecting an escaped
                 // expression.
                 if (!(insideQuotes == 0 || insideQuotes == -2) || escaping)
                     throw IllegalArgumentException(
