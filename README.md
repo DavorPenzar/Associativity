@@ -2,7 +2,7 @@
 
 [*Android*](http://android.com/) app for the famous associations game.
 
-The documentation of classes and methods is given as inline documentation in the source code and additional information is given in [XML files](http://en.wikipedia.org/wiki/XML) of the app. Although the source code is open, I do not expect anyone to use it as a base for their own app.
+The documentation of classes and methods is given as inline documentation in the source code and additional information is given in [*XML* files](http://en.wikipedia.org/wiki/XML) of the app. Although the source code is open, I do not expect anyone to use it as a base for their own app.
 
 The rest of the [*README.md* file](README.md) explains how to create new game tables. No special computer knowledge is needed for this part and anyone is invited to give it a try &#128077;
 
@@ -10,7 +10,7 @@ Developers wanting to build the app should open the project in [*Android Studio*
 
 ##  Defining New Game Tables
 
-New game tables can be defined in [*CSV* files (*comma-separated values*)](http://en.wikipedia.org/wiki/Comma-separated_values). If you are unfamiliar with the format, follow the link, although to produce valid game tables a leading contemporary spreadsheet software will suffice (you may even skip to [**Game Table Format**](#game-table-format)&mdash;however, read the first 5 or so points in [**Supported *CSV* Format**](#supported-csv-format) to see which options to select when producing a table using spreadsheet software (default options will probably be OK)).
+New game tables can be defined in [*CSV* files (*comma-separated values*)](http://en.wikipedia.org/wiki/Comma-separated_values). If you are unfamiliar with the format, follow the link, although to produce valid game tables a leading contemporary [spreadsheet software](http://en.wikipedia.org/wiki/Spreadsheet) will suffice (you may even skip to [**Game Table Format**](#game-table-format)&mdash;however, read the first few points in [**Supported *CSV* Format**](#supported-csv-format) to see which options to select when producing a table using [spreadsheet software](http://en.wikipedia.org/wiki/Spreadsheet) (default options will probably be OK unless your cells contain line breaks or a backslash)).
 
 ### Supported [*CSV* Format](http://en.wikipedia.org/wiki/Comma-separated_values)
 
@@ -22,9 +22,9 @@ The format of the [*CSV* files](http://en.wikipedia.org/wiki/Comma-separated_val
 4.  Single quotes **must** be regular single quotes, i. e. the character `'\''` ([ASCII value](http://en.wikipedia.org/wiki/ASCII) *39*, in hex. *27*).
 5.  Double quotes **must** be regular double quotes, i. e. the character `'\"'` ([ASCII value](http://en.wikipedia.org/wiki/ASCII) *34*, in hex. *22*).
 6.  Line breaks inside cells are not allowed, even if the cell is quoted.
-7.  Unlike ordinary [*CSV*](http://en.wikipedia.org/wiki/Comma-separated_values) parsers, the parser implemented in this project allows [**escaping expressions**](http://en.wikipedia.org/wiki/String_literal#Escape_sequences). These expressions are inspired by [escape sequences](http://en.wikipedia.org/wiki/String_literal#Escape_sequences) in [*C*-family programming languages](http://en.wikipedia.org/wiki/List_of_C-family_programming_languages).
+7.  Unlike ordinary [*CSV*](http://en.wikipedia.org/wiki/Comma-separated_values) parsers, the parser implemented in this project allows [**escaping expressions**](http://en.wikipedia.org/wiki/Escape_sequence). These expressions are inspired by [escape sequences](http://en.wikipedia.org/wiki/Escape_sequence) in [*C*-family programming languages](http://en.wikipedia.org/wiki/List_of_C-family_programming_languages).
 8.  Escape character **must** be the backslash, i. e. the character `'\\'` ([ASCII value](http://en.wikipedia.org/wiki/ASCII) *92*, in hex. *5C*).
-9.  Valid [escape sequences](http://en.wikipedia.org/wiki/String_literal#Escape_sequences) are the esacpe character (see above) **immediately** followed by one of the characters listed in the table directly below this numbered list (naturally, the table also lists the resulting characters).
+9.  Valid [escape sequences](http://en.wikipedia.org/wiki/Escape_sequence) are the esacpe character (see above) **immediately** followed by one of the characters listed in the table directly below this numbered list (naturally, the table also lists the resulting characters).
 10. The only *NA* (*not assigned*) value is an **empty cell**.  Cells containing the usual *NA* indicators, such as `"NA"`, `"na"`, `"NaN"`, `"nan"` etc., are parsed as non-empty strings (for instance,`"NA"` results in a cell containing the string `"NA"`).
 11. Escaping a separator is not mandatory if the cell is enclosed in quotes. Also, escaping double quotes in cells enclosed by single quotes and vice versa is not mandatory. However, these characters may also be escaped in cells enclosed by quotes, be careful how the escape character is used even if the cell is enclosed in quotes.
 12. If a cell is not enclosed in quotes, its content is ***trimmed*** (leading and trailing whitespaces are ignored). Leading and trailing whitespaces before and after quotes (if a cell is enclosed in quotes) are also ignored. Some other [*CSV*](http://en.wikipedia.org/wiki/Comma-separated_values) parsers do not allow characters other than the separator or the line break before and after the enclosing quotes, but the one implemented in this project does. This allows formatting [*CSV* files](http://en.wikipedia.org/wiki/Comma-separated_values) to be easily readable by a human.
@@ -86,7 +86,7 @@ XXXXXX    , XXXXX         , XXXXX  , XXXXXX       , XXXXXXXXX
 
 ```
 
-The format above is human-friendly, while a spreadsheet software would probably produce a [*CSV* file](http://en.wikipedia.org/wiki/Comma-separated_values) containing (again, the solutions are masked)
+The format above is human-friendly, while a [spreadsheet software](http://en.wikipedia.org/wiki/Spreadsheet) would probably produce a [*CSV* file](http://en.wikipedia.org/wiki/Comma-separated_values) containing (again, the solutions are masked)
 
 ```
 "1","1","0","1","1"
@@ -104,9 +104,9 @@ In both formats shown commas (and empty cells in the second format) at the end o
 
 **Nota bene. Although solutions in the example above are masked, if you mask the solutions in your [*CSV* file](http://en.wikipedia.org/wiki/Comma-separated_values), the actual solutions will be *XXXXX* and so on. The app cannot *magically* read your mind, nor is any [machine learning algorithm](http://en.wikipedia.org/wiki/Machine_learning) for solving implemented in the app, to fill in the solutions automatically. The latter option, the realistic one, seems like an interesting project, but requires expertise in [NLP](http://en.wikipedia.org/wiki/Natural_language_processing), general culture, culture/language/location-specific knowledge and constant updates to keep up with trending knowledge.**
 
-### Producing a Game Table Using Spreadsheet Software
+### Producing a Game Table Using [Spreadsheet Software](http://en.wikipedia.org/wiki/Spreadsheet)
 
-The easiest way to create a [*CSV* file](http://en.wikipedia.org/wiki/Comma-separated_values) of a game table is using a spreadsheet software such as [*Google Sheets*](http://google.com/sheets/about/), [*Microsoft Office Excel*](http://products.office.com/excel) or [*LibreOffice Calc*](http://libreoffice.org/discover/calc/). In the software of your choice enter the game table as
+The easiest way to create a [*CSV* file](http://en.wikipedia.org/wiki/Comma-separated_values) of a game table is using a [spreadsheet software](http://en.wikipedia.org/wiki/Spreadsheet) such as [*Google Sheets*](http://google.com/sheets/about/), [*Microsoft Office Excel*](http://products.office.com/excel) or [*LibreOffice Calc*](http://libreoffice.org/discover/calc/). In the software of your choice enter the game table as
 
 |              | **A**     | **B**         | **C**  | **D**        | **E**     | **F** | **&hellip;** |
 | :----------: | :---------| :-------------| :------| :------------| :---------| :---- | :------------|
@@ -123,7 +123,7 @@ The easiest way to create a [*CSV* file](http://en.wikipedia.org/wiki/Comma-sepa
 
 Again, be sure to add actual solutions, not strings such as *XXXXX*, in rows 6 until the end. Of course, if your game table is a *kinky* one and one of the solutions or an alternative acceptable answer is *XXX*, then you *should* put *XXX* as the answer in the corresponding column. Keep in mind that the final solution and its alternative acceptable answers are placed in the column *E* from the sixth row downward.
 
-Examples of valid game tables are provided in [*examples/game_tables* subdirectory](examples/game_tables). These game tables are the same as the above, but the solutions are unmasked. Note that only the [*CSV* table](http://en.wikipedia.org/wiki/Comma-separated_values) is readable by the app, the other formats are provided merely to show how to define such tables in various spreadsheet software.
+Examples of valid game tables are provided in [*examples/game_tables* subdirectory](examples/game_tables). These game tables are the same as the above, but the solutions are unmasked. Note that only the [*CSV* table](http://en.wikipedia.org/wiki/Comma-separated_values) is readable by the app, the other formats are provided merely to show how to define such tables in various [spreadsheet software](http://en.wikipedia.org/wiki/Spreadsheet).
 
 The next step is to export the sheet to a [*CSV* file](http://en.wikipedia.org/wiki/Comma-separated_values). This is usually done by *File* > *Export as&hellip;*/*Save as&hellip;*/*Download&hellip;* and choosing [*CSV*](http://en.wikipedia.org/wiki/Comma-separated_values) as the format. As mentioned above, default options will probably be OK, but check [**Supported *CSV* Format**](#supported-csv-format) to see which options to actually select.
 
