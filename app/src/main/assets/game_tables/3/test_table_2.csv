@@ -1,11 +1,11 @@
-1          , 1               , 1               , 1        , 1
-
-bambus     , domaće živtinje , Arhimed         , BMW      ,
-ruka       , McDonald        , Audi            , bojna    ,
-svjetiljka , polje           , Vennov dijagram , listopad ,
-vatra      , štala           , žito            , puč      ,
-
-baklja     , farma           , krugovi         , München  , Olimpijsko selo
-           , gospodarstvo    , kružnice        , Muenchen ,
-           , ranč            , kruznice        ,          ,
-           , ranc            ,                 ,          ,
+1,1,1,1,1
+bambus,domaće životinje,Arhimed,BMW,
+ruka,McDonald,Audi,bojna,
+svjetiljka,polje,Vennov dijagram,listopad,
+vatra,štala,žito,puč,
+baklja,farma,krugovi,München,Olimpijsko selo
+,gospodarstvo,krug,Muenchen,
+,ranč,kružnice,Munchen,
+,ranc,kruznice,,
+,,kružnica,,
+,,kruznica,,

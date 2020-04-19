@@ -1,11 +1,9 @@
- 1           , 1            , 1           , 1           , 1
-
- glad        , car          , but         , bolest      ,
- jeftino     , časna sestra , dim         , energija    ,
- kebab       , jug          , meso        , Kelvin      ,
-"McDonald's" , ptica        , Pik Vrbovec , živa        ,
-
- brza hrana  , pingvin      , šunka       , temperatura , topli sendvič
- brzogriz    ,              , sunka       ,             , topli sendvic
- fast food   ,              ,             ,             , topla dvokriška
-             ,              ,             ,             , topla dvokriska
+1,1,1,1,1
+glad,car,but,bolest,
+jeftino,časna sestra,dim,energija,
+kebab,jug,meso,Kelvin,
+"McDonald's",ptica,Pik Vrbovec,živa,
+brza hrana,pingvin,šunka,temperatura,topli sendvič
+brzogriz,,sunka,,topli sendvic
+fast food,,,,topla dvokriška
+,,,,topla dvokriska

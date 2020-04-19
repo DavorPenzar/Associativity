@@ -1,11 +1,14 @@
-1             , 1          , 1                   , 1          , 1
-
-osjećaj       , instrument , arija               , droga      ,
-Platon        , melodija   , Ero s onoga svijeta , katakombe  ,
-prijateljstvo , pjesma     , Scala               , mafija     ,
-seks          , umjetnost  , Sidney              , pakao      ,
-
-ljubav        , muzika     , opera               , podzemlje  , Orfej i Euridika
-              , glazba     ,                     , podzemnost , Euridika i Orfej
-              ,            ,                     ,            , Euridika
-              ,            ,                     ,            , Orfej
+1,1,1,1,1
+osjećaj,instrument,arija,droga,
+Platon,melodija,Ero s onoga svijeta,katakombe,
+prijateljstvo,pjesma,Scala,mafija,
+seks,umjetnost,Sidney,pakao,
+ljubav,muzika,opera,podzemlje,Orfej i Euridika
+,glazba,,podzemnost,Euridika i Orfej
+,,,,Euridika
+,,,,Orfej
+,,,,Orpheus kai Eurydikē
+,,,,Orpheus kai Eurydike
+,,,,Eurydikē
+,,,,Eurydike
+,,,,Orpheus
