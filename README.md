@@ -2,7 +2,7 @@
 
 [*Android*](http://android.com/) app for the famous associations game.
 
-If you are not interested in the code, skip the following few paragraphs and go [here](#p:skip-code).
+If you are not interested in the code, skip until the paragraph immediately before [**Defining New Game Tables**](#defining-new-game-tables).
 
 The documentation of classes and methods is given as inline documentation in the source code and additional information is given in [*XML* files](http://en.wikipedia.org/wiki/XML) of the app. Although the source code is open, I do not expect anyone to use it as a base for their own app.
 
@@ -30,7 +30,7 @@ fun foo(bar: Any?): Boolean {
 
 ```
 
-<a class="anchor" id="p:skip-code"></a>The rest of the [*README.md* file](README.md) explains how to create new game tables. No special computer knowledge is needed for this part and anyone is invited to give it a try &#128077;
+The rest of the [*README.md* file](README.md) explains how to create new game tables. No special computer knowledge is needed for this part and anyone is invited to give it a try &#128077;
 
 ##  Defining New Game Tables
 
