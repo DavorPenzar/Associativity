@@ -553,7 +553,7 @@ class MainActivity : AppCompatActivity() {
      * the sign may be omitted.
      *
      * **Note: The current implementation of the function works properly only for left-to-right
-     * writing/reading languages.**
+     * writing/reading languages whose decimal separator is a single character.**
      *
      * @param milliseconds Time to express given in milliseconds
      * @param includeHours If `true`, hours are expressed even if they are 0.
