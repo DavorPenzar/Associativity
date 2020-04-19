@@ -380,7 +380,7 @@ class TableReader : Any {
                 var escaping: Boolean = false
 
                 // Read [line].
-                loop@ for (j in line.indices) {
+                lineLoop@ for (j in line.indices) {
                     // Get the current character as a [Char] and a [String].
                     val c: Char = line[j]
                     val s = c.toString()
@@ -398,7 +398,7 @@ class TableReader : Any {
                                 cell.append(CSV_DOUBLE_QUOTE)
 
                                 // Continue to the next character.
-                                continue@loop
+                                continue@lineLoop
                             }
 
                             // Otherwise end [cell].
@@ -451,7 +451,7 @@ class TableReader : Any {
                         escaping = true
 
                         // Continue to the next character.
-                        continue@loop
+                        continue@lineLoop
                     }
 
                     // Act accordingly to quotes environment.
@@ -530,9 +530,18 @@ class TableReader : Any {
                     }
                 }
 
+                // If [cell] was enclosed in double quotes, end it.
+                if (insideQuotes == -2) {
+                    // Close double quotes.
+                    insideQuotes = 0
+
+                    // Expect the end of [cell].
+                    expectCellEnd = true
+                }
+
                 // Check if [line] ended while inside quotes or while expecting an escaped
                 // expression.
-                if (!(insideQuotes == 0 || insideQuotes == -2) || escaping)
+                if (insideQuotes != 0 || escaping)
                     throw IllegalArgumentException(
                         CSV_UNEXPECTED_LINE_END_ERROR_MESSAGE.format(originName, i, line.length)
                     )
