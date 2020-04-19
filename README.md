@@ -4,6 +4,28 @@
 
 The documentation of classes and methods is given as inline documentation in the source code and additional information is given in [*XML* files](http://en.wikipedia.org/wiki/XML) of the app. Although the source code is open, I do not expect anyone to use it as a base for their own app.
 
+The app is written in [*Kotlin* programming language](http://kotlinlang.org/). Following [the guidelines](http://kotlinlang.org/docs/reference/kotlin-doc.html), inline documentation of classes and methods is written **immediately before** the object being documented. For instance, a documented method `foo` would be written as
+
+```Kotlin
+/**
+ * Foo a bar.
+ *
+ * @param bar Object to foo. May be `null`.
+ *
+ * @return If fooing [bar] succeds, `true`; `false` otherwise.
+ *
+ * @throws IllegalArgumentException If [bar] is illegal.
+ *
+ */
+fun foo(bar: Any?): Boolean {
+	// Foo [bar]...
+
+	// In case the method reaches the end, return `false` (fooing did not succeed).
+	return false
+}
+
+```
+
 The rest of the [*README.md* file](README.md) explains how to create new game tables. No special computer knowledge is needed for this part and anyone is invited to give it a try &#128077;
 
 Developers wanting to build the app should open the project in [*Android Studio*](http://developer.android.com/studio/). Not only was this project created using the mentioned software meaning the software will know how to build the app, but this is also official [*Android*'s](http://android.com/) development software for creating apps and I highly recommend it for its user-friendliness, even for beginners such as myself (this is my first app).
