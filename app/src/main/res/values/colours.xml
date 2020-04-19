@@ -64,39 +64,9 @@
     <color name="colorSecondaryDeep">@color/deep_space_sparkle_deep</color>
     <color name="colorSecondaryDark">@color/deep_space_sparkle_dark</color>
 
-    <color name="colorTertiary">@color/peach</color>
-    <color name="colorTertiaryPastel">@color/peach_pastel</color>
-    <color name="colorTertiaryLight">@color/peach_light</color>
-    <color name="colorTertiaryDeep">@color/peach_deep</color>
-    <color name="colorTertiaryDark">@color/peach_dark</color>
-
-    <color name="colorQuaternary">@color/tigers_eye</color>
-    <color name="colorQuaternaryPastel">@color/tigers_eye_pastel</color>
-    <color name="colorQuaternaryLight">@color/tigers_eye_light</color>
-    <color name="colorQuaternaryDeep">@color/tigers_eye_deep</color>
-    <color name="colorQuaternaryDark">@color/tigers_eye_dark</color>
-
-    <color name="colorQuinary">@color/dark_scarlet</color>
-    <color name="colorQuinaryPastel">@color/dark_scarlet_pastel</color>
-    <color name="colorQuinaryLight">@color/dark_scarlet_light</color>
-    <color name="colorQuinaryDeep">@color/dark_scarlet_deep</color>
-    <color name="colorQuinaryDark">@color/dark_scarlet_dark</color>
-
-    <color name="colorAccentPrimary">@color/bdazzled_blue</color>
-    <color name="colorAccentPrimaryPastel">@color/bdazzled_blue_pastel</color>
-    <color name="colorAccentPrimaryLight">@color/bdazzled_blue_light</color>
-    <color name="colorAccentPrimaryDeep">@color/bdazzled_blue_deep</color>
-    <color name="colorAccentPrimaryDark">@color/bdazzled_blue_dark</color>
-
-    <color name="colorAccentSecondary">@color/baby_powder</color>
-    <color name="colorAccentSecondaryPastel">@color/baby_powder_pastel</color>
-    <color name="colorAccentSecondaryLight">@color/baby_powder_light</color>
-    <color name="colorAccentSecondaryDeep">@color/baby_powder_deep</color>
-    <color name="colorAccentSecondaryDark">@color/baby_powder_dark</color>
-
-    <color name="colorAccent">@color/colorAccentPrimary</color>
-    <color name="colorAccentPastel">@color/colorAccentPrimaryPastel</color>
-    <color name="colorAccentLight">@color/colorAccentPrimaryLight</color>
-    <color name="colorAccentDeep">@color/colorAccentPrimaryDeep</color>
-    <color name="colorAccentDark">@color/colorAccentPrimaryDark</color>
+    <color name="colorAccent">@color/bdazzled_blue</color>
+    <color name="colorAccentPastel">@color/bdazzled_blue_pastel</color>
+    <color name="colorAccentLight">@color/bdazzled_blue_light</color>
+    <color name="colorAccentDeep">@color/bdazzled_blue_deep</color>
+    <color name="colorAccentDark">@color/bdazzled_blue_dark</color>
 </resources>

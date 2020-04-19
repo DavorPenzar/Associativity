@@ -5,8 +5,8 @@
     <corners android:radius="@dimen/spacing_normal" />
     <gradient
         android:angle="90"
-        android:centerColor="@color/colorAccentSecondary"
-        android:endColor="@color/colorAccentSecondaryLight"
-        android:startColor="@color/colorAccentSecondaryDeep" />
+        android:centerColor="@color/baby_powder"
+        android:endColor="@color/baby_powder_light"
+        android:startColor="@color/baby_powder_deep" />
     <stroke android:color="@android:color/black" android:width="@dimen/border_width_normal" />
 </shape>
