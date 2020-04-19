@@ -4,7 +4,7 @@
 
 The documentation of classes and methods is given as inline documentation in the source code and additional information is given in [*XML* files](http://en.wikipedia.org/wiki/XML) of the app. Although the source code is open, I do not expect anyone to use it as a base for their own app.
 
-The app is written in [*Kotlin* programming language](http://kotlinlang.org/). Following [the guidelines](http://kotlinlang.org/docs/reference/kotlin-doc.html), inline documentation of classes and methods is written **immediately before** the object being documented. For instance, a documented method `foo` would be documented as
+The app is written in [*Kotlin* programming language](http://kotlinlang.org/). Following [the guidelines](http://kotlinlang.org/docs/reference/kotlin-doc.html), inline documentation of classes and methods is written **immediately before** the object being documented. For instance, a method `foo` would be documented as
 
 ```Kotlin
 /**
