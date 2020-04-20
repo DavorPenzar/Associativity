@@ -2,15 +2,13 @@ package com.penzart.associativity
 
 import android.content.Context
 import android.content.res.AssetManager
-import android.os.Bundle
-import android.os.Handler
-import android.os.IBinder
-import android.os.Looper
+import android.os.*
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import com.penzart.associativity.MainActivity.Companion.GAME_TABLES_DEFAULT_DIRECTORY
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.BufferedWriter
 import java.io.File
@@ -21,9 +19,6 @@ import java.nio.file.DirectoryStream
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.time.Duration
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 
 /**
@@ -53,9 +48,9 @@ import kotlin.math.abs
  *
  * @property stopwatchStartness If the stopwatch has started, `true`; `false` otherwise.
  * @property stopwatchStopness If the stopwatch has fully stopped (as when successfully guessing the final solution, giving up or closing the app), `true`; `false` otherwise.
- * @property stopwatchDuration The duration of gameplay measured by the stopwatch.
+ * @property stopwatchDuration The duration of gameplay measured by the stopwatch in milliseconds.
  * @property stopwatchHandler The [Handler] object of the stopwatch; could be considered the stopwatch itself.
- * @property stopwatchStartTimeStamp The initial timestamp for measuring [stopwatchDuration] of gameplay by the stopwatch (it changes when calling methods [onPause] and [onResume] to disregard idle time therefore ultimately it may be a different timestamp so that [stopwatchDuration] would be measured properly and fairly).
+ * @property stopwatchStartTimeStamp The initial timestamp (milliseconds from boot time) for measuring [stopwatchDuration] of gameplay by the stopwatch (it changes when calling methods [onPause] and [onResume] to disregard idle time therefore ultimately it may be a different timestamp so that [stopwatchDuration] would be measured properly and fairly).
  *
  * @property guessOpenness If the guess dialog is open, `true`; `false` otherwise.
  * @property guessGiveUp If giving up is allowed during guessing, `true`; `false` otherwise.
@@ -181,9 +176,7 @@ class MainActivity : AppCompatActivity() {
          * @return The constructed mixed label.
          *
          */
-        private fun appendSuffix(label: String, suffix: String): String {
-            return label + suffix
-        }
+        private fun appendSuffix(label: String, suffix: String): String = label + suffix
 
         /**
          * "Fix" an array of acceptable answers (solutions).
@@ -299,11 +292,9 @@ class MainActivity : AppCompatActivity() {
         private fun constructDifficultyLevelSubdirectoryPath(
             rootDirectory: String,
             difficultyLevel: Int
-        ): String {
-            return when (difficultyLevel) {
-                0 -> rootDirectory
-                else -> Paths.get(rootDirectory, difficultyLevel.toString()).toString()
-            }
+        ): String = when (difficultyLevel) {
+            0 -> rootDirectory
+            else -> Paths.get(rootDirectory, difficultyLevel.toString()).toString()
         }
 
         /**
@@ -332,49 +323,47 @@ class MainActivity : AppCompatActivity() {
             difficultyLevel: Int,
             assets: AssetManager? = null,
             filesDir: File? = null
-        ): InputStream {
-            return when (difficultyLevel) {
-                0 -> {
-                    // Get the path of the external storage [subdirectory].
-                    val subdirectory: String = Paths.get(
-                        filesDir!!.path,
-                        constructDifficultyLevelSubdirectoryPath(
-                            rootDirectory,
-                            difficultyLevel
-                        )
-                    ).toString()
-
-                    // Open external storage [subdirectory].
-                    val directoryStream: DirectoryStream<Path> = Files.newDirectoryStream(
-                        Paths.get(subdirectory)
-                    )
-
-                    // Get the array of paths of items in [directoryStream].
-                    val items: Array<String> = (
-                        ArrayList<String>().apply {
-                            for (item in directoryStream)
-                                add(item.toString())
-                        }
-                    ).toArray(arrayOf())
-
-                    // Close [directoryStream].
-                    directoryStream.close()
-
-                    // Open and return a random item in [items].
-                    return File(items.random()).inputStream()
-                }
-                else -> {
-                    // Get the path of the assets [subdirectory].
-                    val subdirectory: String = constructDifficultyLevelSubdirectoryPath(
+        ): InputStream = when (difficultyLevel) {
+            0 -> {
+                // Get the path of the external storage [subdirectory].
+                val subdirectory: String = Paths.get(
+                    filesDir!!.path,
+                    constructDifficultyLevelSubdirectoryPath(
                         rootDirectory,
                         difficultyLevel
                     )
+                ).toString()
 
-                    // Open and return a random table in the assets [subdirectory].
-                    assets!!.open(
-                        Paths.get(subdirectory, assets.list(subdirectory)!!.random()).toString()
-                    )
-                }
+                // Open external storage [subdirectory].
+                val directoryStream: DirectoryStream<Path> = Files.newDirectoryStream(
+                    Paths.get(subdirectory)
+                )
+
+                // Get the array of paths of items in [directoryStream].
+                val items: Array<String> = (
+                    ArrayList<String>().apply {
+                        for (item in directoryStream)
+                            add(item.toString())
+                    }
+                ).toArray(arrayOf())
+
+                // Close [directoryStream].
+                directoryStream.close()
+
+                // Open and return a random item in [items].
+                File(items.random()).inputStream()
+            }
+            else -> {
+                // Get the path of the assets [subdirectory].
+                val subdirectory: String = constructDifficultyLevelSubdirectoryPath(
+                    rootDirectory,
+                    difficultyLevel
+                )
+
+                // Open and return a random table in the assets [subdirectory].
+                assets!!.open(
+                    Paths.get(subdirectory, assets.list(subdirectory)!!.random()).toString()
+                )
             }
         }
 
@@ -397,40 +386,38 @@ class MainActivity : AppCompatActivity() {
             difficultyLevel: Int,
             assets: AssetManager? = null,
             filesDir: File? = null
-        ): Boolean {
-            return try {
-                when (difficultyLevel) {
-                    0 -> {
-                        // Open external storage directory.
-                        val directoryStream: DirectoryStream<Path> = Files.newDirectoryStream(
-                            Paths.get(
-                                filesDir!!.path,
-                                constructDifficultyLevelSubdirectoryPath(
-                                    rootDirectory,
-                                    difficultyLevel
-                                )
+        ): Boolean = try {
+            when (difficultyLevel) {
+                0 -> {
+                    // Open external storage directory.
+                    val directoryStream: DirectoryStream<Path> = Files.newDirectoryStream(
+                        Paths.get(
+                            filesDir!!.path,
+                            constructDifficultyLevelSubdirectoryPath(
+                                rootDirectory,
+                                difficultyLevel
                             )
                         )
+                    )
 
-                        // Check if [directoryStream] is non-empty.
-                        val nonEmpty: Boolean = directoryStream.iterator().hasNext()
+                    // Check if [directoryStream] is non-empty.
+                    val nonEmpty: Boolean = directoryStream.iterator().hasNext()
 
-                        // Close [directoryStream].
-                        directoryStream.close()
+                    // Close [directoryStream].
+                    directoryStream.close()
 
-                        // Return [nonEmpty].
-                        nonEmpty
-                    }
-                    else -> {
-                        // Return non-emptiness of the [assets] subdirectory.
-                        assets!!.list(
-                            constructDifficultyLevelSubdirectoryPath(rootDirectory, difficultyLevel)
-                        )!!.isNotEmpty()
-                    }
+                    // Return [nonEmpty].
+                    nonEmpty
                 }
-            } catch (exception: IOException) {
-                false
+                else -> {
+                    // Return non-emptiness of the [assets] subdirectory.
+                    assets!!.list(
+                        constructDifficultyLevelSubdirectoryPath(rootDirectory, difficultyLevel)
+                    )!!.isNotEmpty()
+                }
             }
+        } catch (exception: IOException) {
+            false
         }
 
         /**
@@ -461,25 +448,24 @@ class MainActivity : AppCompatActivity() {
 
             // If [subdirectory] does not exist or exists but is not a directory, create it.
             if (
-                when (Files.exists(Paths.get(subdirectory))) {
-                    true -> {
-                        // Open [subdirectory].
-                        val file: File = File(subdirectory)
+                if (Files.exists(Paths.get(subdirectory))) {
+                    // Open [subdirectory].
+                    val file: File = File(subdirectory)
 
-                        // If [file] is not a directory, delete it and set `true`.  Otherwise set
-                        // `false`.
-                        if (file.isDirectory)
-                            false
-                        else {
-                            // Delete [file].
-                            file.delete()
+                    // If [file] is not a directory, delete it and set `true`.  Otherwise set
+                    // `false`.
+                    if (file.isDirectory)
+                        false
+                    else {
+                        // Delete [file].
+                        file.delete()
 
-                            // Set `true`.
-                            true
-                        }
+                        // Set `true`.
+                        true
                     }
-                    else -> true
                 }
+                else
+                    true
             )
                 File(subdirectory).mkdirs()
 
@@ -520,9 +506,9 @@ class MainActivity : AppCompatActivity() {
 
     private var stopwatchStartness: Boolean = false
     private var stopwatchStopness: Boolean = false
-    private var stopwatchDuration: Duration = Duration.ZERO
+    private var stopwatchDuration: Long = 0L
     private var stopwatchHandler: Handler = Handler()
-    private var stopwatchStartTimeStamp: LocalDateTime = LocalDateTime.now()
+    private var stopwatchStartTimeStamp: Long = SystemClock.elapsedRealtime()
 
     private var guessOpenness: Boolean = false
     private var guessGiveUp: Boolean = false
@@ -575,12 +561,10 @@ class MainActivity : AppCompatActivity() {
         val absoluteDays = absoluteHours / 24L
 
         // Initialise the expression as a sign or an empty string.
-        var timeExpression = when (includeSign) {
-            true -> SIGN_MINUS
-            else -> when (includeSign) {
-                true -> SIGN_PLUS
-                else -> String()
-            }
+        var timeExpression = when {
+            milliseconds < 0 -> SIGN_MINUS
+            includeSign -> SIGN_PLUS
+            else -> String()
         }
 
         // Express the absolute time.
@@ -638,19 +622,17 @@ class MainActivity : AppCompatActivity() {
      * @see arrayOfColumns
      *
      */
-    private fun arrayOfCells(rowOrColumn: String? = null): Array<String> {
-        return when (rowOrColumn) {
-            null -> resources.getStringArray(R.array.cells)
-            labelOne -> resources.getStringArray(R.array.cells_1)
-            labelTwo -> resources.getStringArray(R.array.cells_2)
-            labelThree -> resources.getStringArray(R.array.cells_3)
-            labelFour -> resources.getStringArray(R.array.cells_4)
-            labelA -> resources.getStringArray(R.array.cells_A)
-            labelB -> resources.getStringArray(R.array.cells_B)
-            labelC -> resources.getStringArray(R.array.cells_C)
-            labelD -> resources.getStringArray(R.array.cells_D)
-            else -> arrayOf()
-        }
+    private fun arrayOfCells(rowOrColumn: String? = null): Array<String> = when (rowOrColumn) {
+        null -> resources.getStringArray(R.array.cells)
+        labelOne -> resources.getStringArray(R.array.cells_1)
+        labelTwo -> resources.getStringArray(R.array.cells_2)
+        labelThree -> resources.getStringArray(R.array.cells_3)
+        labelFour -> resources.getStringArray(R.array.cells_4)
+        labelA -> resources.getStringArray(R.array.cells_A)
+        labelB -> resources.getStringArray(R.array.cells_B)
+        labelC -> resources.getStringArray(R.array.cells_C)
+        labelD -> resources.getStringArray(R.array.cells_D)
+        else -> arrayOf()
     }
 
     /**
@@ -662,9 +644,7 @@ class MainActivity : AppCompatActivity() {
      * @see arrayOfColumns
      *
      */
-    private fun arrayOfRows(): Array<String> {
-        return resources.getStringArray(R.array.rows)
-    }
+    private fun arrayOfRows(): Array<String> = resources.getStringArray(R.array.rows)
 
     /**
      * Get the array of columns' labels.
@@ -675,9 +655,7 @@ class MainActivity : AppCompatActivity() {
      * @see arrayOfRows
      *
      */
-    private fun arrayOfColumns(): Array<String> {
-        return resources.getStringArray(R.array.columns)
-    }
+    private fun arrayOfColumns(): Array<String> = resources.getStringArray(R.array.columns)
 
     /**
      * Given a known button in the game table or the button of the final solution, get its label (cell label, column label, final solution label).
@@ -687,9 +665,7 @@ class MainActivity : AppCompatActivity() {
      * @return The label of the element represented by [button].
      *
      */
-    private fun retrieveGameElementLabel(button: Button): String {
-        return button.tag.toString()
-    }
+    private fun retrieveGameElementLabel(button: Button): String = button.tag.toString()
 
     /**
      * Get the id of the button of a cell in the game table.
@@ -702,13 +678,11 @@ class MainActivity : AppCompatActivity() {
      * @see idOfFinal
      *
      */
-    private fun idOfCell(cell: String): Int {
-        return resources.getIdentifier(
-            resources.getString(R.string.button) + cell,
-            resources.getString(R.string.id),
-            packageName
-        )
-    }
+    private fun idOfCell(cell: String): Int = resources.getIdentifier(
+        resources.getString(R.string.button) + cell,
+        resources.getString(R.string.id),
+        packageName
+    )
 
     /**
      * Get the id of the button of a column's solution in the game table.
@@ -721,13 +695,11 @@ class MainActivity : AppCompatActivity() {
      * @see idOfFinal
      *
      */
-    private fun idOfColumn(column: String): Int {
-        return resources.getIdentifier(
-            resources.getString(R.string.button) + column,
-            resources.getString(R.string.id),
-            packageName
-        )
-    }
+    private fun idOfColumn(column: String): Int = resources.getIdentifier(
+        resources.getString(R.string.button) + column,
+        resources.getString(R.string.id),
+        packageName
+    )
 
     /**
      * Get the id of the button of the final solution.
@@ -738,13 +710,11 @@ class MainActivity : AppCompatActivity() {
      * @see idOfColumn
      *
      */
-    private fun idOfFinal(): Int {
-        return resources.getIdentifier(
-            resources.getString(R.string.button) + resources.getString(R.string.sol),
-            resources.getString(R.string.id),
-            packageName
-        )
-    }
+    private fun idOfFinal(): Int = resources.getIdentifier(
+        resources.getString(R.string.button) + resources.getString(R.string.sol),
+        resources.getString(R.string.id),
+        packageName
+    )
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -823,9 +793,9 @@ class MainActivity : AppCompatActivity() {
         if (stopwatch) {
             stopwatchStartness = false
             stopwatchStopness = false
-            stopwatchDuration = Duration.ZERO
+            stopwatchDuration = 0L
             stopwatchHandler = Handler()
-            stopwatchStartTimeStamp = LocalDateTime.now()
+            stopwatchStartTimeStamp = SystemClock.elapsedRealtime()
         }
 
         // Reset the guess dialog if needed.
@@ -1051,7 +1021,7 @@ class MainActivity : AppCompatActivity() {
      * Make [editTextEnterGuess]' IME action done to be clicking [buttonGuess].
      *
      */
-    private fun connectEditTextEnterGuessAndButtonGuess() {
+    private fun connectEditTextEnterGuessAndButtonGuess() =
         editTextEnterGuess.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
@@ -1062,7 +1032,6 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
-    }
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1079,9 +1048,7 @@ class MainActivity : AppCompatActivity() {
      * @see onCreate
      *
      */
-    private fun whatGameDifficulty(): Int {
-        return gameDifficulty
-    }
+    private fun whatGameDifficulty(): Int = gameDifficulty
 
     /**
      * Change the game's difficulty level.
@@ -1105,9 +1072,7 @@ class MainActivity : AppCompatActivity() {
      * @return If the game is fresh, `true`; `false` otherwise.
      *
      */
-    private fun isGameFresh(): Boolean {
-        return gameFreshness
-    }
+    private fun isGameFresh(): Boolean = gameFreshness
 
     /**
      * Set the game's freshness.
@@ -1129,10 +1094,7 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun changeGameFreshness(freshness: Boolean? = null) {
-        gameFreshness = when (freshness) {
-            null -> !gameFreshness
-            else -> freshness
-        }
+        gameFreshness = freshness ?: !gameFreshness
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1150,9 +1112,7 @@ class MainActivity : AppCompatActivity() {
      * @see LauncherActivity
      *
      */
-    public fun newGame(it: View) {
-        finish()
-    }
+    public fun newGame(it: View) = finish()
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1170,9 +1130,7 @@ class MainActivity : AppCompatActivity() {
      * @see resetStopwatch
      *
      */
-    private fun hasStopwatchStarted(): Boolean {
-        return stopwatchStartness
-    }
+    private fun hasStopwatchStarted(): Boolean = stopwatchStartness
 
     /**
      * Set the stopwatch's startness.
@@ -1194,10 +1152,7 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun changeStopwatchStartness(startness: Boolean? = null) {
-        stopwatchStartness = when (startness) {
-            null -> !stopwatchStartness
-            else -> startness
-        }
+        stopwatchStartness = startness ?: !stopwatchStartness
     }
 
     /**
@@ -1211,15 +1166,13 @@ class MainActivity : AppCompatActivity() {
      * @see resetStopwatch
      *
      */
-    private fun hasStopwatchStopped(): Boolean {
-        return stopwatchStopness
-    }
+    private fun hasStopwatchStopped(): Boolean = stopwatchStopness
 
     /**
      * Set the stopwatch's stopness.
      *
-     * If [stopness] is `null`, the stopwatch's stopness state is toggled (a stopped stopwatch
-     * will be set to non-stopped and vice versa).
+     * If [stopness] is `null`, the stopwatch's stopness state is toggled (a stopped stopwatch will
+     * be set to non-stopped and vice versa).
      *
      * **Note: This method merely changes what [hasStopwatchStopped] method will return.  To
      * actually stop the stopwatch call [stopStopwatch] method or to reset it call
@@ -1235,53 +1188,46 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun changeStopwatchStopness(stopness: Boolean? = null) {
-        stopwatchStopness = when (stopness) {
-            null -> !stopwatchStopness
-            else -> stopness
-        }
+        stopwatchStopness = stopness ?: !stopwatchStopness
     }
 
     /**
-     * Get the stopwatch's initial timestamp.
+     * Get the stopwatch's initial timestamp in milliseconds from boot time.
      *
-     * @return The stopwatch's initial timestamp.
+     * @return The stopwatch's initial timestamp in milliseconds from boot time.
      *
      */
-    private fun retrieveStopwatchStartTimestamp(): LocalDateTime {
-        return stopwatchStartTimeStamp
-    }
+    private fun retrieveStopwatchStartTimestamp(): Long = stopwatchStartTimeStamp
 
     /**
-     * Set the stopwatch's initial timestamp.
+     * Set the stopwatch's initial timestamp in milliseconds from boot time.
      *
-     * @param startTimestamp New stopwatch's initial timestamp.
+     * @param startTimestamp New stopwatch's initial timestamp in milliseconds from boot time.
      *
      * @see retrieveStopwatchStartTimestamp
      *
      */
-    private fun changeStopwatchStartTimestamp(startTimestamp: LocalDateTime) {
+    private fun changeStopwatchStartTimestamp(startTimestamp: Long) {
         stopwatchStartTimeStamp = startTimestamp
     }
 
     /**
-     * Get the current stopwatch's duration.
+     * Get the current stopwatch's duration in milliseconds.
      *
-     * @return The current stopwatch's duration.
+     * @return The current stopwatch's duration in milliseconds.
      *
      */
-    private fun retrieveStopwatchDuration(): Duration {
-        return stopwatchDuration
-    }
+    private fun retrieveStopwatchDuration(): Long = stopwatchDuration
 
     /**
-     * Set current stopwatch's duration.
+     * Set current stopwatch's duration in milliseconds.
      *
-     * @param duration New stopwatch's duration.
+     * @param duration New stopwatch's duration in milliseconds.
      *
      * @see retrieveStopwatchDuration
      *
      */
-    private fun changeStopwatchDuration(duration: Duration) {
+    private fun changeStopwatchDuration(duration: Long) {
         stopwatchDuration = duration
     }
 
@@ -1291,9 +1237,7 @@ class MainActivity : AppCompatActivity() {
      * @return The time expressed in [textViewStopwatch] as a [String] object.
      *
      */
-    private fun retrieveStopwatchTime(): String {
-        return textViewStopwatch.text.toString()
-    }
+    private fun retrieveStopwatchTime(): String = textViewStopwatch.text.toString()
 
     /**
      * Print time to [textViewStopwatch]
@@ -1308,19 +1252,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Express the time and print it to [textViewStopwatch].
+     * Express the time in milliseconds and print it to [textViewStopwatch].
      *
      * The time is expressed with [expressTime] method and printed with [printStopwatchTime] method.
      *
-     * @param time Time to print as a [Duration] object.
+     * @param time Time to print in milliseconds.
      *
      * @see expressTime
      * @see retrieveStopwatchTime
      *
      */
-    private fun displayStopwatchTime(time: Duration) {
-        printStopwatchTime(expressTime(time.toMillis()))
-    }
+    private fun displayStopwatchTime(time: Long) =
+        printStopwatchTime(expressTime(time))
 
     /**
      * Start the stopwatch.
@@ -1337,7 +1280,7 @@ class MainActivity : AppCompatActivity() {
 
         // Compute the timestamp from which to count time.
         changeStopwatchStartTimestamp(
-            LocalDateTime.now() - retrieveStopwatchDuration()
+            SystemClock.elapsedRealtime() - retrieveStopwatchDuration()
         )
 
         // Set the stopwatch's startness to `true`.
@@ -1349,7 +1292,7 @@ class MainActivity : AppCompatActivity() {
                 override fun run() {
                     // Count time.
                     changeStopwatchDuration(
-                        Duration.between(retrieveStopwatchStartTimestamp(), LocalDateTime.now())
+                        SystemClock.elapsedRealtime() - retrieveStopwatchStartTimestamp()
                     )
 
                     // Display time using [displayTime] method.
@@ -1405,9 +1348,9 @@ class MainActivity : AppCompatActivity() {
 
         // Reset stopwatch values.
         printStopwatchTime(String())
-        changeStopwatchStartTimestamp(LocalDateTime.now())
+        changeStopwatchStartTimestamp(SystemClock.elapsedRealtime())
         if (resetDuration)
-            changeStopwatchDuration(Duration.ZERO)
+            changeStopwatchDuration(0L)
 
         // Reinitialise the stopwatch handler.
         initialiseStopwatchHandler()
@@ -1428,9 +1371,7 @@ class MainActivity : AppCompatActivity() {
      * @return `true` if the guess dialog is open, `false` otherwise.
      *
      */
-    private fun isOpenGuessDialog(): Boolean {
-        return guessOpenness
-    }
+    private fun isOpenGuessDialog(): Boolean = guessOpenness
 
     /**
      * Set the guess dialog's openness.
@@ -1450,10 +1391,7 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun changeGuesDialogOpenness(openness: Boolean? = null) {
-        guessOpenness = when(openness) {
-            null -> !guessOpenness
-            else -> openness
-        }
+        guessOpenness = openness ?: !guessOpenness
     }
 
     /**
@@ -1498,9 +1436,7 @@ class MainActivity : AppCompatActivity() {
      * @return If giving up is allowed during guessing, `true`; `false` otherwise.
      *
      */
-    private fun isGuessGivingUpAllowed(): Boolean {
-        return guessGiveUp
-    }
+    private fun isGuessGivingUpAllowed(): Boolean = guessGiveUp
 
     /**
      * Change the allowness of giving up during guessing.
@@ -1520,10 +1456,7 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun changeGuessGivingUpAllowness(giveUp: Boolean? = null) {
-        guessGiveUp = when (giveUp) {
-            null -> !guessGiveUp
-            else -> giveUp
-        }
+        guessGiveUp = giveUp ?: !guessGiveUp
     }
 
     /**
@@ -1532,9 +1465,7 @@ class MainActivity : AppCompatActivity() {
      * @return The label of the current target of guessing.
      *
      */
-    private fun retrieveGuessTarget(): String {
-        return guessTarget
-    }
+    private fun retrieveGuessTarget(): String = guessTarget
 
     /**
      * Change the current target of guessing.
@@ -1556,12 +1487,10 @@ class MainActivity : AppCompatActivity() {
      * @return Current hint for guessing.
      *
      */
-    private fun retrieveGuessHint(elaborate: Boolean = true): String {
-        return when (elaborate) {
-            true -> textViewHint.text.toString()
-            else -> editTextEnterGuess.hint.toString()
-        }
-    }
+    private fun retrieveGuessHint(elaborate: Boolean = true): String = if (elaborate)
+        textViewHint.text.toString()
+    else
+        editTextEnterGuess.hint.toString()
 
     /**
      * Print an elaborate hint in [textViewHint].
@@ -1579,10 +1508,10 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun displayElaborateGuessHint(hint: String?, target: String? = null) {
-        textViewHint.text = when (target) {
-            null -> hint
-            else -> DISPLAY_PARENT_CHILD_TEXT.format(target, hint)
-        }
+        textViewHint.text = if (target == null)
+            hint
+        else
+            DISPLAY_PARENT_CHILD_TEXT.format(target, hint)
     }
 
     /**
@@ -1603,9 +1532,7 @@ class MainActivity : AppCompatActivity() {
      * @return Currently written guess in [editTextEnterGuess].
      *
      */
-    private fun retrieveGuess(): String {
-        return editTextEnterGuess.text.toString()
-    }
+    private fun retrieveGuess(): String = editTextEnterGuess.text.toString()
 
     /**
      * Set the guess in [editTextEnterGuess].
@@ -1615,9 +1542,7 @@ class MainActivity : AppCompatActivity() {
      * @see retrieveGuess
      *
      */
-    private fun typeGuess(guess: String?) {
-        editTextEnterGuess.setText(guess)
-    }
+    private fun typeGuess(guess: String?) = editTextEnterGuess.setText(guess)
 
     /**
      * On-click method for [buttonDismiss].
@@ -1627,9 +1552,7 @@ class MainActivity : AppCompatActivity() {
      * @param it The [buttonDismiss].
      *
      */
-    public fun clickOnDismiss(it: View) {
-        closeGuessDialog()
-    }
+    public fun clickOnDismiss(it: View) = closeGuessDialog()
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1642,9 +1565,7 @@ class MainActivity : AppCompatActivity() {
      * @return Currently written text in [textViewCurrent].
      *
      */
-    private fun retrieveCurrentText(): String {
-        return textViewCurrent.text.toString()
-    }
+    private fun retrieveCurrentText(): String = textViewCurrent.text.toString()
 
     /**
      * Print a text in [textViewCurrent].
@@ -1662,10 +1583,10 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun displayCurrentText(text: String?, origin: String? = null) {
-        textViewCurrent.text = when (origin) {
-            null -> text
-            else -> DISPLAY_PARENT_CHILD_TEXT.format(origin, text)
-        }
+        textViewCurrent.text = if (origin == null)
+            text
+        else
+            DISPLAY_PARENT_CHILD_TEXT.format(origin, text)
     }
 
 
@@ -1690,9 +1611,7 @@ class MainActivity : AppCompatActivity() {
      * @see closeFinal
      *
      */
-    private fun isCellOpen(cell: String): Boolean {
-        return cellsOpenness[cell]!!
-    }
+    private fun isCellOpen(cell: String): Boolean = cellsOpenness[cell]!!
 
     /**
      * Change a cell's openness.
@@ -1718,10 +1637,7 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun changeCellOpennes(cell: String, openness: Boolean? = null) {
-        cellsOpenness[cell] = when (openness) {
-            null -> !cellsOpenness[cell]!!
-            else -> openness
-        }
+        cellsOpenness[cell] = openness ?: !cellsOpenness[cell]!!
     }
 
     /**
@@ -1732,9 +1648,7 @@ class MainActivity : AppCompatActivity() {
      * @return The [cell]'s value.
      *
      */
-    private fun cellValue(cell: String): String {
-        return cellsValues[cell]!!
-    }
+    private fun cellValue(cell: String): String = cellsValues[cell]!!
 
     /**
      * Set a cell's value.
@@ -1809,9 +1723,7 @@ class MainActivity : AppCompatActivity() {
      * @see closeFinal
      *
      */
-    private fun isColumnOpen(column: String): Boolean {
-        return columnsOpenness[column]!!
-    }
+    private fun isColumnOpen(column: String): Boolean = columnsOpenness[column]!!
 
     /**
      * Change a column's solution's openness.
@@ -1838,10 +1750,7 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun changeColumnOpennes(column: String, openness: Boolean? = null) {
-        columnsOpenness[column] = when (openness) {
-            null -> !columnsOpenness[column]!!
-            else -> openness
-        }
+        columnsOpenness[column] = openness ?: !columnsOpenness[column]!!
     }
 
     /**
@@ -1852,9 +1761,7 @@ class MainActivity : AppCompatActivity() {
      * @return The [column]'s solution's acceptable answers.
      *
      */
-    private fun columnValue(column: String): Array<String> {
-        return columnsValues[column]!!
-    }
+    private fun columnValue(column: String): Array<String> = columnsValues[column]!!
 
     /**
      * Set a column's solution's acceptable answers.
@@ -1870,10 +1777,10 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun editColumnValue(column: String, value: Array<String>, fix: Boolean = true) {
-        columnsValues[column] = when (fix) {
-            true -> fixAcceptables(value)
-            else -> value
-        }
+        columnsValues[column] = if (fix)
+            fixAcceptables(value)
+        else
+            value
     }
 
     /**
@@ -1938,9 +1845,7 @@ class MainActivity : AppCompatActivity() {
      * @see closeFinal
      *
      */
-    private fun isFinalOpen(): Boolean {
-        return solutionOpenness
-    }
+    private fun isFinalOpen(): Boolean = solutionOpenness
 
     /**
      * Change the final solution's openness.
@@ -1966,10 +1871,7 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun changeFinalOpennes(openness: Boolean? = null) {
-        solutionOpenness = when (openness) {
-            null -> !solutionOpenness
-            else -> openness
-        }
+        solutionOpenness = openness ?: !solutionOpenness
     }
 
     /**
@@ -1978,9 +1880,7 @@ class MainActivity : AppCompatActivity() {
      * @return The final solution's acceptable answers.
      *
      */
-    private fun finalValue(): Array<String> {
-        return solutionValue
-    }
+    private fun finalValue(): Array<String> = solutionValue
 
     /**
      * Set final solution's acceptable answers.
@@ -1995,10 +1895,10 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun editFinalValue(value: Array<String>, fix: Boolean = true) {
-        solutionValue = when (fix) {
-            true -> fixAcceptables(value)
-            else -> value
-        }
+        solutionValue = if (fix)
+            fixAcceptables(value)
+        else
+            value
     }
 
     /**
@@ -2066,9 +1966,7 @@ class MainActivity : AppCompatActivity() {
      * @see closeFinal
      *
      */
-    public fun clickOnClosedCell(it: View) {
-        openCell(retrieveGameElementLabel(it as Button))
-    }
+    public fun clickOnClosedCell(it: View) = openCell(retrieveGameElementLabel(it as Button))
 
     /**
      * On-click method for buttons of open cells in the game table.
@@ -2233,9 +2131,7 @@ class MainActivity : AppCompatActivity() {
      * @see closeFinal
      *
      */
-    public fun clickOnOpenFinal(it: View) {
-        displayCurrentText(finalValue()[0])
-    }
+    public fun clickOnOpenFinal(it: View) = displayCurrentText(finalValue()[0])
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2468,9 +2364,8 @@ class MainActivity : AppCompatActivity() {
      * @see columnValue
      *
      */
-    private fun guessColumn(column: String, guess: String): Boolean {
-        return isAcceptable(guess, columnValue(column))
-    }
+    private fun guessColumn(column: String, guess: String): Boolean =
+        isAcceptable(guess, columnValue(column))
 
     /**
      * Offer a guess for the final solution.
@@ -2491,9 +2386,7 @@ class MainActivity : AppCompatActivity() {
      * @see stopStopwatch
      *
      */
-    private fun guessFinal(guess: String): Boolean {
-        return isAcceptable(guess, finalValue())
-    }
+    private fun guessFinal(guess: String): Boolean = isAcceptable(guess, finalValue())
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2524,7 +2417,7 @@ class MainActivity : AppCompatActivity() {
             putBoolean(STOPWATCH_STARTNESS, hasStopwatchStarted())
             putBoolean(STOPWATCH_STOPNESS, hasStopwatchStopped())
             putString(STOPWATCH_PRINT, retrieveStopwatchTime())
-            putLong(STOPWATCH_DURATION, retrieveStopwatchDuration().toMillis())
+            putLong(STOPWATCH_DURATION, retrieveStopwatchDuration())
 
             // If the game is not fresh, save the state of the game table and the solutions.
             if (!isGameFresh()) {
@@ -2601,7 +2494,7 @@ class MainActivity : AppCompatActivity() {
             printStopwatchTime(getString(STOPWATCH_PRINT)!!)
             changeStopwatchStartness(getBoolean(STOPWATCH_STARTNESS))
             changeStopwatchStopness(getBoolean(STOPWATCH_STOPNESS))
-            changeStopwatchDuration(Duration.of(getLong(STOPWATCH_DURATION), ChronoUnit.MILLIS))
+            changeStopwatchDuration(getLong(STOPWATCH_DURATION))
 
             // Recover the freshness of the game, but do not set it yet.
             val restoredGameFreshness: Boolean = getBoolean(GAME_FRESHNESS)

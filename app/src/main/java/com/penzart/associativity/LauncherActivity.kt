@@ -50,9 +50,7 @@ class LauncherActivity : AppCompatActivity() {
          * @return The constructed mixed label.
          *
          */
-        private fun appendSuffix(label: Int, suffix: String): String {
-            return label.toString() + suffix
-        }
+        private fun appendSuffix(label: Int, suffix: String): String = label.toString() + suffix
 
         /**
          * Construct a label for saving difficulty level enabling in [onSaveInstanceState] from a difficulty level's label.
@@ -62,9 +60,7 @@ class LauncherActivity : AppCompatActivity() {
          * @return The constructed mixed label.
          *
          */
-        private fun enabledLabel(label: Int): String {
-            return appendSuffix(label, SUFFIX_ENABLED)
-        }
+        private fun enabledLabel(label: Int): String = appendSuffix(label, SUFFIX_ENABLED)
     }
 
 
@@ -85,9 +81,8 @@ class LauncherActivity : AppCompatActivity() {
      * @return The array of difficulty levels' labels.
      *
      */
-    private fun arrayOfDifficulties(): Array<Int> {
-        return resources.getIntArray(R.array.difficulty_labels_int).toTypedArray()
-    }
+    private fun arrayOfDifficulties(): Array<Int> =
+        resources.getIntArray(R.array.difficulty_labels_int).toTypedArray()
 
     /**
      * Get the id of the button for choosing a difficulty level.
@@ -97,13 +92,11 @@ class LauncherActivity : AppCompatActivity() {
      * @return Id of the button of the [difficulty] level.
      *
      */
-    private fun idOfButton(difficulty: Int): Int {
-        return resources.getIdentifier(
-            resources.getString(R.string.button) + difficulty.toInt(),
-            resources.getString(R.string.id),
-            packageName
-        )
-    }
+    private fun idOfButton(difficulty: Int): Int = resources.getIdentifier(
+        resources.getString(R.string.button) + difficulty.toInt(),
+        resources.getString(R.string.id),
+        packageName
+    )
 
     /**
      * Given a known button for choosing the difficulty level, get its difficulty level label.
@@ -113,9 +106,7 @@ class LauncherActivity : AppCompatActivity() {
      * @return The difficulty level label represented by [button].
      *
      */
-    private fun retrieveGameDifficulty(button: Button): Int {
-        return button.tag.toString().toInt()
-    }
+    private fun retrieveGameDifficulty(button: Button): Int = button.tag.toString().toInt()
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -126,9 +117,7 @@ class LauncherActivity : AppCompatActivity() {
      * Reset inner properties to their default values.
      *
      */
-    private fun resetProperties() {
-        difficultiesEnabled.clear()
-    }
+    private fun resetProperties() = difficultiesEnabled.clear()
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -148,14 +137,13 @@ class LauncherActivity : AppCompatActivity() {
      * @see isDifficultyEnabled
      *
      */
-    private fun shouldDifficultyBeEnabled(difficulty: Int): Boolean {
-        return MainActivity.isGameTablesSubdirectoryNonEmpty(
+    private fun shouldDifficultyBeEnabled(difficulty: Int): Boolean =
+        MainActivity.isGameTablesSubdirectoryNonEmpty(
             MainActivity.GAME_TABLES_DEFAULT_DIRECTORY,
             difficulty,
             assets,
             getExternalFilesDir(null)
         )
-    }
 
     /**
      * Check if a difficulty level is enabled.
@@ -169,9 +157,7 @@ class LauncherActivity : AppCompatActivity() {
      * @see disableDifficulty
      *
      */
-    private fun isDifficultyEnabled(difficulty: Int): Boolean {
-        return difficultiesEnabled[difficulty]!!
-    }
+    private fun isDifficultyEnabled(difficulty: Int): Boolean = difficultiesEnabled[difficulty]!!
 
     /**
      * Change difficulty level's enabling.
@@ -192,10 +178,7 @@ class LauncherActivity : AppCompatActivity() {
      *
      */
     private fun changeDifficultyEnabling(difficulty: Int, enabled: Boolean? = null) {
-        difficultiesEnabled[difficulty] = when (enabled) {
-            null -> !difficultiesEnabled[difficulty]!!
-            else -> enabled
-        }
+        difficultiesEnabled[difficulty] = enabled ?: !difficultiesEnabled[difficulty]!!
     }
 
     /**

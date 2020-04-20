@@ -5,7 +5,8 @@
     package="com.penzart.associativity"
     android:installLocation="preferExternal">
 
-    <!-- Permissions. -->
+    <!-- Permissions.  The app currently only writes and reads in the app's specific directories
+    therefore the following permissions are actually not required. -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
