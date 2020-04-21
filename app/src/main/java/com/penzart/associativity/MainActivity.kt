@@ -8,17 +8,10 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import com.penzart.associativity.MainActivity.Companion.GAME_TABLES_DEFAULT_DIRECTORY
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.BufferedWriter
 import java.io.File
-import java.io.IOException
 import java.io.InputStream
-import java.lang.Integer.min
-import java.nio.file.DirectoryStream
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
 import kotlin.math.abs
 
 /**
@@ -108,7 +101,7 @@ class MainActivity : AppCompatActivity() {
      * @property GUESS_HINT_BRIEF Label to save the brief hint of guessing in [onSaveInstanceState] method.
      * @property GUESS_INPUT Label to save the typed guess in [editTextEnterGuess] in [onSaveInstanceState] method.
      *
-     * @property GAME_TABLES_DEFAULT_DIRECTORY Relative assets path for the directory with game tables.  **Note: It is not guaranteed that this path ends with a path separator.  To join paths use [Paths.get] method.**
+     * @property GAME_TABLES_DEFAULT_DIRECTORY Relative assets path for the directory with game tables.  **Note: It is not guaranteed that this path ends with a path separator.  To join paths use [constructPath] method.**
      *
      */
     public companion object {
@@ -168,6 +161,20 @@ class MainActivity : AppCompatActivity() {
         ////////////////////////////////////////////////////////////////////////////////////////////
 
         /**
+         * Construct a path from subpaths.
+         *
+         * The function returns [parts] joined to a string with [File.separator] as a separator in
+         * the order given.
+         *
+         * @param parts Subpaths to join in a complete path.
+         *
+         * @return Complete path constructed from subpaths.
+         *
+         */
+        private fun constructPath(vararg parts: String): String =
+            parts.joinToString(File.separator)
+
+        /**
          * Construct a label for saving state in [onSaveInstanceState] from a cell's, column's or the final solution's label and a suffix.
          *
          * @param label An element's label.
@@ -177,6 +184,87 @@ class MainActivity : AppCompatActivity() {
          *
          */
         private fun appendSuffix(label: String, suffix: String): String = label + suffix
+
+        /**
+         * Construct the path of a subdirectory of the desired difficulty level in the root directory of game tables.
+         *
+         * The resulting path is of the same *relativity level* as the given [rootDirectory] path.
+         *
+         * If [difficultyLevel] is `0`, the resulting path directs to the external storage;
+         * otherwise it directs to an assets subdirectory.
+         *
+         * As 0 is considered a custom difficulty level located on the external storage, if
+         * [difficultyLevel] is `0`, the constructed directory is the same as [rootDirectory].
+         * Otherwise a subdirectory is chosen according to the value of [difficultyLevel].
+         *
+         * @param rootDirectory Path of the root directory of game tables.
+         * @param difficultyLevel Difficulty level of the desired game table.
+         *
+         * @return The path of the subdirectory of game tables of the desired difficulty level.
+         *
+         */
+        private fun constructDifficultyLevelSubdirectoryPath(
+            rootDirectory: String,
+            difficultyLevel: Int
+        ): String = when (difficultyLevel) {
+            0 -> rootDirectory
+            else -> constructPath(rootDirectory, difficultyLevel.toString())
+        }
+
+        /**
+         * Open a random game table with solutions.
+         *
+         * The method returns a random table read from a file in the appropriate subdirectory of
+         * game tables (from the external storage or [assets]).
+         *
+         * If [difficultyLevel] is `0`, [filesDir] must not be `null` but has to be a valid path to
+         * external storage; otherwise [assets] must not be `null` but be a valid [AssetManager].
+         *
+         * @param rootDirectory Path of the root directory of game tables.
+         * @param difficultyLevel Difficulty level of the desired game table.
+         *
+         * @return [InputStream] of a random game table from the appropriate subdirectory.
+         *
+         * @see TableReader
+         * @see TableReader.readAssociationsTable
+         * @see importRandomGameTable
+         * @see constructDifficultyLevelSubdirectoryPath
+         * @see isGameTablesSubdirectoryNonEmpty
+         *
+         */
+        private fun randomGameTable(
+            rootDirectory: String,
+            difficultyLevel: Int,
+            assets: AssetManager? = null,
+            filesDir: File? = null
+        ): InputStream = when (difficultyLevel) {
+            0 -> {
+                // Get the path of the external storage [subdirectory].
+                val subdirectory: String = constructPath(
+                    filesDir!!.path,
+                    constructDifficultyLevelSubdirectoryPath(
+                        rootDirectory,
+                        difficultyLevel
+                    )
+                )
+
+                // Get the list of files in external storage [subdirectory].
+                val items: Array<String> = File(subdirectory).list()!!
+
+                // Open and return a random item in [items].
+                File(constructPath(subdirectory, items.random())).inputStream()
+            }
+            else -> {
+                // Get the path of the assets [subdirectory].
+                val subdirectory: String = constructDifficultyLevelSubdirectoryPath(
+                    rootDirectory,
+                    difficultyLevel
+                )
+
+                // Open and return a random table in the assets [subdirectory].
+                assets!!.open(constructPath(subdirectory, assets.list(subdirectory)!!.random()))
+            }
+        }
 
         /**
          * "Fix" an array of acceptable answers (solutions).
@@ -272,102 +360,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         /**
-         * Construct the path of a subdirectory of the desired difficulty level in the root directory of game tables.
-         *
-         * The resulting path is of the same *relativity level* as the given [rootDirectory] path.
-         *
-         * If [difficultyLevel] is `0`, the resulting path directs to the external storage;
-         * otherwise it directs to an assets subdirectory.
-         *
-         * As 0 is considered a custom difficulty level located on the external storage, if
-         * [difficultyLevel] is `0`, the constructed directory is the same as [rootDirectory].
-         * Otherwise a subdirectory is chosen according to the value of [difficultyLevel].
-         *
-         * @param rootDirectory Path of the root directory of game tables.
-         * @param difficultyLevel Difficulty level of the desired game table.
-         *
-         * @return The path of the subdirectory of game tables of the desired difficulty level.
-         *
-         */
-        private fun constructDifficultyLevelSubdirectoryPath(
-            rootDirectory: String,
-            difficultyLevel: Int
-        ): String = when (difficultyLevel) {
-            0 -> rootDirectory
-            else -> Paths.get(rootDirectory, difficultyLevel.toString()).toString()
-        }
-
-        /**
-         * Open a random game table with solutions.
-         *
-         * The method returns a random table read from a file in the appropriate subdirectory of
-         * game tables (from the external storage or [assets]).
-         *
-         * If [difficultyLevel] is `0`, [filesDir] must not be `null` but has to be a valid path to
-         * external storage; otherwise [assets] must not be `null` but be a valid [AssetManager].
-         *
-         * @param rootDirectory Path of the root directory of game tables.
-         * @param difficultyLevel Difficulty level of the desired game table.
-         *
-         * @return [InputStream] of a random game table from the appropriate subdirectory.
-         *
-         * @see TableReader
-         * @see TableReader.readAssociationsTable
-         * @see importRandomGameTable
-         * @see constructDifficultyLevelSubdirectoryPath
-         * @see isGameTablesSubdirectoryNonEmpty
-         *
-         */
-        private fun randomGameTable(
-            rootDirectory: String,
-            difficultyLevel: Int,
-            assets: AssetManager? = null,
-            filesDir: File? = null
-        ): InputStream = when (difficultyLevel) {
-            0 -> {
-                // Get the path of the external storage [subdirectory].
-                val subdirectory: String = Paths.get(
-                    filesDir!!.path,
-                    constructDifficultyLevelSubdirectoryPath(
-                        rootDirectory,
-                        difficultyLevel
-                    )
-                ).toString()
-
-                // Open external storage [subdirectory].
-                val directoryStream: DirectoryStream<Path> = Files.newDirectoryStream(
-                    Paths.get(subdirectory)
-                )
-
-                // Get the array of paths of items in [directoryStream].
-                val items: Array<String> = (
-                    ArrayList<String>().apply {
-                        for (item in directoryStream)
-                            add(item.toString())
-                    }
-                ).toArray(arrayOf())
-
-                // Close [directoryStream].
-                directoryStream.close()
-
-                // Open and return a random item in [items].
-                File(items.random()).inputStream()
-            }
-            else -> {
-                // Get the path of the assets [subdirectory].
-                val subdirectory: String = constructDifficultyLevelSubdirectoryPath(
-                    rootDirectory,
-                    difficultyLevel
-                )
-
-                // Open and return a random table in the assets [subdirectory].
-                assets!!.open(
-                    Paths.get(subdirectory, assets.list(subdirectory)!!.random()).toString()
-                )
-            }
-        }
-
-        /**
          * Check if a game tables subdirectory is empty.
          *
          * If [difficultyLevel] is `0`, [filesDir] must not be `null` but has to be a valid path to
@@ -388,35 +380,23 @@ class MainActivity : AppCompatActivity() {
             filesDir: File? = null
         ): Boolean = try {
             when (difficultyLevel) {
-                0 -> {
-                    // Open external storage directory.
-                    val directoryStream: DirectoryStream<Path> = Files.newDirectoryStream(
-                        Paths.get(
-                            filesDir!!.path,
-                            constructDifficultyLevelSubdirectoryPath(
-                                rootDirectory,
-                                difficultyLevel
-                            )
+                // Return non-emptiness of the external storage subdirectory.
+                0 -> File(
+                    constructPath(
+                        filesDir!!.path,
+                        constructDifficultyLevelSubdirectoryPath(
+                            rootDirectory,
+                            difficultyLevel
                         )
                     )
+                ).list()!!.isNotEmpty()
 
-                    // Check if [directoryStream] is non-empty.
-                    val nonEmpty: Boolean = directoryStream.iterator().hasNext()
-
-                    // Close [directoryStream].
-                    directoryStream.close()
-
-                    // Return [nonEmpty].
-                    nonEmpty
-                }
-                else -> {
-                    // Return non-emptiness of the [assets] subdirectory.
-                    assets!!.list(
-                        constructDifficultyLevelSubdirectoryPath(rootDirectory, difficultyLevel)
-                    )!!.isNotEmpty()
-                }
+                // Return non-emptiness of the [assets] subdirectory.
+                else -> assets!!.list(
+                    constructDifficultyLevelSubdirectoryPath(rootDirectory, difficultyLevel)
+                )!!.isNotEmpty()
             }
-        } catch (exception: IOException) {
+        } catch (exception: Exception) {
             false
         }
 
@@ -440,42 +420,41 @@ class MainActivity : AppCompatActivity() {
             readmeFilename: String? = null,
             readmeText: String? = null
         ) {
-            // Construct the path of [subdirectory] of custom game tables.
-            val subdirectory: String = Paths.get(
+            // Construct [subdirectoryPath] of custom game tables.
+            val subdirectoryPath: String = constructPath(
                 filesDir.path,
                 constructDifficultyLevelSubdirectoryPath(rootDirectory, 0)
-            ).toString()
+            )
 
-            // If [subdirectory] does not exist or exists but is not a directory, create it.
+            // Open [subdirectory] of custom game tables.
+            val subdirectory: File = File(subdirectoryPath)
+
             if (
-                if (Files.exists(Paths.get(subdirectory))) {
-                    // Open [subdirectory].
-                    val file: File = File(subdirectory)
-
-                    // If [file] is not a directory, delete it and set `true`.  Otherwise set
-                    // `false`.
-                    if (file.isDirectory)
-                        false
+                // If [subdirectory] does not exist or exists but is not a directory, create it as a
+                // directory.
+                if (subdirectory.exists()) {
+                    if (subdirectory.isDirectory)
+                        true
                     else {
-                        // Delete [file].
-                        file.delete()
+                        // Delete [subdirectory].
+                        subdirectory.delete()
 
                         // Set `true`.
                         true
                     }
-                }
-                else
+                } else
                     true
             )
-                File(subdirectory).mkdirs()
+                subdirectory.mkdirs()
 
             // Open README file to write.
             if (readmeFilename != null) {
+                // Open README file.
                 val readmeWriter: BufferedWriter = File(
-                    Paths.get(filesDir.path, readmeFilename).toString()
+                    constructPath(filesDir.path, readmeFilename)
                 ).bufferedWriter()
 
-                // Write README file.
+                // Print to README file.
                 readmeWriter.write(readmeText!!)
                 readmeWriter.newLine()
 
@@ -945,7 +924,7 @@ class MainActivity : AppCompatActivity() {
     ) {
         // Shuffle cells inside columns if needed.
         for (column in arrayOfColumns())
-            if (shuffleColumns.getOrDefault(column, false)) {
+            if (shuffleColumns[column] == true) {
                 // Get the original order of cells and the new order.
                 val order: ArrayList<String> = arrayOfCells(column).toCollection(ArrayList())
                 val reorder: ArrayList<String> = ArrayList(order).apply {
@@ -958,9 +937,7 @@ class MainActivity : AppCompatActivity() {
                 // `i`-th element of the array [order].
                 val newTableValuesColumn: HashMap<String, String> =
                     HashMap<String, String>().apply {
-                        val n: Int = min(order.size, reorder.size)
-
-                        for (i in 0 until n)
+                        for (i in order.indices)
                             put(order[i], cellValue(reorder[i]))
                     }
 
@@ -984,24 +961,18 @@ class MainActivity : AppCompatActivity() {
             val newTableValues: HashMap<String, String> = HashMap()
             val newColumnsValues: HashMap<String, Array<String>> = HashMap()
 
-            // Number of columns.
-            val n: Int = min(order.size, reorder.size)
-
             // Iterate over arrays [order] and [reorder] and populate [newTableValues] and
             // [newColumnsValues].
-            for (i in 0 until n) {
+            for (i in order.indices) {
                 // Get labels of cells in columns pointed at by the [i]-th element in arrays [order]
                 // and [reorder].
                 val oldCells: ArrayList<String> = arrayOfCells(order[i]).toCollection(ArrayList())
                 val newCells: ArrayList<String> = arrayOfCells(reorder[i]).toCollection(ArrayList())
 
-                // Number of cells in the column.
-                val m: Int = min(oldCells.size, newCells.size)
-
                 // Copy from [tableValues] and [columnsValues] to [newTableValues] and
                 // [newColumnsValues] but with altered keys.
 
-                for (j in 0 until m)
+                for (j in oldCells.indices)
                     newTableValues[oldCells[j]] = cellValue(newCells[j])
 
                 newColumnsValues[order[i]] = columnValue(reorder[i])
@@ -1054,7 +1025,8 @@ class MainActivity : AppCompatActivity() {
      * Change the game's difficulty level.
      *
      * **Note: This method merely changes what [whatGameDifficulty] method will return.  To actually
-     * play a game of a different difficulty start [MainActivity] with a proper [Intent].
+     * play a game of a different difficulty start [MainActivity] with a proper
+     * [android.content.Intent].
      *
      * @param difficulty New game's difficulty level.
      *
@@ -1082,11 +1054,10 @@ class MainActivity : AppCompatActivity() {
      *
      * **Note: This method merely changes what [isGameFresh] method will return.  To actually
      * refresh a game the graphical UI must be reset and the game table must be initialised among
-     * other things—use [prepareNewGame] method to do that.**
+     * other things—restart [MainActivity] to do that.**
      *
      * @param freshness New freshness of the game.
      *
-     * @see prepareNewGame
      * @see isGameFresh
      * @see onCreate
      * @see onStart
@@ -1104,7 +1075,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * On-click method for [buttonNewGame].
      *
-     * The button finishes [this] activity and brings the user back to the previous activity.  The
+     * The button finishes this activity and brings the user back to the previous activity.  The
      * previous activity should be a [LauncherActivity].
      *
      * @param it The button [buttonNewGame].
@@ -1606,9 +1577,6 @@ class MainActivity : AppCompatActivity() {
      * @see openCell
      * @see openColumn
      * @see openFinal
-     * @see closeCell
-     * @see closeColumn
-     * @see closeFinal
      *
      */
     private fun isCellOpen(cell: String): Boolean = cellsOpenness[cell]!!
@@ -1631,9 +1599,6 @@ class MainActivity : AppCompatActivity() {
      * @see openCell
      * @see openColumn
      * @see openFinal
-     * @see closeCell
-     * @see closeColumn
-     * @see closeFinal
      *
      */
     private fun changeCellOpennes(cell: String, openness: Boolean? = null) {
@@ -1676,9 +1641,6 @@ class MainActivity : AppCompatActivity() {
      * @see isFinalOpen
      * @see openColumn
      * @see openFinal
-     * @see closeCell
-     * @see closeColumn
-     * @see closeFinal
      *
      */
     private fun openCell(cell: String, displayContent: Boolean = true) {
@@ -1718,9 +1680,6 @@ class MainActivity : AppCompatActivity() {
      * @see openCell
      * @see openColumn
      * @see openFinal
-     * @see closeCell
-     * @see closeColumn
-     * @see closeFinal
      *
      */
     private fun isColumnOpen(column: String): Boolean = columnsOpenness[column]!!
@@ -1744,9 +1703,6 @@ class MainActivity : AppCompatActivity() {
      * @see openCell
      * @see openColumn
      * @see openFinal
-     * @see closeCell
-     * @see closeColumn
-     * @see closeFinal
      *
      */
     private fun changeColumnOpennes(column: String, openness: Boolean? = null) {
@@ -1795,9 +1751,6 @@ class MainActivity : AppCompatActivity() {
      * @see isFinalOpen
      * @see openCell
      * @see openFinal
-     * @see closeCell
-     * @see closeColumn
-     * @see closeFinal
      *
      */
     private fun openColumn(
@@ -1840,9 +1793,6 @@ class MainActivity : AppCompatActivity() {
      * @see openCell
      * @see openColumn
      * @see openFinal
-     * @see closeCell
-     * @see closeColumn
-     * @see closeFinal
      *
      */
     private fun isFinalOpen(): Boolean = solutionOpenness
@@ -1865,9 +1815,6 @@ class MainActivity : AppCompatActivity() {
      * @see openCell
      * @see openColumn
      * @see openFinal
-     * @see closeCell
-     * @see closeColumn
-     * @see closeFinal
      *
      */
     private fun changeFinalOpennes(openness: Boolean? = null) {
@@ -1914,9 +1861,6 @@ class MainActivity : AppCompatActivity() {
      * @see isFinalOpen
      * @see openCell
      * @see openColumn
-     * @see closeCell
-     * @see closeColumn
-     * @see closeFinal
      *
      */
     private fun openFinal(recursiveOpen: Boolean = true, displayContent: Boolean = true) {
@@ -1961,9 +1905,6 @@ class MainActivity : AppCompatActivity() {
      * @see openCell
      * @see openColumn
      * @see openFinal
-     * @see closeCell
-     * @see closeColumn
-     * @see closeFinal
      *
      */
     public fun clickOnClosedCell(it: View) = openCell(retrieveGameElementLabel(it as Button))
@@ -1981,9 +1922,6 @@ class MainActivity : AppCompatActivity() {
      * @see openCell
      * @see openColumn
      * @see openFinal
-     * @see closeCell
-     * @see closeColumn
-     * @see closeFinal
      *
      */
     public fun clickOnOpenCell(it: View) {
@@ -2010,9 +1948,6 @@ class MainActivity : AppCompatActivity() {
      * @see openCell
      * @see openColumn
      * @see openFinal
-     * @see closeCell
-     * @see closeColumn
-     * @see closeFinal
      * @see offerColumnGuess
      *
      */
@@ -2055,9 +1990,6 @@ class MainActivity : AppCompatActivity() {
      * @see openCell
      * @see openColumn
      * @see openFinal
-     * @see closeCell
-     * @see closeColumn
-     * @see closeFinal
      *
      */
     public fun clickOnOpenColumn(it: View) {
@@ -2084,9 +2016,6 @@ class MainActivity : AppCompatActivity() {
      * @see openCell
      * @see openColumn
      * @see openFinal
-     * @see closeCell
-     * @see closeColumn
-     * @see closeFinal
      * @see offerFinalGuess
      *
      */
@@ -2126,12 +2055,11 @@ class MainActivity : AppCompatActivity() {
      * @see openCell
      * @see openColumn
      * @see openFinal
-     * @see closeCell
-     * @see closeColumn
-     * @see closeFinal
      *
      */
-    public fun clickOnOpenFinal(it: View) = displayCurrentText(finalValue()[0])
+    public fun clickOnOpenFinal(it: View) {
+        displayCurrentText(finalValue()[0])
+    }
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

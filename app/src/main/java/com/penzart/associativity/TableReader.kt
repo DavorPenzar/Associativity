@@ -105,7 +105,7 @@ class TableReader : Any {
         private val ASSOCIATIONS_TABLE_COLUMNS_LABELS: Array<String> = arrayOf("A", "B", "C", "D")
         private const val ASSOCIATIONS_TABLE_SOLUTION_LABEL: String = "Sol"
 
-        public const val SUFFIX_ASSOCIATIONS_TABLE_SHUFFLE: String = "Shuffle"
+        private const val SUFFIX_ASSOCIATIONS_TABLE_SHUFFLE: String = "Shuffle"
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////
