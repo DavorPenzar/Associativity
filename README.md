@@ -8,7 +8,7 @@ The documentation of classes and methods is given as inline documentation in the
 
 Developers wanting to build the app should open the project in [*Android Studio*](http://developer.android.com/studio/). Not only was this project created using the mentioned software meaning the software will know how to build the app, but this is also official [*Android*'s](http://android.com/) development software for creating apps and I highly recommend it for its user-friendliness, even for beginners such as myself (this is my first app).
 
-The app is written in [*Kotlin* programming language](http://kotlinlang.org/). Following [the guidelines](http://kotlinlang.org/docs/reference/kotlin-doc.html), inline documentation of classes and methods is written **immediately before** the object being documented. For instance, a method `foo` would be documented as
+The app is written in [*Kotlin* programming language](http://kotlinlang.org/). Following [the guidelines](http://kotlinlang.org/docs/reference/kotlin-doc.html), inline documentation of classes and methods is written **immediately before** the object being documented. For instance, a method `foo` would be documented as (the documentation is in the `/** ... */` block)
 
 ```Kotlin
 /**
@@ -29,6 +29,8 @@ fun foo(bar: Any?): Boolean {
 }
 
 ```
+
+See [here](http://en.wikipedia.org/wiki/Foobar) meaning of the terms *foo* and *bar*.
 
 The rest of the [*README.md* file](README.md) explains how to create new game tables. No special computer knowledge is needed for this part and anyone is invited to give it a try &#128077;
 
