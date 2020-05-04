@@ -14,7 +14,7 @@ The app is written in [*Kotlin* programming language](http://kotlinlang.org/). F
 /**
  * Foo a bar.
  *
- * @param bar Object to foo. May be `null`.
+ * @param bar Object to foo. The parameter may be `null`.
  *
  * @return If fooing [bar] succeds, `true`; `false` otherwise.
  *
