@@ -12,6 +12,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.io.BufferedWriter
 import java.io.File
 import java.io.InputStream
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 import kotlin.math.abs
 
 /**
@@ -101,7 +104,7 @@ class MainActivity : AppCompatActivity() {
      * @property GUESS_HINT_BRIEF Label to save the brief hint of guessing in [onSaveInstanceState] method.
      * @property GUESS_INPUT Label to save the typed guess in [editTextEnterGuess] in [onSaveInstanceState] method.
      *
-     * @property GAME_TABLES_DEFAULT_DIRECTORY Relative assets path for the directory with game tables.  **Note: It is not guaranteed that this path ends with a path separator.  To join paths use [constructPath] method.**
+     * @property GAME_TABLES_DEFAULT_DIRECTORY Relative assets path for the directory with game tables.  **Note: It is not guaranteed that this path ends with [File.separator].  To join paths use [constructPath] method.**
      *
      */
     public companion object {
@@ -164,15 +167,50 @@ class MainActivity : AppCompatActivity() {
          * Construct a path from subpaths.
          *
          * The function returns [parts] joined to a string with [File.separator] as a separator in
-         * the order given.
+         * the order given.  If any of the [parts] ends with a non-escaped [File.separator], it will
+         * be removed before the joining.
          *
          * @param parts Subpaths to join in a complete path.
          *
          * @return Complete path constructed from subpaths.
          *
          */
-        private fun constructPath(vararg parts: String): String =
-            parts.joinToString(File.separator)
+        private fun constructPath(vararg parts: String): String {
+            // Extract [parts] with terminating [File.separator] removed.
+            val refinedParts: Array<String> = Array(parts.size) { i ->
+                // If the current part is empty, copy it.
+                if (parts[i].isEmpty())
+                    String()
+
+                // If the current part does not end with [File.separator], copy it.
+                if (!parts[i].endsWith(File.separatorChar))
+                    parts[i]
+
+                // Assume the terminating [File.separator] is not escaped.
+                var escaping: Boolean = false
+
+                // If an even number of [TableReader.ESCAPE_CHAR]s precedes the terminating
+                // [File.separator], the terminating [File.separator] is escaped; otherwise it is
+                // not escaped.
+                for (j in parts[i].length - 2 downTo 0) {
+                    if (parts[i][j].toString() != TableReader.ESCAPE_CHAR)
+                        break
+
+                    escaping = !escaping
+                }
+
+                // If the terminating [File.separator] is escaped, copy the current part except the
+                // terminating [File.separator].
+                if (escaping)
+                    parts[i].substring(0 until parts[i].length - 1)
+
+                // Copy the current part.
+                parts[i]
+            }
+
+            // Return [refinedParts] joint into a string delimited by [File.separator]s.
+            return refinedParts.joinToString(File.separator)
+        }
 
         /**
          * Construct a label for saving state in [onSaveInstanceState] from a cell's, column's or the final solution's label and a suffix.

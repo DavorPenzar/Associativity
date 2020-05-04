@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_launcher.*
 
 /**
  * The game launcher activity.
@@ -323,9 +324,9 @@ class LauncherActivity : AppCompatActivity() {
             MainActivity.GAME_TABLES_DEFAULT_DIRECTORY,
             getExternalFilesDir(null)!!,
             resources.getString(R.string.custom_game_tables_readme_filename),
-            resources.getStringArray(R.array.custom_game_tables_readme).apply {
-                set(0, get(0).format(MainActivity.GAME_TABLES_DEFAULT_DIRECTORY))
-            }.joinToString(System.lineSeparator())
+            resources.getStringArray(R.array.custom_game_tables_readme).apply(
+                { set(0, get(0).format(MainActivity.GAME_TABLES_DEFAULT_DIRECTORY)) }
+            ).joinToString(System.lineSeparator())
         )
 
         // Disable difficulty levels for which no game tables are provided.
