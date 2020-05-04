@@ -36,7 +36,7 @@ The rest of the [*README.md* file](README.md) explains how to create new game ta
 
 ##  Defining New Game Tables
 
-New game tables can be defined in [*CSV* files (*comma-separated values*)](http://en.wikipedia.org/wiki/Comma-separated_values). If you are unfamiliar with the format, follow the link, although to produce valid game tables a leading contemporary [spreadsheet software](http://en.wikipedia.org/wiki/Spreadsheet) will suffice (you may even skip to [**Game Table Format**](#game-table-format)&mdash;however, read the first few points in [**Supported *CSV* Format**](#supported-csv-format) to see which options to select when producing a table using [spreadsheet software](http://en.wikipedia.org/wiki/Spreadsheet) (default options will probably be OK unless your cells contain line breaks and maybe if they contain quotes).
+New game tables can be defined in [*CSV* files (*comma-separated values*)](http://en.wikipedia.org/wiki/Comma-separated_values). If you are unfamiliar with the format, follow the link, although to produce valid game tables a leading contemporary [spreadsheet software](http://en.wikipedia.org/wiki/Spreadsheet) will suffice. In fact, you may even skip to [**Game Table Format**](#game-table-format)&mdash;however, it is recomended to read the first few points in [**Supported *CSV* Format**](#supported-csv-format) to see which options to select when producing a table using [spreadsheet software](http://en.wikipedia.org/wiki/Spreadsheet) (default options will probably be OK unless your cells contain line breaks and maybe if they contain quotes).
 
 ### Supported [*CSV* Format](http://en.wikipedia.org/wiki/Comma-separated_values)
 
