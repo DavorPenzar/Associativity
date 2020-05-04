@@ -3,7 +3,10 @@
     <string name="app_name" translatable="true">Associativity</string>
     <string name="app_description" translatable="true">The famous associations game</string>
 
-    <string name="custom_game_tables_readme" translatable="true">Put custom game tables into \"%s\" directory (folder).\n\nFollow https://github.com/DavorPenzar/Associativity/blob/master/README.md to see how to create custom game tables.</string>
+    <string-array name="custom_game_tables_readme" translatable="true">
+        <item>Put custom game tables into \"%s\" directory (folder).</item>
+        <item>Follow http://github.com/DavorPenzar/Associativity/blob/master/README.md to see how to create custom game tables.</item>
+    </string-array>
 
     <string name="difficulty_choose" translatable="true">Choose difficulty level</string>
     <string name="difficulty_level_0" translatable="true">Custom</string>

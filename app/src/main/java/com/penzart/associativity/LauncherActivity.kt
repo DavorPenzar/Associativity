@@ -323,10 +323,9 @@ class LauncherActivity : AppCompatActivity() {
             MainActivity.GAME_TABLES_DEFAULT_DIRECTORY,
             getExternalFilesDir(null)!!,
             resources.getString(R.string.custom_game_tables_readme_filename),
-            resources.getString(
-                R.string.custom_game_tables_readme,
-                MainActivity.GAME_TABLES_DEFAULT_DIRECTORY
-            )
+            resources.getStringArray(R.array.custom_game_tables_readme).apply {
+                set(0, get(0).format(MainActivity.GAME_TABLES_DEFAULT_DIRECTORY))
+            }.joinToString(System.lineSeparator())
         )
 
         // Disable difficulty levels for which no game tables are provided.

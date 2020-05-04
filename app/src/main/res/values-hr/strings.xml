@@ -3,7 +3,10 @@
     <string name="app_name" translatable="true">Asocijativnost</string>
     <string name="app_description" translatable="true">Čuvena igra asocijacija</string>
 
-    <string name="custom_game_tables_readme" translatable="true">Vlastite igraće tablice stavi u direktorij (mapu) \"%s\".\n\nOtvori https://github.com/DavorPenzar/Associativity/blob/master/README.md da vidiš kako napraviti vlastite igraće tablice.</string>
+    <string-array name="custom_game_tables_readme" translatable="true">
+        <item>Vlastite igraće tablice stavi u direktorij (mapu) \"%s\".</item>
+        <item>Otvori http://github.com/DavorPenzar/Associativity/blob/master/README.md da bi saznao kako napraviti vlastite igraće tablice.</item>
+    </string-array>
 
     <string name="difficulty_choose" translatable="true">Odaberi razinu težine</string>
     <string name="difficulty_level_0" translatable="true">Vlastito</string>
