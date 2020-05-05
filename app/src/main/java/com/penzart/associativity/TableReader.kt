@@ -294,7 +294,7 @@ class TableReader : Any {
             precedingLine: Int = 0,
             parseEscapeSequences: Boolean = false
         ): Array<Array<String>> {
-            // Lambda function for inserting rows in tables.  The resulting [table] is returned.
+            // Lambda function for inserting rows in tables.  Resulting [table] is returned.
             val insertRowInTable: (
                 table: ArrayList<Array<String>>, row: ArrayList<String>
             ) -> ArrayList<Array<String>> =
@@ -305,8 +305,8 @@ class TableReader : Any {
                 }
 
             // Lambda function for inserting cells in rows.  If [wereQuotes], the cell is built and
-            // added to the end; otherwise it is built, trimmed and then added.  The resulting [row]
-            // is returned.
+            // added to the end; otherwise it is built, trimmed and then added.  In the end [cell]
+            // is cleared and resulting [row] is returned.
             val insertCellInRow: (
                 row: ArrayList<String>, cell: StringBuilder, wereQuotes: Boolean
             ) -> ArrayList<String> =
@@ -317,6 +317,8 @@ class TableReader : Any {
                         else
                             cell.toString().trim()
                     )
+
+                    cell.clear()
 
                     row
                 }
@@ -343,7 +345,7 @@ class TableReader : Any {
                 val row: ArrayList<String> = ArrayList()
 
                 // Initialise [cell] builders.
-                var cell: StringBuilder = StringBuilder()
+                val cell: StringBuilder = StringBuilder()
 
                 // Assume [line] is empty.
                 var emptyLine: Boolean = true
@@ -474,9 +476,6 @@ class TableReader : Any {
 
                                 // Do not necessarily expect the end of [cell] any more.
                                 expectCellEnd = false
-
-                                // Initialise new [cell].
-                                cell = StringBuilder()
                             }
 
                             // Otherwise just add the character to [cell].
