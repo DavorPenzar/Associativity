@@ -70,26 +70,27 @@ If any of the conditions mentioned above is not satisfied, an uncaught exception
 
 An example of a column (or the final solution for that matter&mdash;suppose cells in the column are solutions of some other columns) where the order of associations matters is the column *C* in the following associations game table (try to solve the table &#128521;).
 
-|       | **A**     | **B**         | **C**  | **D**        |
-|-----: | :-------: | :-----------: | :----: | :----------: |
-| **1** | sheet     | ice           | Mary   | Google Drive |
-| **2** | cellulose | Christmas     | had    | storm        |
-| **3** | academia  | flakes        | a      | sky          |
-| **4** | printer   | mountain tops | little | water        |
+|       | **A**     | **B**        | **C**  | **D**        |
+|-----: | :-------: | :----------: | :----: | :----------: |
+| **1** | sheet     | ice          | Mary   | Google Drive |
+| **2** | cellulose | Christmas    | had    | storm        |
+| **3** | academia  | flake        | a      | sky          |
+| **4** | printer   | mountain top | little | water        |
 
 A valid [*CSV* file](http://en.wikipedia.org/wiki/Comma-separated_values) defining the table above would contain (solutions are masked so you would not be deprived of the fun solving the table)
 
 ```
-1         , 1             , 0      , 1            , 1
+1         , 1            , 0      , 1            , 1
 
-sheet     , ice           , Mary   , Google Drive ,
-cellulose , Christmas     , had    , storm        ,
-academia  , flakes        , a      , sky          ,
-printer   , mountain tops , little , water        ,
+sheet     , ice          , Mary   , Google Drive ,
+cellulose , Christmas    , had    , storm        ,
+academia  , flake        , a      , sky          ,
+printer   , mountain top , little , water        ,
 
-XXXXX     , XXXX          , XXXX   , XXXXX        , XXXXX
-XXXXXX    , XXXXX         , XXXXX  , XXXXXX       , XXXXXXXXX
-          , XXXXXXX       , XXXXX  , XXXXXX       ,
+XXXXX     , XXXX         , XXXX   , XXXXX        , XXXXX
+XXXXXX    , XXXXX        , XXXXX  , XXXXXX       , XXXXX XXXXXX
+          , XXXXXXX      , XXXXX  , XXXXXX       , XXXXX XXXXX
+          ,              ,        ,              , XXXXXXXXX
 
 ```
 
@@ -99,11 +100,12 @@ The format above is human-friendly, while a [spreadsheet software](http://en.wik
 "1","1","0","1","1"
 "sheet","ice","Mary","Google Drive",""
 "cellulose","Christmas","had","storm",""
-"academia","flakes","a","sky",""
-"printer","mountain tops","little","water",""
+"academia","flake","a","sky",""
+"printer","mountain top","little","water",""
 "XXXXX","XXXX","XXXX","XXXXX","XXXXX"
-"XXXXXX","XXXXX","XXXXX","XXXXXX","XXXXXXXXX"
-"","XXXXXXX","XXXXX","XXXXXX",""
+"XXXXXX","XXXXX","XXXXX","XXXXXX","XXXXX XXXXXX"
+"","XXXXXXX","XXXXX","XXXXXX","XXXXX XXXXX"
+"","","","","XXXXXXXXX"
 
 ```
 
@@ -115,18 +117,19 @@ In both formats shown commas (and empty cells in the second format) at the end o
 
 The easiest way to create a [*CSV* file](http://en.wikipedia.org/wiki/Comma-separated_values) of a game table is using a [spreadsheet software](http://en.wikipedia.org/wiki/Spreadsheet) such as [*Google Sheets*](http://google.com/sheets/about/), [*Microsoft Office Excel*](http://products.office.com/excel) or [*LibreOffice Calc*](http://libreoffice.org/discover/calc/). In the software of your choice enter the game table as
 
-|              | **A**     | **B**         | **C**   | **D**        | **E**       | **F** | **&hellip;** |
-| :----------: | :---------| :-------------| :-------| :------------| :-----------| :---- | :------------|
-| **1**        | 1         | 1             | 0       | 1            | 1           |       |              |
-| **2**        | sheet     | ice           | Mary    | Google Drive |             |       |              |
-| **3**        | cellulose | Christmas     | had     | storm        |             |       |              |
-| **4**        | academia  | flakes        | a       | sky          |             |       |              |
-| **5**        | printer   | mountain tops | little  | water        |             |       |              |
-| **6**        | *XXXXX*   | *XXXX*        | *XXXX*  | *XXXXX*      | *XXXXX*     |       |              |
-| **7**        | *XXXXXX*  | *XXXXX*       | *XXXXX* | *XXXXXX*     | *XXXXXXXXX* |       |              |
-| **8**        |           | *XXXXXXX*     | *XXXXX* | *XXXXXX*     |             |       |              |
-| **9**        |           |               |         |              |             |       |              |
-| **&vellip;** |           |               |         |              |             |       |              |
+|              | **A**     | **B**        | **C**   | **D**        | **E**          | **F** | **&hellip;** |
+| :----------: | :---------| :------------| :-------| :------------| :--------------| :---- | :------------|
+| **1**        | 1         | 1            | 0       | 1            | 1              |       |              |
+| **2**        | sheet     | ice          | Mary    | Google Drive |                |       |              |
+| **3**        | cellulose | Christmas    | had     | storm        |                |       |              |
+| **4**        | academia  | flake        | a       | sky          |                |       |              |
+| **5**        | printer   | mountain top | little  | water        |                |       |              |
+| **6**        | *XXXXX*   | *XXXX*       | *XXXX*  | *XXXXX*      | *XXXXX*        |       |              |
+| **7**        | *XXXXXX*  | *XXXXX*      | *XXXXX* | *XXXXXX*     | *XXXXX XXXXXX* |       |              |
+| **8**        |           | *XXXXXXX*    | *XXXXX* | *XXXXXX*     | *XXXXX XXXXX*  |       |              |
+| **9**        |           |              |         |              | *XXXXXXXXX*    |       |              |
+| **10**       |           |              |         |              |                |       |              |
+| **&vellip;** |           |              |         |              |                |       |              |
 
 Again, be sure to add actual solutions, not strings such as *XXXXX*, in rows 6 until the end. Of course, if your game table is a *kinky* one and one of the solutions or an alternative acceptable answer is *XXX*, then you *should* put *XXX* as the answer in the corresponding column. Keep in mind that the final solution and its alternative acceptable answers are placed in the column *E* from the sixth row downward.
 
