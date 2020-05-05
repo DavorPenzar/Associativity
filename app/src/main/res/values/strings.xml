@@ -10,8 +10,9 @@
     <string name="custom_game_tables_readme_filename" translatable="false">README.txt</string>
     <string-array name="custom_game_tables_readme" translatable="true">
         <item>Put custom game tables into \"%s\" directory (folder).</item>
-        <item>Follow http://github.com/DavorPenzar/Associativity/blob/master/README.md to see how to create custom game tables.</item>
+        <item>Follow %s to see how to create custom game tables.</item>
     </string-array>
+    <string name="custom_game_tables_readme_url" translatable="false">http://github.com/DavorPenzar/Associativity/blob/master/README.md</string>
 
     <!-- Difficulty levels and related strings. -->
     <string name="dif" translatable="false">Dif</string>

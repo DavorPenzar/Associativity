@@ -5,7 +5,7 @@
 
     <string-array name="custom_game_tables_readme" translatable="true">
         <item>Put custom game tables into \"%s\" directory (folder).</item>
-        <item>Follow http://github.com/DavorPenzar/Associativity/blob/master/README.md to see how to create custom game tables.</item>
+        <item>Follow %s to see how to create custom game tables.</item>
     </string-array>
 
     <string name="difficulty_choose" translatable="true">Choose difficulty level</string>

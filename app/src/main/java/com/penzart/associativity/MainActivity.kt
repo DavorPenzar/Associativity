@@ -12,9 +12,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.io.BufferedWriter
 import java.io.File
 import java.io.InputStream
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 import kotlin.math.abs
 
 /**
@@ -177,7 +174,7 @@ class MainActivity : AppCompatActivity() {
          */
         private fun constructPath(vararg parts: String): String {
             // Extract [parts] with terminating [File.separator] removed.
-            val refinedParts: Array<String> = Array(parts.size) { i ->
+            val refinedParts: Array<String> = Array(parts.size) { i: Int ->
                 // If the current part is empty, copy it.
                 if (parts[i].isEmpty())
                     String()
@@ -444,7 +441,7 @@ class MainActivity : AppCompatActivity() {
          * If [readmeFilename] is `null`, no README file is created.  Otherwise [readmeText] must
          * not be `null` and [readmeText] is written as contents of the README file written in
          * [filesDir] with the filename [readmeFilename].  A new line is appended to [readmeText]
-         * even if it already ends with a new line.
+         * if it does not end with a line break.
          *
          * @param rootDirectory Path of the root directory of game tables.
          * @param filesDir Main external storage directory.
@@ -494,7 +491,8 @@ class MainActivity : AppCompatActivity() {
 
                 // Print to README file.
                 readmeWriter.write(readmeText!!)
-                readmeWriter.newLine()
+                if (!readmeText.endsWith(System.lineSeparator()))
+                    readmeWriter.newLine()
 
                 // Close README file.
                 readmeWriter.close()
