@@ -75,7 +75,7 @@ An example of a column (or the final solution for that matter&mdash;suppose cell
 | **1** | sheet     | ice           | Mary   | Google Drive |
 | **2** | cellulose | Christmas     | had    | storm        |
 | **3** | academia  | flakes        | a      | sky          |
-| **4** | printer   | mountain tops | little | steam        |
+| **4** | printer   | mountain tops | little | water        |
 
 A valid [*CSV* file](http://en.wikipedia.org/wiki/Comma-separated_values) defining the table above would contain (solutions are masked so you would not be deprived of the fun solving the table)
 
@@ -85,7 +85,7 @@ A valid [*CSV* file](http://en.wikipedia.org/wiki/Comma-separated_values) defini
 sheet     , ice           , Mary   , Google Drive ,
 cellulose , Christmas     , had    , storm        ,
 academia  , flakes        , a      , sky          ,
-printer   , mountain tops , little , steam        ,
+printer   , mountain tops , little , water        ,
 
 XXXXX     , XXXX          , XXXX   , XXXXX        , XXXXX
 XXXXXX    , XXXXX         , XXXXX  , XXXXXX       , XXXXXXXXX
@@ -100,7 +100,7 @@ The format above is human-friendly, while a [spreadsheet software](http://en.wik
 "sheet","ice","Mary","Google Drive",""
 "cellulose","Christmas","had","storm",""
 "academia","flakes","a","sky",""
-"printer","mountain tops","little","steam",""
+"printer","mountain tops","little","water",""
 "XXXXX","XXXX","XXXX","XXXXX","XXXXX"
 "XXXXXX","XXXXX","XXXXX","XXXXXX","XXXXXXXXX"
 "","XXXXXXX","XXXXX","XXXXXX",""
@@ -121,7 +121,7 @@ The easiest way to create a [*CSV* file](http://en.wikipedia.org/wiki/Comma-sepa
 | **2**        | sheet     | ice           | Mary    | Google Drive |             |       |              |
 | **3**        | cellulose | Christmas     | had     | storm        |             |       |              |
 | **4**        | academia  | flakes        | a       | sky          |             |       |              |
-| **5**        | printer   | mountain tops | little  | steam        |             |       |              |
+| **5**        | printer   | mountain tops | little  | water        |             |       |              |
 | **6**        | *XXXXX*   | *XXXX*        | *XXXX*  | *XXXXX*      | *XXXXX*     |       |              |
 | **7**        | *XXXXXX*  | *XXXXX*       | *XXXXX* | *XXXXXX*     | *XXXXXXXXX* |       |              |
 | **8**        |           | *XXXXXXX*     | *XXXXX* | *XXXXXX*     |             |       |              |
