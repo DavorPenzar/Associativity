@@ -30,7 +30,7 @@ fun foo(bar: Any?): Boolean {
 
 ```
 
-See [here](http://en.wikipedia.org/wiki/Foobar) meaning of the terms *foo* and *bar*.
+See [here](http://en.wikipedia.org/wiki/Foobar) the meaning of the terms *foo* and *bar*.
 
 The rest of the [*README.md* file](README.md) explains how to create new game tables. No special computer knowledge is needed for this part and anyone is invited to give it a try &#128077;
 
