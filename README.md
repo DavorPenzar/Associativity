@@ -30,7 +30,7 @@ fun foo(bar: Any?): Boolean {
 
 ```
 
-See [here](http://en.wikipedia.org/wiki/Foobar) meaning of the terms *foo* and *bar*.
+See [here](http://en.wikipedia.org/wiki/Foobar) the meaning of the terms *foo* and *bar*.
 
 The rest of the [*README.md* file](README.md) explains how to create new game tables. No special computer knowledge is needed for this part and anyone is invited to give it a try &#128077;
 
@@ -118,7 +118,7 @@ In both formats shown commas (and empty cells in the second format) at the end o
 The easiest way to create a [*CSV* file](http://en.wikipedia.org/wiki/Comma-separated_values) of a game table is using a [spreadsheet software](http://en.wikipedia.org/wiki/Spreadsheet) such as [*Google Sheets*](http://google.com/sheets/about/), [*Microsoft Office Excel*](http://products.office.com/excel) or [*LibreOffice Calc*](http://libreoffice.org/discover/calc/). In the software of your choice enter the game table as
 
 |              | **A**     | **B**        | **C**   | **D**        | **E**          | **F** | **&hellip;** |
-| :----------: | :---------| :------------| :-------| :------------| :--------------| :---- | :------------|
+| :----------: | :---------| :------------| :-------| :------------| :--------------| :-----| :------------|
 | **1**        | 1         | 1            | 0       | 1            | 1              |       |              |
 | **2**        | sheet     | ice          | Mary    | Google Drive |                |       |              |
 | **3**        | cellulose | Christmas    | had     | storm        |                |       |              |
@@ -139,7 +139,7 @@ The next step is to export the sheet to a [*CSV* file](http://en.wikipedia.org/w
 
 ### Adding Game Tables to the App
 
-Ideally there would be an online server to which one could upload their own new game table and from which the app would download the game table and run it. The problem is that servers are not free and this is currently a non-profit one man's project essentially meaning no such server is implemented. If an app's server for distributing game tables existed, a [DBMS](http://en.wikipedia.org/wiki/Database#Database_management_system) would probably be installed and there would be no need for an in-app [*CSV*](http://en.wikipedia.org/wiki/Comma-separated_values) parser.
+Ideally there would be an online server to which one could upload their own new game table and from which the app would download the game table and run it. The problem is that servers are not free and this is currently a non-profit one man's project essentially meaning no such server is implemented. If an app's server for distributing game tables existed, a [DBMS](http://en.wikipedia.org/wiki/Database#Database_management_system) would probably be installed and maybe the need for an in-app [*CSV*](http://en.wikipedia.org/wiki/Comma-separated_values) parser would be avoided.
 
 **If you only want to mount your game tables into the app, but do not have the will or knowledge to build the app yourself**, put your game tables' [*CSV* files](http://en.wikipedia.org/wiki/Comma-separated_values) into the *game_tables* subdirectory of the app's directory on your device. The app's directory will probably be *Android/data/com.penzart.associativity/files* in internal or external (such as an [*SD* card](http://en.wikipedia.org/wiki/SD_card)) memory. After the app was run for the first time, a *README.txt* file should appear in the app's directory, but the README file will essentially direct you to [this *README.md* file](README.md) and will not reveal any useful information. Game tables put in the specified *game_tables* directory should be playable by choosing *Custom* difficulty level, but this feature was not fully tested yet.
 
