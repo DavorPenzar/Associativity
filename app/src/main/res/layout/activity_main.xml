@@ -66,7 +66,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/adViewAdvertisement"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayoutHeader">
@@ -604,148 +604,15 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Guess dialog (hidden by default, shown when needed). -->
-    <ScrollView
-        android:id="@+id/scrollViewGuessDialog"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@color/shade040Percent"
+    <!-- Ads. -->
+    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adViewAdvertisement"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
-        android:visibility="gone"
+        ads:adSize="SMART_BANNER"
+        ads:adUnitId="ca-app-pub-3940256099942544/6300978111"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <LinearLayout
-            android:id="@+id/linearLayoutGuessDialog"
-            style="@style/GuessDialog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="start|center_horizontal"
-            android:orientation="vertical">
-
-            <!-- Header. -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/linearLayoutGuessDialogHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <!-- "Dismiss" button. -->
-                <LinearLayout
-                    android:id="@+id/linearLayoutDismiss"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <Button
-                        android:id="@+id/buttonDismiss"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:onClick="clickOnDismiss"
-                        android:text="@string/guess_dialog_dismiss" />
-                </LinearLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <!-- Dialog contents. -->
-            <LinearLayout
-                android:id="@+id/linearLayoutGuessDisplay"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="start|center_horizontal"
-                android:orientation="vertical">
-
-                <!-- Elaborate hint. -->
-                <LinearLayout
-                    android:id="@+id/linearLayoutHint"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/textViewHint"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center" />
-                </LinearLayout>
-
-                <!-- [EditText] for entering guess. -->
-                <LinearLayout
-                    android:id="@+id/linearLayoutEnterGuess"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <EditText
-                        android:id="@+id/editTextEnterGuess"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:ems="10"
-                        android:hint="@string/guess_dialog_try"
-                        android:imeOptions="actionDone"
-                        android:importantForAutofill="no"
-                        android:inputType="text|textAutoComplete|textAutoCorrect" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- "Give up" and "Try" buttons. -->
-            <LinearLayout
-                android:id="@+id/linearLayoutGuessButtons"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:baselineAligned="false"
-                android:gravity="start|center_vertical"
-                android:orientation="horizontal">
-
-                <!-- "Give up" button. -->
-                <LinearLayout
-                    android:id="@+id/linearLayoutGiveUp"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <Button
-                        android:id="@+id/buttonGiveUp"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:clickable="false"
-                        android:enabled="false"
-                        android:gravity="center"
-                        android:text="@string/guess_dialog_give_up" />
-                </LinearLayout>
-
-                <!-- "Try" button. -->
-                <LinearLayout
-                    android:id="@+id/linearLayoutGuess"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <Button
-                        android:id="@+id/buttonGuess"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:text="@string/guess_dialog_try" />
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
-    </ScrollView>
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

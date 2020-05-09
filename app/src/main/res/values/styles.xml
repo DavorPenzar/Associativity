@@ -86,8 +86,6 @@
 
     <!-- Style of the guess dialog. -->
     <style name="GuessDialog">
-        <item name="android:layout_margin">@dimen/spacing_small</item>
-        <item name="android:background">@drawable/guess_dialog</item>
         <item name="android:padding">@dimen/spacing_normal</item>
     </style>
 </resources>

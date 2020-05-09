@@ -4,10 +4,10 @@ import android.content.Context
 import android.content.res.AssetManager
 import android.os.*
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.ads.AdRequest
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.BufferedWriter
 import java.io.File
@@ -46,7 +46,7 @@ import kotlin.math.abs
  * @property stopwatchStartTimeStamp The initial timestamp (milliseconds from boot time) for measuring [stopwatchDuration] of gameplay by the stopwatch (it changes when calling methods [onPause] and [onResume] to disregard idle time therefore ultimately it may be a different timestamp so that [stopwatchDuration] would be measured properly and fairly).
  *
  * @property guessOpenness If the guess dialog is open, `true`; `false` otherwise.
- * @property guessGiveUp If giving up is allowed during guessing, `true`; `false` otherwise.
+ * @property guessGiveUpAllowed If giving up is allowed during guessing, `true`; `false` otherwise.
  * @property guessTarget Label of the target of guessing.
  *
  * @property cellsOpenness Mapping from cells' labels to their openness.
@@ -59,7 +59,7 @@ import kotlin.math.abs
  * @property solutionValue The final solution and alternative acceptable answers.
  *
  */
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //  COMPANION ELEMENTS                                                                        //
@@ -94,12 +94,10 @@ class MainActivity : AppCompatActivity() {
      *
      * @property CURRENT_TEXT Label to save currently displayed text in [textViewCurrent] in [onSaveInstanceState] method.
      *
-     * @property GUESS_OPENNESS Label to save openness of the guess dialog in [onSaveInstanceState] method.
      * @property GUESS_GIVE_UP Label to save the ability to give up in [onSaveInstanceState] method.
      * @property GUESS_TARGET Label to save the target of guessing in [onSaveInstanceState] method.
      * @property GUESS_HINT_ELABORATE Label to save the elaborate hint for guessing in [onSaveInstanceState] method.
      * @property GUESS_HINT_BRIEF Label to save the brief hint of guessing in [onSaveInstanceState] method.
-     * @property GUESS_INPUT Label to save the typed guess in [editTextEnterGuess] in [onSaveInstanceState] method.
      *
      * @property GAME_TABLES_DEFAULT_DIRECTORY Relative assets path for the directory with game tables.  **Note: It is not guaranteed that this path ends with [File.separator].  To join paths use [constructPath] method.**
      *
@@ -141,12 +139,10 @@ class MainActivity : AppCompatActivity() {
 
         private const val CURRENT_TEXT: String = "displayCurrent"
 
-        private const val GUESS_OPENNESS: String = "isGuessDialogOpen"
         private const val GUESS_GIVE_UP: String = "guessGiveUp"
         private const val GUESS_TARGET: String = "guessTarget"
         private const val GUESS_HINT_ELABORATE: String = "guessElaborateHint"
         private const val GUESS_HINT_BRIEF: String = "guessBriefHint"
-        private const val GUESS_INPUT: String = "guess"
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -526,8 +522,10 @@ class MainActivity : AppCompatActivity() {
     private var stopwatchStartTimeStamp: Long = SystemClock.elapsedRealtime()
 
     private var guessOpenness: Boolean = false
-    private var guessGiveUp: Boolean = false
+    private var guessGiveUpAllowed: Boolean = false
     private var guessTarget: String = String()
+    private var guessHintElaborate: String = String()
+    private var guessHintBrief: String = String()
 
     private val cellsOpenness: HashMap<String, Boolean> = HashMap()
     private val cellsValues: HashMap<String, String> = HashMap()
@@ -816,8 +814,10 @@ class MainActivity : AppCompatActivity() {
         // Reset the guess dialog if needed.
         if (guessDialog) {
             guessOpenness = false
-            guessGiveUp = false
+            guessGiveUpAllowed = false
             guessTarget = String()
+            guessHintElaborate = String()
+            guessHintBrief = String()
         }
 
         // Reset the game table and solutions if needed.
@@ -1023,22 +1023,6 @@ class MainActivity : AppCompatActivity() {
                 editColumnValue(column, newColumnsValues[column]!!)
         }
     }
-
-    /**
-     * Make [editTextEnterGuess]' IME action done to be clicking [buttonGuess].
-     *
-     */
-    private fun connectEditTextEnterGuessAndButtonGuess() =
-        editTextEnterGuess.setOnEditorActionListener { _, actionId, _ ->
-            when (actionId) {
-                EditorInfo.IME_ACTION_DONE -> {
-                    buttonGuess.performClick()
-
-                    true
-                }
-                else -> false
-            }
-        }
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1373,68 +1357,13 @@ class MainActivity : AppCompatActivity() {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Find out whether the guess dialog is open or closed.
-     *
-     * @return `true` if the guess dialog is open, `false` otherwise.
-     *
-     */
-    private fun isOpenGuessDialog(): Boolean = guessOpenness
-
-    /**
-     * Set the guess dialog's openness.
-     *
-     * If [openness] is `null`, the guess dialog's openness state is toggled (an open guess dialog
-     * will be set to closed and vice versa).
-     *
-     * **Note: This method merely changes what [isOpenGuessDialog] method will return.  To
-     * actually open the guess dialog call [openGuessDialog] method or to close it call
-     * [closeGuessDialog] method which will in turn call this method among doing other things.**
-     *
-     * @param openness New openness of the guess dialog.
-     *
-     * @see isOpenGuessDialog
-     * @see openGuessDialog
-     * @see closeGuessDialog
-     *
-     */
-    private fun changeGuesDialogOpenness(openness: Boolean? = null) {
-        guessOpenness = openness ?: !guessOpenness
-    }
-
-    /**
      * Open the guess dialog.
      *
      * @see isOpenGuessDialog
-     * @see closeGuessDialog
      *
      */
     private fun openGuessDialog() {
-        // Set the guess dialog's openness to `true`.
-        changeGuesDialogOpenness(true)
-
-        // Actually open the guess dialog.
-        scrollViewGuessDialog.visibility = View.VISIBLE
-    }
-
-    /**
-     * Close the guess dialog.
-     *
-     * @see isOpenGuessDialog
-     * @see closeGuessDialog
-     *
-     */
-    private fun closeGuessDialog() {
-        // Close the input method.
-        closeInputMethod(editTextEnterGuess.windowToken)
-
-        // Actually close the guess dialog.
-        scrollViewGuessDialog.visibility = View.GONE
-
-        // Clear [editTextEnterGuess].
-        typeGuess(String())
-
-        // Set the guess dialog's openness to `false`.
-        changeGuesDialogOpenness(false)
+        GuessDialog().show(supportFragmentManager, retrieveGuessHint())
     }
 
     /**
@@ -1443,7 +1372,7 @@ class MainActivity : AppCompatActivity() {
      * @return If giving up is allowed during guessing, `true`; `false` otherwise.
      *
      */
-    private fun isGuessGivingUpAllowed(): Boolean = guessGiveUp
+    override fun isGuessGivingUpAllowed(): Boolean = guessGiveUpAllowed
 
     /**
      * Change the allowness of giving up during guessing.
@@ -1463,7 +1392,7 @@ class MainActivity : AppCompatActivity() {
      *
      */
     private fun changeGuessGivingUpAllowness(giveUp: Boolean? = null) {
-        guessGiveUp = giveUp ?: !guessGiveUp
+        guessGiveUpAllowed = giveUp ?: !guessGiveUpAllowed
     }
 
     /**
@@ -1489,77 +1418,105 @@ class MainActivity : AppCompatActivity() {
     /**
      * Get the current hint for guessing.
      *
-     * @param elaborate If `true`, the elaborate hint (i. e. the text in [textViewHint]) is returned; otherwise the brief hint is returned (i. e. `hint` of [editTextEnterGuess]).
+     * @param elaborate If `true`, the elaborate hint is returned; otherwise the brief hint is returned.
      *
      * @return Current hint for guessing.
      *
      */
-    private fun retrieveGuessHint(elaborate: Boolean = true): String = if (elaborate)
-        textViewHint.text.toString()
+    override public fun retrieveGuessHint(elaborate: Boolean): String = if (elaborate)
+        guessHintElaborate
     else
-        editTextEnterGuess.hint.toString()
+        guessHintBrief
 
     /**
-     * Print an elaborate hint in [textViewHint].
-     *
-     * If [target] is given (if it is not `null`), the hint is displayed as `"target: hint"`, where
-     * `target` is [target] and `hint` is [hint].  Otherwise only [hint] is printed.
-     *
-     * When restoring a previously printed elaborate hint, pass the complete elaborate hint as the
-     * argument [hint] while leaving the argument [target] to the default `null` value.
+     * Set elaborate hint for guessing.
      *
      * @param hint Elaborate hint to print.
-     * @param target Target of the solution (column label if the solution is not final).
      *
      * @see retrieveGuessHint
      *
      */
-    private fun displayElaborateGuessHint(hint: String?, target: String? = null) {
-        textViewHint.text = if (target == null)
-            hint
-        else
-            DISPLAY_PARENT_CHILD_TEXT.format(target, hint)
+    private fun changeElaborateGuessHint(hint: String) {
+        guessHintElaborate = hint
     }
 
     /**
-     * Print a brief hint in [editTextEnterGuess].
+     * Set brief hint for guessing.
      *
      * @param hint Brief hint to display.
      *
      * @see retrieveGuessHint
      *
      */
-    private fun displayBriefGuessHint(hint: String?) {
-        editTextEnterGuess.hint = hint
+    private fun changeBriefGuessHint(hint: String) {
+        guessHintBrief = hint
     }
 
     /**
-     * Get the currently written guess in [editTextEnterGuess].
+     * Try to guess a solution.
      *
-     * @return Currently written guess in [editTextEnterGuess].
+     * According to the target of guessing, a column's solution or the final solution is tried to
+     * be guessed.  Guesses are checked using [guessColumn] and [guessFinal] methods and, according
+     * to their returned values, appropriate actions are deployed (if the solution is guessed, the
+     * column/complete table is opened and the appropriate feedback message is displayed; when the
+     * final solution is guessed, the stopwatch is permanently stopped).
+     *
+     * @param guess Offered guess.
+     *
+     * @see guessGiveUp
+     * @see guessColumn
+     * @see guessFinal
      *
      */
-    private fun retrieveGuess(): String = editTextEnterGuess.text.toString()
+    override fun guessTry(guess: String) = if (
+        arrayOfColumns().contains(retrieveGuessTarget())
+    ) {
+        if (guessColumn(retrieveGuessTarget(), guess)) {
+            openColumn(retrieveGuessTarget(), displayContent = false)
+            displayCurrentText(
+                resources.getString(
+                    R.string.guess_dialog_feedback_correct,
+                    resources.getString(R.string.guess_dialog_feedback_smiley_face)
+                )
+            )
+        } else
+            displayCurrentText(
+                resources.getString(
+                    R.string.guess_dialog_feedback_wrong,
+                    resources.getString(R.string.guess_dialog_feedback_sad_face)
+                )
+            )
+    } else {
+        if (guessFinal(guess)) {
+            openFinal(displayContent = false)
+            displayCurrentText(
+                resources.getString(
+                    R.string.guess_dialog_feedback_correct,
+                    resources.getString(R.string.guess_dialog_feedback_smiley_face)
+                )
+            )
+        } else
+            displayCurrentText(
+                resources.getString(
+                    R.string.guess_dialog_feedback_wrong,
+                    resources.getString(R.string.guess_dialog_feedback_sad_face)
+                )
+            )
+    }
 
     /**
-     * Set the guess in [editTextEnterGuess].
+     * Give up guessing a solution.
      *
-     * @param guess Guess to set in [editTextEnterGuess].
+     * The actions are similar to when a solution is guessed (correctly), i. e. the appropriate
+     * column/complete table is opened and the stopwatch is stopped if necessary.
      *
-     * @see retrieveGuess
-     *
-     */
-    private fun typeGuess(guess: String?) = editTextEnterGuess.setText(guess)
-
-    /**
-     * On-click method for [buttonDismiss].
-     *
-     * When called, the guess dialog is closed.
-     *
-     * @param it The [buttonDismiss].
+     * @see guessTry
      *
      */
-    public fun clickOnDismiss(it: View) = closeGuessDialog()
+    override fun guessGiveUp() = if (arrayOfColumns().contains(retrieveGuessTarget()))
+        openColumn(retrieveGuessTarget())
+    else
+        openFinal()
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2126,14 +2083,11 @@ class MainActivity : AppCompatActivity() {
         changeGuessTarget(column)
 
         // Display hints.
-        displayElaborateGuessHint(hint!!.joinToString(COMMA_DELIMITER), column)
-        displayBriefGuessHint(column)
+        changeElaborateGuessHint(hint!!.joinToString(COMMA_DELIMITER))
+        changeBriefGuessHint(column)
 
         // Allow or disallow giving up.
         changeGuessGivingUpAllowness(offerGivingUp)
-
-        // Make [buttonGuess] respond to guessing the [column]'s solution.
-        bindButtonGuessToColumn(column)
 
         // Open the guess dialog.
         openGuessDialog()
@@ -2158,155 +2112,14 @@ class MainActivity : AppCompatActivity() {
         changeGuessTarget(resources.getString(R.string.sol))
 
         // Display hints.
-        displayElaborateGuessHint(hint!!.joinToString(COMMA_DELIMITER))
-        displayBriefGuessHint(resources.getString(R.string.game_table_solution))
+        changeElaborateGuessHint(hint!!.joinToString(COMMA_DELIMITER))
+        changeBriefGuessHint(resources.getString(R.string.game_table_solution))
 
         // Allow or disallow giving up.
         changeGuessGivingUpAllowness(offerGivingUp)
 
-        // Make [buttonGuess] respond to guessing the final solution.
-        bindButtonGuessToFinal()
-
         // Open the guess dialog.
         openGuessDialog()
-    }
-
-    /**
-     * Make [buttonGuess] respond to guessing a column's solution.
-     *
-     * When clicked, it is checked whether or not the guess typed in [editTextEnterGuess] is correct
-     * or not.  If it is correct, [column] and its solution are opened, otherwise the player is
-     * informed their guess was wrong by displaying the message in [textViewCurrent].  In the end
-     * the guess dialog is closed.
-     *
-     * Also, clicking [buttonGiveUp] will automatically open [column] and its solution if the button
-     * is enabled (if [isGuessGivingUpAllowed] method returns `true`).
-     *
-     * @param column Column's label.
-     *
-     * @see clickOnClosedCell
-     * @see clickOnClosedColumn
-     * @see clickOnClosedFinal
-     * @see offerColumnGuess
-     * @see isGuessGivingUpAllowed
-     *
-     */
-    private fun bindButtonGuessToColumn(column: String) {
-        // Set on-click method of [buttonGuess].
-        buttonGuess.setOnClickListener {
-            if (guessColumn(column,retrieveGuess())) {
-                openColumn(column, displayContent = false)
-                displayCurrentText(
-                    resources.getString(
-                        R.string.guess_dialog_feedback_correct,
-                        resources.getString(R.string.guess_dialog_feedback_smiley_face)
-                    )
-                )
-            }
-            else
-                displayCurrentText(
-                    resources.getString(
-                        R.string.guess_dialog_feedback_wrong,
-                        resources.getString(R.string.guess_dialog_feedback_sad_face)
-                    )
-                )
-
-            closeGuessDialog()
-        }
-
-        // Act accordingly on [buttonGiveUp].
-        if (isGuessGivingUpAllowed()) {
-            // Enable the button.
-            buttonGiveUp.apply {
-                isClickable = true
-                isEnabled = true
-            }
-
-            // Set on-click method.
-            buttonGiveUp.setOnClickListener {
-                openColumn(column)
-
-                closeGuessDialog()
-            }
-        }
-        else {
-            buttonGiveUp.apply {
-                // Remove on-click method.
-                setOnClickListener(null)
-
-                // Disable the button.
-                isEnabled = false
-                isClickable = false
-            }
-        }
-    }
-
-    /**
-     * Make [buttonGuess] respond to guessing the final solution.
-     *
-     * When clicked, it is checked whether or not the guess typed in [editTextEnterGuess] is correct
-     * or not.  If it is correct, the complete game table along with the final solution are opened,
-     * otherwise the player is informed their guess was wrong by displaying the message in
-     * [textViewCurrent].  In the end the guess dialog is closed.
-     *
-     * Also, clicking [buttonGiveUp] will automatically open the complete game table and the final
-     * solution if the button is enabled (if [isGuessGivingUpAllowed] method returns `true`).
-     *
-     * @see clickOnClosedCell
-     * @see clickOnClosedColumn
-     * @see clickOnClosedFinal
-     * @see offerColumnGuess
-     * @see isGuessGivingUpAllowed
-     *
-     */
-    private fun bindButtonGuessToFinal() {
-        // Set on-click method of [buttonGuess].
-        buttonGuess.setOnClickListener {
-            if (guessFinal(retrieveGuess())) {
-                openFinal(displayContent = false)
-                displayCurrentText(
-                    resources.getString(
-                        R.string.guess_dialog_feedback_correct,
-                        resources.getString(R.string.guess_dialog_feedback_smiley_face)
-                    )
-                )
-            }
-            else
-                displayCurrentText(
-                    resources.getString(
-                        R.string.guess_dialog_feedback_wrong,
-                        resources.getString(R.string.guess_dialog_feedback_sad_face)
-                    )
-                )
-
-            closeGuessDialog()
-        }
-
-        // Act accordingly on [buttonGiveUp].
-        if (isGuessGivingUpAllowed()) {
-            // Enable the button.
-            buttonGiveUp.apply {
-                isClickable = true
-                isEnabled = true
-            }
-
-            // Set on-click method.
-            buttonGiveUp.setOnClickListener {
-                openFinal()
-
-                closeGuessDialog()
-            }
-        }
-        else {
-            buttonGiveUp.apply {
-                // Remove on-click method.
-                setOnClickListener(null)
-
-                // Disable the button.
-                isEnabled = false
-                isClickable = false
-            }
-        }
     }
 
     /**
@@ -2411,20 +2224,11 @@ class MainActivity : AppCompatActivity() {
             // Save the currently displayed text in [textViewCurrent].
             putString(CURRENT_TEXT, retrieveCurrentText())
 
-            // Save the openness of the guess dialog.
-            putBoolean(GUESS_OPENNESS, isOpenGuessDialog())
-
-            // If the guess dialog is open, save its state.
-            if (isOpenGuessDialog()) {
-                putBoolean(GUESS_GIVE_UP, isGuessGivingUpAllowed())
-
-                putString(GUESS_TARGET, retrieveGuessTarget())
-
-                putString(GUESS_HINT_ELABORATE, retrieveGuessHint(true))
-                putString(GUESS_HINT_BRIEF, retrieveGuessHint(false))
-
-                putString(GUESS_INPUT, retrieveGuess())
-            }
+            // Save the state of the guess dialog
+            putBoolean(GUESS_GIVE_UP, isGuessGivingUpAllowed())
+            putString(GUESS_TARGET, retrieveGuessTarget())
+            putString(GUESS_HINT_ELABORATE, retrieveGuessHint(true))
+            putString(GUESS_HINT_BRIEF, retrieveGuessHint(false))
         }
     }
 
@@ -2500,26 +2304,11 @@ class MainActivity : AppCompatActivity() {
             // Recover the text displayed in [textViewCurrent] and redesplay it.
             displayCurrentText(getString(CURRENT_TEXT)!!)
 
-            // If the guess dialog has been open, recover its state and reopen it.
-            if (getBoolean(GUESS_OPENNESS)) {
-                changeGuessGivingUpAllowness(getBoolean(GUESS_GIVE_UP))
-
-                changeGuessTarget(getString(GUESS_TARGET)!!)
-
-                val guessTarget: String = retrieveGuessTarget()
-
-                displayElaborateGuessHint(getString(GUESS_HINT_ELABORATE)!!)
-                displayBriefGuessHint(getString(GUESS_HINT_BRIEF)!!)
-
-                if (arrayOfColumns().contains(guessTarget))
-                    bindButtonGuessToColumn(guessTarget)
-                else
-                    bindButtonGuessToFinal()
-
-                typeGuess(getString(GUESS_INPUT))
-
-                openGuessDialog()
-            }
+            // Recover the text of the guess dialog.
+            changeGuessGivingUpAllowness(getBoolean(GUESS_GIVE_UP))
+            changeGuessTarget(getString(GUESS_TARGET)!!)
+            changeElaborateGuessHint(getString(GUESS_HINT_ELABORATE)!!)
+            changeBriefGuessHint(getString(GUESS_HINT_BRIEF)!!)
 
             // Set the game's freshness to the recovered freshness.
             changeGameFreshness(restoredGameFreshness)
@@ -2550,9 +2339,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        // Make [editTextEnterGuess]' IME action done to be clicking [buttonGuess].
-        connectEditTextEnterGuessAndButtonGuess()
+        adViewAdvertisement.loadAd(AdRequest.Builder().build())
 
         // Reset inner properties.
         resetProperties(

@@ -242,18 +242,11 @@ class LauncherActivity : AppCompatActivity() {
      * @see MainActivity.onCreate
      *
      */
-    public fun launchNewGame(it: View) {
-        // Get the chosen difficulty level.
-        val difficulty: Int = retrieveGameDifficulty(it as Button)
-
-        // Create an [intent] for starting [MainActivity]
-        val intent: Intent = Intent(this, MainActivity::class.java).apply {
-            putExtra(resources.getString(R.string.dif), difficulty)
+    public fun launchNewGame(it: View) = startActivity(
+        Intent(this, MainActivity::class.java).apply {
+            putExtra(resources.getString(R.string.dif), retrieveGameDifficulty(it as Button))
         }
-
-        // Start [MainActivity].
-        startActivity(intent)
-    }
+    )
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
