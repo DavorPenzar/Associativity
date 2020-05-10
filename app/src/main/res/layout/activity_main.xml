@@ -56,7 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:gravity="center" />
+                android:gravity="start" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -604,7 +604,8 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Ads. -->
+    <!-- Ads.  Test ads are loaded as instructed at
+    http://developers.google.com/admob/android/test-ads. -->
     <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/adViewAdvertisement"
         android:layout_width="match_parent"

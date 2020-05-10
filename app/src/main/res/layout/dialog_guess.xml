@@ -45,6 +45,6 @@
             android:hint="@string/guess_dialog_try"
             android:imeOptions="actionDone"
             android:importantForAutofill="no"
-            android:inputType="text|textAutoComplete|textAutoCorrect" />
+            android:inputType="text|textAutoCorrect|textAutoComplete" />
     </LinearLayout>
 </LinearLayout>

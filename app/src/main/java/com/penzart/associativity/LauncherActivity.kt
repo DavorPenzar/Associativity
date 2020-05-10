@@ -318,7 +318,15 @@ class LauncherActivity : AppCompatActivity() {
             resources.getString(R.string.custom_game_tables_readme_filename),
             resources.getStringArray(R.array.custom_game_tables_readme).apply(
                 {
-                    set(0, get(0).format(MainActivity.GAME_TABLES_DEFAULT_DIRECTORY))
+                    set(
+                        0,
+                        get(0).format(
+                            AssociativityApplication.constructPath(
+                                MainActivity.GAME_TABLES_DEFAULT_DIRECTORY,
+                                String()
+                            )
+                        )
+                    )
                     set(
                         1,
                         get(1).format(resources.getString(R.string.custom_game_tables_readme_url))

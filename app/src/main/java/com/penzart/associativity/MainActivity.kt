@@ -1,10 +1,11 @@
 package com.penzart.associativity
 
-import android.content.Context
 import android.content.res.AssetManager
-import android.os.*
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.SystemClock
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.ads.AdRequest
@@ -45,9 +46,10 @@ import kotlin.math.abs
  * @property stopwatchHandler The [Handler] object of the stopwatch; could be considered the stopwatch itself.
  * @property stopwatchStartTimeStamp The initial timestamp (milliseconds from boot time) for measuring [stopwatchDuration] of gameplay by the stopwatch (it changes when calling methods [onPause] and [onResume] to disregard idle time therefore ultimately it may be a different timestamp so that [stopwatchDuration] would be measured properly and fairly).
  *
- * @property guessOpenness If the guess dialog is open, `true`; `false` otherwise.
  * @property guessGiveUpAllowed If giving up is allowed during guessing, `true`; `false` otherwise.
  * @property guessTarget Label of the target of guessing.
+ * @property guessHintElaborate Elaborate hint for guessing.
+ * @property guessHintBrief Brief hint for guessing.
  *
  * @property cellsOpenness Mapping from cells' labels to their openness.
  * @property cellsValues Mapping from cells' labels to their values.
@@ -157,55 +159,6 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
         ////////////////////////////////////////////////////////////////////////////////////////////
 
         /**
-         * Construct a path from subpaths.
-         *
-         * The function returns [parts] joined to a string with [File.separator] as a separator in
-         * the order given.  If any of the [parts] ends with a non-escaped [File.separator], it will
-         * be removed before the joining.
-         *
-         * @param parts Subpaths to join in a complete path.
-         *
-         * @return Complete path constructed from subpaths.
-         *
-         */
-        private fun constructPath(vararg parts: String): String {
-            // Extract [parts] with terminating [File.separator] removed.
-            val refinedParts: Array<String> = Array(parts.size) { i: Int ->
-                // If the current part is empty, copy it.
-                if (parts[i].isEmpty())
-                    String()
-
-                // If the current part does not end with [File.separator], copy it.
-                if (!parts[i].endsWith(File.separatorChar))
-                    parts[i]
-
-                // Assume the terminating [File.separator] is not escaped.
-                var escaping: Boolean = false
-
-                // If an even number of [TableReader.ESCAPE_CHAR]s precedes the terminating
-                // [File.separator], the terminating [File.separator] is escaped; otherwise it is
-                // not escaped.
-                for (j in parts[i].length - 2 downTo 0) {
-                    if (parts[i][j].toString() != TableReader.ESCAPE_CHAR)
-                        break
-
-                    escaping = !escaping
-                }
-
-                // If the terminating [File.separator] is escaped, copy the current part except the
-                // terminating [File.separator].
-                if (escaping)
-                    parts[i].substring(0 until parts[i].length - 1)
-
-                // Copy the current part.
-                parts[i]
-            }
-
-            // Return [refinedParts] joint into a string delimited by [File.separator]s.
-            return refinedParts.joinToString(File.separator)
-        }
-
-        /**
          * Construct a label for saving state in [onSaveInstanceState] from a cell's, column's or the final solution's label and a suffix.
          *
          * @param label An element's label.
@@ -239,7 +192,9 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
             difficultyLevel: Int
         ): String = when (difficultyLevel) {
             0 -> rootDirectory
-            else -> constructPath(rootDirectory, difficultyLevel.toString())
+            else -> AssociativityApplication.constructPath(
+                rootDirectory, difficultyLevel.toString()
+            )
         }
 
         /**
@@ -270,8 +225,8 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
             filesDir: File? = null
         ): InputStream = when (difficultyLevel) {
             0 -> {
-                // Get the path of the external storage [subdirectory].
-                val subdirectory: String = constructPath(
+                // Get the path of external storage [subdirectory].
+                val subdirectory: String = AssociativityApplication.constructPath(
                     filesDir!!.path,
                     constructDifficultyLevelSubdirectoryPath(
                         rootDirectory,
@@ -283,17 +238,24 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
                 val items: Array<String> = File(subdirectory).list()!!
 
                 // Open and return a random item in [items].
-                File(constructPath(subdirectory, items.random())).inputStream()
+                File(
+                    AssociativityApplication.constructPath(subdirectory, items.random())
+                ).inputStream()
             }
             else -> {
-                // Get the path of the assets [subdirectory].
+                // Get the path of assets [subdirectory].
                 val subdirectory: String = constructDifficultyLevelSubdirectoryPath(
                     rootDirectory,
                     difficultyLevel
                 )
 
                 // Open and return a random table in the assets [subdirectory].
-                assets!!.open(constructPath(subdirectory, assets.list(subdirectory)!!.random()))
+                assets!!.open(
+                    AssociativityApplication.constructPath(
+                        subdirectory,
+                        assets.list(subdirectory)!!.random()
+                    )
+                )
             }
         }
 
@@ -380,15 +342,8 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
          * @see fixAcceptables
          *
          */
-        private fun isAcceptable(guess: String, acceptables: Array<String>): Boolean {
-            // Try to find [guess] among [acceptables], case-insensitively.
-            for (acceptable in acceptables)
-                if (guess.equals(acceptable, true))
-                    return true
-
-            // Return `false` if [guess] was not found.
-            return false
-        }
+        private fun isAcceptable(guess: String, acceptables: Array<String>): Boolean =
+            acceptables.any { it.equals(guess, ignoreCase = true) }
 
         /**
          * Check if a game tables subdirectory is empty.
@@ -413,7 +368,7 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
             when (difficultyLevel) {
                 // Return non-emptiness of the external storage subdirectory.
                 0 -> File(
-                    constructPath(
+                    AssociativityApplication.constructPath(
                         filesDir!!.path,
                         constructDifficultyLevelSubdirectoryPath(
                             rootDirectory,
@@ -452,7 +407,7 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
             readmeText: String? = null
         ) {
             // Construct [subdirectoryPath] of custom game tables.
-            val subdirectoryPath: String = constructPath(
+            val subdirectoryPath: String = AssociativityApplication.constructPath(
                 filesDir.path,
                 constructDifficultyLevelSubdirectoryPath(rootDirectory, 0)
             )
@@ -460,6 +415,7 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
             // Open [subdirectory] of custom game tables.
             val subdirectory: File = File(subdirectoryPath)
 
+            // Create missing directories.
             if (
                 // If [subdirectory] does not exist or exists but is not a directory, create it as a
                 // directory.
@@ -482,7 +438,7 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
             if (readmeFilename != null) {
                 // Open README file.
                 val readmeWriter: BufferedWriter = File(
-                    constructPath(filesDir.path, readmeFilename)
+                    AssociativityApplication.constructPath(filesDir.path, readmeFilename)
                 ).bufferedWriter()
 
                 // Print to README file.
@@ -521,7 +477,6 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
     private var stopwatchHandler: Handler = Handler()
     private var stopwatchStartTimeStamp: Long = SystemClock.elapsedRealtime()
 
-    private var guessOpenness: Boolean = false
     private var guessGiveUpAllowed: Boolean = false
     private var guessTarget: String = String()
     private var guessHintElaborate: String = String()
@@ -587,9 +542,12 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
             val absoluteDaysInt: Int = absoluteDays.toInt()
 
             timeExpression += (
-                    resources.getQuantityString(R.plurals.stopwatch_days, absoluteDaysInt, absoluteDaysInt) +
-                            TIME_SPACE_DELIMITER
-                    )
+                resources.getQuantityString(
+                    R.plurals.stopwatch_days,
+                    absoluteDaysInt,
+                    absoluteDaysInt
+                ) + TIME_SPACE_DELIMITER
+            )
         }
 
         // Express hours.
@@ -605,18 +563,6 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
 
         // Return the expression.
         return timeExpression
-    }
-
-    /**
-     * Close the input method.
-     *
-     * @param window Window in which the input method should be closed.
-     *
-     */
-    private fun closeInputMethod(window: IBinder) {
-        val input: InputMethodManager? =
-            getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-        input?.hideSoftInputFromWindow(window, 0)
     }
 
     /**
@@ -813,7 +759,6 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
 
         // Reset the guess dialog if needed.
         if (guessDialog) {
-            guessOpenness = false
             guessGiveUpAllowed = false
             guessTarget = String()
             guessHintElaborate = String()

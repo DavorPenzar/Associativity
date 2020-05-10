@@ -375,7 +375,7 @@ class TableReader : Any {
 
                     // If an ending character is read, set [reading] to `false` and break the
                     // `while`-loop.
-                    if (ends.contains(c)) {
+                    if (c in ends) {
                         reading = false
 
                         break@lineLoop

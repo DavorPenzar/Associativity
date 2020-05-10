@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/constraintLayoutLauncher"
+    style="@style/Launcher"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".LauncherActivity">
@@ -26,7 +27,7 @@
             android:id="@+id/linearLayoutTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="start|center_vertical"
             android:orientation="horizontal">
 
             <TextView
@@ -34,8 +35,8 @@
                 style="@style/Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
+                android:layout_gravity="start"
+                android:gravity="start"
                 android:text="@string/app_name" />
         </LinearLayout>
 
@@ -44,7 +45,7 @@
             android:id="@+id/linearLayoutDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="end|center_vertical"
             android:orientation="horizontal">
 
             <TextView
@@ -52,8 +53,8 @@
                 style="@style/Description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
+                android:layout_gravity="end"
+                android:gravity="end"
                 android:text="@string/app_description" />
         </LinearLayout>
     </LinearLayout>
@@ -88,6 +89,7 @@
 
                 <TextView
                     android:id="@+id/textViewChooseDifficulty"
+                    style="@style/ChooseDifficulty"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -95,9 +97,10 @@
                     android:text="@string/difficulty_choose" />
             </LinearLayout>
 
-            <!-- Deifficulty level chooser. -->
+            <!-- Difficulty level chooser. -->
             <LinearLayout
                 android:id="@+id/linearLayoutGameDifficulty"
+                style="?android:attr/buttonBarStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -106,6 +109,7 @@
 
                 <LinearLayout
                     android:id="@+id/linearLayout1"
+                    style="?android:attr/buttonBarStyle"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_gravity="center"
@@ -116,6 +120,7 @@
 
                     <Button
                         android:id="@+id/button1"
+                        style="?android:attr/buttonBarButtonStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -127,6 +132,7 @@
 
                 <LinearLayout
                     android:id="@+id/linearLayout2"
+                    style="?android:attr/buttonBarStyle"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_gravity="center"
@@ -137,6 +143,7 @@
 
                     <Button
                         android:id="@+id/button2"
+                        style="?android:attr/buttonBarButtonStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -148,6 +155,7 @@
 
                 <LinearLayout
                     android:id="@+id/linearLayout3"
+                    style="?android:attr/buttonBarStyle"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_gravity="center"
@@ -158,6 +166,7 @@
 
                     <Button
                         android:id="@+id/button3"
+                        style="?android:attr/buttonBarButtonStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -169,6 +178,7 @@
 
                 <LinearLayout
                     android:id="@+id/linearLayout0"
+                    style="?android:attr/buttonBarStyle"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_gravity="center"
@@ -179,6 +189,7 @@
 
                     <Button
                         android:id="@+id/button0"
+                        style="?android:attr/buttonBarButtonStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
