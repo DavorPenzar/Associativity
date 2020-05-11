@@ -29,7 +29,7 @@
     <string name="game_table_closed" translatable="true">Zatvoreno</string>
     <string name="game_table_open" translatable="true">Otvoreno</string>
 
-    <string name="guess_dialog_dismiss" translatable="true">Odustani</string>
+    <string name="guess_dialog_dismiss" translatable="true">Obustavi</string>
     <string name="guess_dialog_give_up" translatable="true">Predaj se</string>
     <string name="guess_dialog_try" translatable="true">Pokušaj</string>
 
