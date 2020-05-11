@@ -8,9 +8,9 @@
     style="@style/GuessDialog"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".GuessDialog">
 
     <!-- Elaborate hint. -->
     <LinearLayout
@@ -41,7 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:ems="10"
+            android:gravity="start"
             android:hint="@string/guess_dialog_try"
             android:imeOptions="actionDone"
             android:importantForAutofill="no"

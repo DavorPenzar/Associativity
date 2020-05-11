@@ -102,7 +102,7 @@ class GuessDialog : AppCompatDialogFragment() {
      *
      * If the specified button does not exist or [dialog] has not yet been fully created, `null` is returned.
      *
-     * @param whichButton The identifier of the button that should be returned.
+     * @param whichButton The identifier of the button that should be returned.  For example, this can be [DialogInterface.BUTTON_POSITIVE].
      *
      * @return The button from [dialog], or `null` if a button does not exist.
      *

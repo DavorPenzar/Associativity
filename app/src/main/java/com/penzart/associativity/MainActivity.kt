@@ -18,7 +18,7 @@ import kotlin.math.abs
 /**
  * Main activity of the application.
  *
- * Difficulty levels labels are:
+ * Difficulty levels labels are (as defined in [resources] and [R]):
  * * 1 for "easy",
  * * 2 for "medium",
  * * 3 for "hard",
@@ -1128,6 +1128,18 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
     }
 
     /**
+     * Change visibility of the stopwatch.
+     *
+     * Changes visibility of [linearLayoutStopwatch].
+     *
+     * @param visibility One of [View.VISIBLE], [View.INVISIBLE] or [View.GONE].
+     *
+     */
+    private fun changeStopwatchVisibility(visibility: Int) {
+        linearLayoutStopwatch.visibility = visibility
+    }
+
+    /**
      * Get the stopwatch's initial timestamp in milliseconds from boot time.
      *
      * @return The stopwatch's initial timestamp in milliseconds from boot time.
@@ -1239,6 +1251,9 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
                 }
             }
         )
+
+        // Display the stopwatch.
+        changeStopwatchVisibility(View.VISIBLE)
     }
 
     /**
@@ -1281,6 +1296,9 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
     private fun resetStopwatch(resetDuration: Boolean = true) {
         // Stop the stopwatch.
         stopStopwatch(true)
+
+        // Hide the stopwatch.
+        changeStopwatchVisibility(View.GONE)
 
         // Reset stopwatch values.
         printStopwatchTime(String())
