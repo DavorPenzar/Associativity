@@ -268,19 +268,42 @@ class GuessDialog : AppCompatDialogFragment() {
      * @return The button from [dialog], or `null` if a button does not exist.
      *
      */
-    private fun getButton(whichButton: Int): Button =
-        (dialog as AlertDialog).getButton(whichButton)
+    private fun getButton(whichButton: Int): Button = getButton(whichButton, dialog as AlertDialog)
+
+    /**
+     * Get one of the buttons used in the dialog.
+     *
+     * If the specified button does not exist or the dialog has not yet been fully created,
+     * `null` is returned.
+     *
+     * @param whichButton The identifier of the button that should be returned.  For example, this can be [BUTTON_TRY].
+     * @param dialog [AlertDialog] of a [GuessDialog] from which to get the button.
+     *
+     * @return The button from [dialog], or `null` if a button does not exist.
+     *
+     */
+    private fun getButton(whichButton: Int, dialog: AlertDialog): Button =
+        dialog.getButton(whichButton)
 
     /**
      * Make IME action *done* of guessing to be clicking the try button.
      *
      */
     private fun connectEditTextEnterGuessAndPositiveButton() =
-        dialog!!.findViewById<EditText>(R.id.editTextEnterGuess).setOnEditorActionListener {
+        connectEditTextEnterGuessAndPositiveButton(dialog as AlertDialog)
+
+    /**
+     * Make IME action *done* of guessing to be clicking the try button of [AlertDialog].
+     *
+     * @param dialog [AlertDialog] of a [GuessDialog] with [EditText] for typing a guess.
+     *
+     */
+    private fun connectEditTextEnterGuessAndPositiveButton(dialog: AlertDialog) =
+        dialog.findViewById<EditText>(R.id.editTextEnterGuess).setOnEditorActionListener {
             _, actionId: Int, _ ->
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE -> {
-                        getButton(BUTTON_TRY).performClick()
+                        getButton(BUTTON_TRY, dialog).performClick()
 
                         true
                     }
@@ -296,22 +319,30 @@ class GuessDialog : AppCompatDialogFragment() {
      */
     private fun connectEditTextEnterGuessAndPositiveButton(view: View) =
         view.findViewById<EditText>(R.id.editTextEnterGuess).setOnEditorActionListener {
-                _, actionId: Int, _ ->
-            when (actionId) {
-                EditorInfo.IME_ACTION_DONE -> {
-                    getButton(BUTTON_TRY).performClick()
+            _, actionId: Int, _ ->
+                when (actionId) {
+                    EditorInfo.IME_ACTION_DONE -> {
+                        getButton(BUTTON_TRY).performClick()
 
-                    true
+                        true
+                    }
+                    else -> false
                 }
-                else -> false
-            }
         }
 
     /**
      * Disable the give up button.
      *
      */
-    private fun disableGiveUpButton() = getButton(BUTTON_GIVE_UP).apply {
+    private fun disableGiveUpButton() = disableGiveUpButton(dialog as AlertDialog)
+
+    /**
+     * Disable the give up button of [AlertDialog].
+     *
+     * @param dialog [AlertDialog] of a [GuessDialog] to which to disable the give up button.
+     *
+     */
+    private fun disableGiveUpButton(dialog: AlertDialog) = getButton(BUTTON_GIVE_UP, dialog).apply {
         // Remove on-click method.
         setOnClickListener(null)
 
@@ -332,7 +363,17 @@ class GuessDialog : AppCompatDialogFragment() {
      *
      */
     private fun displayElaborateGuessHint(hint: String?) =
-        (dialog as AlertDialog).setMessage(hint)
+        displayElaborateGuessHint(hint, dialog as AlertDialog)
+
+    /**
+     * Print an elaborate hint for guessing to [AlertDialog].
+     *
+     * @param hint Elaborate hint to display.
+     * @param dialog [AlertDialog] of a [GuessDialog] at which to display [hint].
+     *
+     */
+    private fun displayElaborateGuessHint(hint: String?, dialog: AlertDialog) =
+        dialog.setMessage(hint)
 
     /**
      * Print a brief hint for guessing.
@@ -340,12 +381,22 @@ class GuessDialog : AppCompatDialogFragment() {
      * @param hint Brief hint to display.
      *
      */
-    private fun displayBriefGuessHint(hint: String?) {
-        dialog!!.findViewById<EditText>(R.id.editTextEnterGuess).hint = hint
+    private fun displayBriefGuessHint(hint: String?) =
+        displayBriefGuessHint(hint, dialog as AlertDialog)
+
+    /**
+     * Print a brief hint for guessing to [AlertDialog].
+     *
+     * @param hint Brief hint to display.
+     * @param dialog [AlertDialog] of a [GuessDialog] with [EditText] for typing a guess.
+     *
+     */
+    private fun displayBriefGuessHint(hint: String?, dialog: AlertDialog) {
+        dialog.findViewById<EditText>(R.id.editTextEnterGuess).hint = hint
     }
 
     /**
-     * Print a brief hint for guessing.
+     * Print a brief hint for guessing to [View].
      *
      * @param hint Brief hint to display.
      * @param view [View] with [EditText] for typing a guess.
@@ -361,11 +412,21 @@ class GuessDialog : AppCompatDialogFragment() {
      * @return Currently written guess.
      *
      */
-    private fun retrieveGuess(): String =
-        dialog!!.findViewById<EditText>(R.id.editTextEnterGuess).text.toString()
+    private fun retrieveGuess(): String = retrieveGuess(dialog as AlertDialog)
 
     /**
-     * Get the currently written guess.
+     * Get the currently written guess in [AlertDialog].
+     *
+     * @param dialog [AlertDialog] of a [GuessDialog] with [EditText] for typing a guess.
+     *
+     * @return Currently written guess.
+     *
+     */
+    private fun retrieveGuess(dialog: AlertDialog): String =
+        dialog.findViewById<EditText>(R.id.editTextEnterGuess).text.toString()
+
+    /**
+     * Get the currently written guess in [View].
      *
      * @param view [View] with [EditText] for typing a guess.
      *
@@ -383,11 +444,22 @@ class GuessDialog : AppCompatDialogFragment() {
      * @see retrieveGuess
      *
      */
-    private fun typeGuess(guess: String?) =
-        dialog!!.findViewById<EditText>(R.id.editTextEnterGuess).setText(guess)
+    private fun typeGuess(guess: String?) = typeGuess(guess, dialog as AlertDialog)
 
     /**
-     * Set the guess.
+     * Set the guess to [AlertDialog].
+     *
+     * @param guess Guess to set.
+     * @param dialog [AlertDialog] of a [GuessDialog] with [EditText] for typing a guess.
+     *
+     * @see retrieveGuess
+     *
+     */
+    private fun typeGuess(guess: String?, dialog: AlertDialog) =
+        dialog.findViewById<EditText>(R.id.editTextEnterGuess).setText(guess)
+
+    /**
+     * Set the guess to [View].
      *
      * @param guess Guess to set.
      * @param view [View] with [EditText] for typing a guess.
@@ -468,8 +540,12 @@ class GuessDialog : AppCompatDialogFragment() {
 
             // Set buttons of the dialog.  Create a button for giving up only if giving up is
             // allowed.
-            setTryButton(R.string.guess_dialog_try) { _, _ -> listener.guessTry(retrieveGuess()) }
-            setDismissButton(R.string.guess_dialog_dismiss) { _, _ -> dialog!!.cancel() }
+            setTryButton(R.string.guess_dialog_try) { dialog: DialogInterface, _ ->
+                listener.guessTry(retrieveGuess(dialog as AlertDialog))
+            }
+            setDismissButton(R.string.guess_dialog_dismiss) { dialog: DialogInterface, _ ->
+                dialog.cancel()
+            }
             if (listener.isGuessGivingUpAllowed())
                 setGiveUpButton(R.string.guess_dialog_give_up) { _, _ -> listener.guessGiveUp() }
         }
