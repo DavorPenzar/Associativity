@@ -34,9 +34,18 @@
         <item name="android:textStyle">italic</item>
     </style>
 
+    <style name="DifficultyMenu">
+        <item name="android:divider">@drawable/difficulty_menu_divider</item>
+        <item name="android:showDividers">middle</item>
+    </style>
+
     <!-- Style of the information provider for choosing difficulty level. -->
     <style name="ChooseDifficulty">
         <item name="android:textColor">@android:color/primary_text_dark</item>
+    </style>
+
+    <!-- Style of the main activity. -->
+    <style name="Main">
     </style>
 
     <!-- Style of the stopwatch. -->
@@ -64,17 +73,17 @@
     </style>
 
     <!-- Style of cells' buttons. -->
-    <style name="ClosedCellButton" parent="GameTableButton">
+    <style name="CellButton" parent="GameTableButton">
         <item name="android:background">@drawable/closed_cell_button</item>
     </style>
 
     <!-- Style of columns' solutions' buttons. -->
-    <style name="ClosedColumnButton" parent="GameTableButton">
+    <style name="ColumnButton" parent="GameTableButton">
         <item name="android:background">@drawable/closed_column_button</item>
     </style>
 
     <!-- Style of the final solution's button. -->
-    <style name="ClosedSolutionButton" parent="GameTableButton">
+    <style name="SolutionButton" parent="GameTableButton">
         <item name="android:background">@drawable/closed_solution_button</item>
     </style>
 
