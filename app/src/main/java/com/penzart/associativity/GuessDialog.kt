@@ -17,7 +17,6 @@ import androidx.appcompat.app.AppCompatDialogFragment
  * Guess dialog.
  *
  * @property listener Listener of this [GuessDialog].
- * @property dialog Created [AlertDialog].
  *
  */
 class GuessDialog : AppCompatDialogFragment() {
@@ -251,8 +250,7 @@ class GuessDialog : AppCompatDialogFragment() {
     //  PROPERTIES' DECLARATION AND INITIALISATION                                                //
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private var listener: GuessDialogListener? = null
-    private var dialog: AlertDialog? = null
+    private lateinit var listener: GuessDialogListener
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -260,19 +258,21 @@ class GuessDialog : AppCompatDialogFragment() {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Get one of the buttons used in [dialog].
+     * Get one of the buttons used in the dialog.
      *
-     * If the specified button does not exist or [dialog] has not yet been fully created, `null` is returned.
+     * If the specified button does not exist or the dialog has not yet been fully created,
+     * `null` is returned.
      *
      * @param whichButton The identifier of the button that should be returned.  For example, this can be [BUTTON_TRY].
      *
      * @return The button from [dialog], or `null` if a button does not exist.
      *
      */
-    private fun getButton(whichButton: Int): Button = dialog!!.getButton(whichButton)
+    private fun getButton(whichButton: Int): Button =
+        (dialog as AlertDialog).getButton(whichButton)
 
     /**
-     * Make IME action *done* of guessing to be clicking the positive button.
+     * Make IME action *done* of guessing to be clicking the try button.
      *
      */
     private fun connectEditTextEnterGuessAndPositiveButton() =
@@ -289,7 +289,7 @@ class GuessDialog : AppCompatDialogFragment() {
         }
 
     /**
-     * Make IME action *done* of guessing to be clicking the positive button.
+     * Make IME action *done* of guessing to be clicking the try button.
      *
      * @param view [View] with [EditText] for typing a guess.
      *
@@ -308,7 +308,7 @@ class GuessDialog : AppCompatDialogFragment() {
         }
 
     /**
-     * Disable the neutral button.
+     * Disable the give up button.
      *
      */
     private fun disableGiveUpButton() = getButton(BUTTON_GIVE_UP).apply {
@@ -330,17 +330,14 @@ class GuessDialog : AppCompatDialogFragment() {
      *
      * @param hint Elaborate hint to display.
      *
-     * @see retrieveGuessHint
-     *
      */
-    private fun displayElaborateGuessHint(hint: String?) = dialog!!.setMessage(hint)
+    private fun displayElaborateGuessHint(hint: String?) =
+        (dialog as AlertDialog).setMessage(hint)
 
     /**
      * Print a brief hint for guessing.
      *
      * @param hint Brief hint to display.
-     *
-     * @see retrieveGuessHint
      *
      */
     private fun displayBriefGuessHint(hint: String?) {
@@ -352,8 +349,6 @@ class GuessDialog : AppCompatDialogFragment() {
      *
      * @param hint Brief hint to display.
      * @param view [View] with [EditText] for typing a guess.
-     *
-     * @see retrieveGuessHint
      *
      */
     private fun displayBriefGuessHint(hint: String?, view: View) {
@@ -444,45 +439,48 @@ class GuessDialog : AppCompatDialogFragment() {
      */
     @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        // Initialise [builder] of resulting [dialog].
-        val builder: AlertDialog.Builder = AlertDialog.Builder(activity)
+        // Create [builder] of the resulting dialog.
+        val builder: AlertDialog.Builder = AlertDialog.Builder(activity).apply {
+            // Set the dialog to cancelable.
+            setCancelable(true)
 
-        // Create [View] of [dialog].
-        val view: View = (activity?.layoutInflater ?: LayoutInflater.from(activity)).inflate(
-            R.layout.dialog_guess, null
-        ).apply {
-            // Display brief hint.
-            displayBriefGuessHint(listener!!.retrieveGuessHint(elaborate = false), this)
+            // Set [View] of the dialog.
+            setView(
+                (activity?.layoutInflater ?: LayoutInflater.from(activity)).inflate(
+                    R.layout.dialog_guess,
+                    null
+                ).apply {
+                    // Display brief hint.
+                    displayBriefGuessHint(listener.retrieveGuessHint(elaborate = false), this)
 
-            // Make IME action *done* of guessing to be clicking the button for guessing.
-            connectEditTextEnterGuessAndPositiveButton(this)
+                    // Make IME action *done* of guessing to be clicking the button for guessing.
+                    connectEditTextEnterGuessAndPositiveButton(this)
 
-            // If [savedInstanceState] is not `null`, recover the typed guess.
-            if (savedInstanceState != null)
-                typeGuess(savedInstanceState.getString(GUESS_INPUT), this)
-        }
+                    // If [savedInstanceState] is not `null`, recover the typed guess.
+                    if (savedInstanceState != null)
+                        typeGuess(savedInstanceState.getString(GUESS_INPUT), this)
+                }
+            )
 
-        // Add elements to [builder].
-        builder.apply {
-            // Set [View] of [dialog].
-            setView(view)
+            // Set title and message (elaborate hint) of the dialog.
+            setTitle(listener.retrieveGuessHint(elaborate = false))
+            setMessage(listener.retrieveGuessHint(elaborate = true))
 
-            // Set title and message (elaborate hint) of [dialog].
-            setTitle(listener!!.retrieveGuessHint(elaborate = false))
-            setMessage(listener!!.retrieveGuessHint(elaborate = true))
-
-            // Set buttons of [dialog].  Create a button for giving up only if giving up is
+            // Set buttons of the dialog.  Create a button for giving up only if giving up is
             // allowed.
-            setTryButton(R.string.guess_dialog_try) { _, _ -> listener!!.guessTry(retrieveGuess()) }
+            setTryButton(R.string.guess_dialog_try) { _, _ -> listener.guessTry(retrieveGuess()) }
             setDismissButton(R.string.guess_dialog_dismiss) { _, _ -> dialog!!.cancel() }
-            if (listener!!.isGuessGivingUpAllowed())
-                setGiveUpButton(R.string.guess_dialog_give_up) { _, _ -> listener!!.guessGiveUp() }
+            if (listener.isGuessGivingUpAllowed())
+                setGiveUpButton(R.string.guess_dialog_give_up) { _, _ -> listener.guessGiveUp() }
         }
 
         // Create [dialog] from [builder].
-        dialog = builder.create()
+        val dialog: AlertDialog = builder.create()
+
+        // Set [dialog] to be canceled when touched outside.
+        dialog.setCanceledOnTouchOutside(true)
 
         // Return [dialog].
-        return dialog!!
+        return dialog
     }
 }

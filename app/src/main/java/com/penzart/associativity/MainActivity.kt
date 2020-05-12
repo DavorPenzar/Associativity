@@ -18,7 +18,7 @@ import kotlin.math.abs
 /**
  * Main activity of the application.
  *
- * Difficulty levels labels are (as defined in [resources] and [R]):
+ * Difficulty levels labels are (as defined in the resources and [R]):
  * * 1 for "easy",
  * * 2 for "medium",
  * * 3 for "hard",
@@ -27,15 +27,15 @@ import kotlin.math.abs
  * also not guaranteed that opening game tables from a root directory other than
  * [GAME_TABLES_DEFAULT_DIRECTORY] will not throw an exception.
  *
- * @property labelOne Label of the first row of cells in the game table in [resources].
- * @property labelTwo Label of the second row of cells in the game table in [resources].
- * @property labelThree Label of the third row of cells in the game table in [resources].
- * @property labelFour Label of the fourth row of cells the game table in [resources].
+ * @property labelOne Label of the first row of cells in the game table in the resources.
+ * @property labelTwo Label of the second row of cells in the game table in the resources.
+ * @property labelThree Label of the third row of cells in the game table in the resources.
+ * @property labelFour Label of the fourth row of cells the game table in the resources.
  *
- * @property labelA Label of the column A of cells in the game table in [resources].
- * @property labelB Label of the column B of cells in the game table in [resources].
- * @property labelC Label of the column C of cells in the game table in [resources].
- * @property labelD Label of the column D of cells in the game table in [resources].
+ * @property labelA Label of the column A of cells in the game table in the resources.
+ * @property labelB Label of the column B of cells in the game table in the resources.
+ * @property labelC Label of the column C of cells in the game table in the resources.
+ * @property labelD Label of the column D of cells in the game table in the resources.
  *
  * @property gameDifficulty Game's difficulty level.
  * @property gameFreshness Game's freshness state (if `true`, the game table should be initialised with new values and all cells closed as when starting the app or starting a new game).

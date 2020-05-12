@@ -9,26 +9,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     tools:context=".GuessDialog">
 
     <!-- [EditText] for entering guess. -->
-    <LinearLayout
-        android:id="@+id/linearLayoutEnterGuess"
+    <EditText
+        android:id="@+id/editTextEnterGuess"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/editTextEnterGuess"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="start"
-            android:hint="@string/guess_dialog_try"
-            android:imeOptions="actionDone"
-            android:importantForAutofill="no"
-            android:inputType="text|textAutoCorrect|textAutoComplete" />
-    </LinearLayout>
+        android:layout_gravity="center"
+        android:gravity="start"
+        android:hint="@string/guess_dialog_try"
+        android:imeOptions="actionDone"
+        android:importantForAutofill="no"
+        android:inputType="text|textAutoCorrect|textAutoComplete" />
 </LinearLayout>

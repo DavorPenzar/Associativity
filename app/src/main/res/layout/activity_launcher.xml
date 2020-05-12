@@ -107,93 +107,45 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <LinearLayout
-                    android:id="@+id/linearLayout1"
-                    style="?android:attr/buttonBarStyle"
+                <Button
+                    android:id="@+id/button1"
+                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:orientation="horizontal"
-                    android:tag="@string/difficulty_label_1">
+                    android:onClick="launchNewGame"
+                    android:tag="@string/difficulty_label_1"
+                    android:text="@string/difficulty_level_1" />
 
-                    <Button
-                        android:id="@+id/button1"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:onClick="launchNewGame"
-                        android:tag="@string/difficulty_label_1"
-                        android:text="@string/difficulty_level_1" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/linearLayout2"
-                    style="?android:attr/buttonBarStyle"
+                <Button
+                    android:id="@+id/button2"
+                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:orientation="horizontal"
-                    android:tag="@string/difficulty_label_2">
+                    android:onClick="launchNewGame"
+                    android:tag="@string/difficulty_label_2"
+                    android:text="@string/difficulty_level_2" />
 
-                    <Button
-                        android:id="@+id/button2"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:onClick="launchNewGame"
-                        android:tag="@string/difficulty_label_2"
-                        android:text="@string/difficulty_level_2" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/linearLayout3"
-                    style="?android:attr/buttonBarStyle"
+                <Button
+                    android:id="@+id/button3"
+                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:orientation="horizontal"
-                    android:tag="@string/difficulty_label_3">
+                    android:onClick="launchNewGame"
+                    android:tag="@string/difficulty_label_3"
+                    android:text="@string/difficulty_level_3" />
 
-                    <Button
-                        android:id="@+id/button3"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:onClick="launchNewGame"
-                        android:tag="@string/difficulty_label_3"
-                        android:text="@string/difficulty_level_3" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/linearLayout0"
-                    style="?android:attr/buttonBarStyle"
+                <Button
+                    android:id="@+id/button0"
+                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:orientation="horizontal"
-                    android:tag="@string/difficulty_label_0">
-
-                    <Button
-                        android:id="@+id/button0"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:onClick="launchNewGame"
-                        android:tag="@string/difficulty_label_0"
-                        android:text="@string/difficulty_level_0" />
-                </LinearLayout>
+                    android:onClick="launchNewGame"
+                    android:tag="@string/difficulty_label_0"
+                    android:text="@string/difficulty_level_0" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
