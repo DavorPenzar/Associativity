@@ -11,7 +11,6 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatDialogFragment
 
 /**
@@ -32,6 +31,7 @@ class GuessDialog : AppCompatDialogFragment() {
      *
      */
     public interface GuessDialogListener {
+
         /**
          * Check if giving up is allowed during guessing.
          *
@@ -77,11 +77,173 @@ class GuessDialog : AppCompatDialogFragment() {
     /**
      * The companion object of the class [GuessDialog].
      *
+     * @property BUTTON_TRY Identifier for the try button.
+     * @property BUTTON_DISMISS Identifier for the dismiss button.
+     * @property BUTTON_GIVE_UP Identifier for the give up button.
+     *
      * @property GUESS_INPUT Label to save the typed guess in [editTextEnterGuess] in [onSaveInstanceState] method.
      *
      */
     public companion object {
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //  PRIVATE CONSTANTS                                                                     //
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+        private const val BUTTON_TRY: Int = DialogInterface.BUTTON_POSITIVE
+        private const val BUTTON_DISMISS: Int = DialogInterface.BUTTON_NEGATIVE
+        private const val BUTTON_GIVE_UP: Int = DialogInterface.BUTTON_NEUTRAL
+
         private const val GUESS_INPUT: String = "guess"
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //  AUXILIARY METHODS                                                                     //
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+        /**
+         * Set a listener to be invoked when the try button of the dialog is pressed.
+         *
+         * @param textId The resource id of the text to display in the try button.
+         * @param listener [DialogInterface.OnClickListener] to use.
+         *
+         */
+        private fun AlertDialog.Builder.setTryButton(
+            textId: Int,
+            listener: DialogInterface.OnClickListener
+        ) = setPositiveButton(textId, listener)
+
+        /**
+         * Set a listener to be invoked when the try button of the dialog is pressed.
+         *
+         * @param textId The resource id of the text to display in the try button.
+         * @param listener [DialogInterface.OnClickListener] to use.
+         *
+         */
+        private fun AlertDialog.Builder.setTryButton(
+            textId: Int,
+            listener: (dialog: DialogInterface, which: Int) -> Unit
+        ) = setPositiveButton(textId, listener)
+
+        /**
+         * Set a listener to be invoked when the try button of the dialog is pressed.
+         *
+         * @param text The text to display in the try button.
+         * @param listener [DialogInterface.OnClickListener] to use.
+         *
+         */
+        private fun AlertDialog.Builder.setTryButton(
+            text: CharSequence,
+            listener: DialogInterface.OnClickListener
+        ) = setPositiveButton(text, listener)
+
+        /**
+         * Set a listener to be invoked when the try button of the dialog is pressed.
+         *
+         * @param text The text to display in the try button.
+         * @param listener [DialogInterface.OnClickListener] to use.
+         *
+         */
+        private fun AlertDialog.Builder.setTryButton(
+            text: CharSequence,
+            listener: (dialog: DialogInterface, which: Int) -> Unit
+        ) = setPositiveButton(text, listener)
+
+        /**
+         * Set a listener to be invoked when the dismiss button of the dialog is pressed.
+         *
+         * @param textId The resource id of the text to display in the dismiss button.
+         * @param listener [DialogInterface.OnClickListener] to use.
+         *
+         */
+        private fun AlertDialog.Builder.setDismissButton(
+            textId: Int,
+            listener: DialogInterface.OnClickListener
+        ) = setNegativeButton(textId, listener)
+
+        /**
+         * Set a listener to be invoked when the dismiss button of the dialog is pressed.
+         *
+         * @param textId The resource id of the text to display in the dismiss button.
+         * @param listener [DialogInterface.OnClickListener] to use.
+         *
+         */
+        private fun AlertDialog.Builder.setDismissButton(
+            textId: Int,
+            listener: (dialog: DialogInterface, which: Int) -> Unit
+        ) = setNegativeButton(textId, listener)
+
+        /**
+         * Set a listener to be invoked when the dismiss button of the dialog is pressed.
+         *
+         * @param text The text to display in the dismiss button.
+         * @param listener [DialogInterface.OnClickListener] to use.
+         *
+         */
+        private fun AlertDialog.Builder.setDismissButton(
+            text: CharSequence,
+            listener: DialogInterface.OnClickListener
+        ) = setNegativeButton(text, listener)
+
+        /**
+         * Set a listener to be invoked when the dismiss button of the dialog is pressed.
+         *
+         * @param text The text to display in the dismiss button.
+         * @param listener [DialogInterface.OnClickListener] to use.
+         *
+         */
+        private fun AlertDialog.Builder.setDismissButton(
+            text: CharSequence,
+            listener: (dialog: DialogInterface, which: Int) -> Unit
+        ) = setNegativeButton(text, listener)
+
+        /**
+         * Set a listener to be invoked when the give up button of the dialog is pressed.
+         *
+         * @param textId The resource id of the text to display in the give up button.
+         * @param listener [DialogInterface.OnClickListener] to use.
+         *
+         */
+        private fun AlertDialog.Builder.setGiveUpButton(
+            textId: Int,
+            listener: DialogInterface.OnClickListener
+        ) = setNeutralButton(textId, listener)
+
+        /**
+         * Set a listener to be invoked when the give up button of the dialog is pressed.
+         *
+         * @param textId The resource id of the text to display in the give up button.
+         * @param listener [DialogInterface.OnClickListener] to use.
+         *
+         */
+        private fun AlertDialog.Builder.setGiveUpButton(
+            textId: Int,
+            listener: (dialog: DialogInterface, which: Int) -> Unit
+        ) = setNeutralButton(textId, listener)
+
+        /**
+         * Set a listener to be invoked when the give up button of the dialog is pressed.
+         *
+         * @param text The text to display in the give up button.
+         * @param listener [DialogInterface.OnClickListener] to use.
+         *
+         */
+        private fun AlertDialog.Builder.setGiveUpButton(
+            text: CharSequence,
+            listener: DialogInterface.OnClickListener
+        ) = setNeutralButton(text, listener)
+
+        /**
+         * Set a listener to be invoked when the give up button of the dialog is pressed.
+         *
+         * @param text The text to display in the give up button.
+         * @param listener [DialogInterface.OnClickListener] to use.
+         *
+         */
+        private fun AlertDialog.Builder.setGiveUpButton(
+            text: CharSequence,
+            listener: (dialog: DialogInterface, which: Int) -> Unit
+        ) = setNeutralButton(text, listener)
     }
 
 
@@ -102,7 +264,7 @@ class GuessDialog : AppCompatDialogFragment() {
      *
      * If the specified button does not exist or [dialog] has not yet been fully created, `null` is returned.
      *
-     * @param whichButton The identifier of the button that should be returned.  For example, this can be [DialogInterface.BUTTON_POSITIVE].
+     * @param whichButton The identifier of the button that should be returned.  For example, this can be [BUTTON_TRY].
      *
      * @return The button from [dialog], or `null` if a button does not exist.
      *
@@ -118,7 +280,7 @@ class GuessDialog : AppCompatDialogFragment() {
             _, actionId: Int, _ ->
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE -> {
-                        getButton(DialogInterface.BUTTON_POSITIVE).performClick()
+                        getButton(BUTTON_TRY).performClick()
 
                         true
                     }
@@ -137,7 +299,7 @@ class GuessDialog : AppCompatDialogFragment() {
                 _, actionId: Int, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
-                    getButton(DialogInterface.BUTTON_POSITIVE).performClick()
+                    getButton(BUTTON_TRY).performClick()
 
                     true
                 }
@@ -149,7 +311,7 @@ class GuessDialog : AppCompatDialogFragment() {
      * Disable the neutral button.
      *
      */
-    private fun disableNeutralButton() = getButton(DialogInterface.BUTTON_NEUTRAL).apply {
+    private fun disableGiveUpButton() = getButton(BUTTON_GIVE_UP).apply {
         // Remove on-click method.
         setOnClickListener(null)
 
@@ -164,33 +326,6 @@ class GuessDialog : AppCompatDialogFragment() {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Get the current hint for guessing.
-     *
-     * @param elaborate If `true`, the elaborate hint is returned; otherwise the brief hint is returned.
-     *
-     * @return Current hint for guessing.
-     *
-     */
-    private fun retrieveGuessHint(elaborate: Boolean = false): String = if (elaborate)
-        dialog!!.findViewById<TextView>(R.id.textViewHint).text.toString()
-    else
-        dialog!!.findViewById<EditText>(R.id.editTextEnterGuess).hint.toString()
-
-    /**
-     * Get the current hint for guessing.
-     *
-     * @param elaborate If `true`, the elaborate hint is returned; otherwise the brief hint is returned.
-     * @param view [View] with [TextView] for displaying a hint and [EditText] for typing a guess.
-     *
-     * @return Current hint for guessing.
-     *
-     */
-    private fun retrieveGuessHint(elaborate: Boolean, view: View): String = if (elaborate)
-        view.findViewById<TextView>(R.id.textViewHint).text.toString()
-    else
-        view.findViewById<EditText>(R.id.editTextEnterGuess).hint.toString()
-
-    /**
      * Print an elaborate hint for guessing.
      *
      * @param hint Elaborate hint to display.
@@ -198,22 +333,7 @@ class GuessDialog : AppCompatDialogFragment() {
      * @see retrieveGuessHint
      *
      */
-    private fun displayElaborateGuessHint(hint: String?) {
-        dialog!!.findViewById<TextView>(R.id.textViewHint).text = hint
-    }
-
-    /**
-     * Print an elaborate hint for guessing.
-     *
-     * @param hint Elaborate hint to display.
-     * @param view [View] with [TextView] for displaying a hint.
-     *
-     * @see retrieveGuessHint
-     *
-     */
-    private fun displayElaborateGuessHint(hint: String?, view: View) {
-        view.findViewById<TextView>(R.id.textViewHint).text = hint
-    }
+    private fun displayElaborateGuessHint(hint: String?) = dialog!!.setMessage(hint)
 
     /**
      * Print a brief hint for guessing.
@@ -331,8 +451,7 @@ class GuessDialog : AppCompatDialogFragment() {
         val view: View = (activity?.layoutInflater ?: LayoutInflater.from(activity)).inflate(
             R.layout.dialog_guess, null
         ).apply {
-            // Display hint.
-            displayElaborateGuessHint(listener!!.retrieveGuessHint(elaborate = true), this)
+            // Display brief hint.
             displayBriefGuessHint(listener!!.retrieveGuessHint(elaborate = false), this)
 
             // Make IME action *done* of guessing to be clicking the button for guessing.
@@ -348,19 +467,16 @@ class GuessDialog : AppCompatDialogFragment() {
             // Set [View] of [dialog].
             setView(view)
 
-            // Set title of [dialog].
+            // Set title and message (elaborate hint) of [dialog].
             setTitle(listener!!.retrieveGuessHint(elaborate = false))
+            setMessage(listener!!.retrieveGuessHint(elaborate = true))
 
             // Set buttons of [dialog].  Create a button for giving up only if giving up is
             // allowed.
-            setNegativeButton(resources.getString(R.string.guess_dialog_dismiss)) { _, _ -> }
-            setPositiveButton(resources.getString(R.string.guess_dialog_try)) { _, _ ->
-                listener!!.guessTry(retrieveGuess())
-            }
+            setTryButton(R.string.guess_dialog_try) { _, _ -> listener!!.guessTry(retrieveGuess()) }
+            setDismissButton(R.string.guess_dialog_dismiss) { _, _ -> dialog!!.cancel() }
             if (listener!!.isGuessGivingUpAllowed())
-                setNeutralButton(resources.getString(R.string.guess_dialog_give_up)) { _, _ ->
-                    listener!!.guessGiveUp()
-                }
+                setGiveUpButton(R.string.guess_dialog_give_up) { _, _ -> listener!!.guessGiveUp() }
         }
 
         // Create [dialog] from [builder].

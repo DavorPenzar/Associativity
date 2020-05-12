@@ -204,7 +204,7 @@ class LauncherActivity : AppCompatActivity() {
         button.setOnClickListener(this::launchNewGame)
 
         // Enable the [difficulty] level.
-        changeDifficultyEnabling(difficulty, true)
+        changeDifficultyEnabling(difficulty, enabled = true)
     }
 
     /**
@@ -227,7 +227,7 @@ class LauncherActivity : AppCompatActivity() {
         }
 
         // Disable the [difficulty] level.
-        changeDifficultyEnabling(difficulty, false)
+        changeDifficultyEnabling(difficulty, enabled = false)
     }
 
     /**
@@ -289,10 +289,8 @@ class LauncherActivity : AppCompatActivity() {
 
         // Restore enablings of difficulty levels.  Actual disabling is done in [onResume] method
         // where needed.
-        savedInstanceState.apply {
-            for (i in arrayOfDifficulties())
-                changeDifficultyEnabling(i, getBoolean(enabledLabel(i)))
-        }
+        for (i in arrayOfDifficulties())
+            changeDifficultyEnabling(i, savedInstanceState.getBoolean(enabledLabel(i)))
     }
 
     /**

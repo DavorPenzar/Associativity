@@ -293,7 +293,7 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
 
                         // Remove all case-insensitive duplicates of the `i`-th element.
                         while (j < size) {
-                            if (get(i).equals(get(j), true))
+                            if (get(i).equals(get(j), ignoreCase = true))
                                 removeAt(j)
                             else
                                 ++j
@@ -343,7 +343,7 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
          *
          */
         private fun isAcceptable(guess: String, acceptables: Array<String>): Boolean =
-            acceptables.any { it.equals(guess, ignoreCase = true) }
+            acceptables.any { guess.equals(it, ignoreCase = true) }
 
         /**
          * Check if a game tables subdirectory is empty.
@@ -417,13 +417,11 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
 
             // Create missing directories.
             if (
-                // If [subdirectory] does not exist or exists but is not a directory, create it as a
-                // directory.
                 if (subdirectory.exists()) {
                     if (subdirectory.isDirectory)
                         true
                     else {
-                        // Delete [subdirectory].
+                        // Delete [subdirectory] because it is not a directory.
                         subdirectory.delete()
 
                         // Set `true`.
@@ -530,7 +528,7 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
 
         // Initialise the expression as a sign or an empty string.
         var timeExpression = when {
-            milliseconds < 0 -> SIGN_MINUS
+            milliseconds < 0L -> SIGN_MINUS
             includeSign -> SIGN_PLUS
             else -> String()
         }
@@ -845,12 +843,12 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
         // Set everything to closed (not open).
 
         for (cell in arrayOfCells())
-            changeCellOpennes(cell, false)
+            changeCellOpennes(cell, openness = false)
 
         for (column in arrayOfColumns())
-            changeColumnOpennes(column, false)
+            changeColumnOpennes(column, openness = false)
 
-        changeFinalOpennes(false)
+        changeFinalOpennes(openness = false)
 
         // Import a random game table with solutions.
 
@@ -880,7 +878,7 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
 
         // Set the game to non-fresh.
 
-        changeGameFreshness(false)
+        changeGameFreshness(freshness = false)
     }
 
     /**
@@ -1130,13 +1128,21 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
     /**
      * Change visibility of the stopwatch.
      *
-     * Changes visibility of [linearLayoutStopwatch].
+     * If [visibility] is `null`, the stopwatch's visibility state is toggled (a visible stopwatch
+     * will be set to non-visible and vice versa).
      *
-     * @param visibility One of [View.VISIBLE], [View.INVISIBLE] or [View.GONE].
+     * @param visibility New visibility of the stopwatch.
      *
      */
-    private fun changeStopwatchVisibility(visibility: Int) {
-        linearLayoutStopwatch.visibility = visibility
+    private fun changeStopwatchVisibility(visibility: Boolean? = null) {
+        if (visibility == null)
+            changeStopwatchVisibility(linearLayoutStopwatch.visibility != View.VISIBLE)
+        else {
+            linearLayoutStopwatch.visibility = if (visibility)
+                View.VISIBLE
+            else
+                View.INVISIBLE
+        }
     }
 
     /**
@@ -1224,7 +1230,7 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
      */
     private fun startStopwatch() {
         // Reset the stopwatch.
-        resetStopwatch(false)
+        resetStopwatch(resetDuration = false)
 
         // Compute the timestamp from which to count time.
         changeStopwatchStartTimestamp(
@@ -1232,7 +1238,10 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
         )
 
         // Set the stopwatch's startness to `true`.
-        changeStopwatchStartness(true)
+        changeStopwatchStartness(startness = true)
+
+        // Display the stopwatch.
+        changeStopwatchVisibility(visibility = true)
 
         // Count time and display it in [textViewStopwatch] using [stopwatchHandler].
         stopwatchHandler.post(
@@ -1251,9 +1260,6 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
                 }
             }
         )
-
-        // Display the stopwatch.
-        changeStopwatchVisibility(View.VISIBLE)
     }
 
     /**
@@ -1273,8 +1279,8 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
 
         // If [fullStop], set the stopwatch's startness and stopness to `true`.
         if (fullStop) {
-            changeStopwatchStartness(true)
-            changeStopwatchStopness(true)
+            changeStopwatchStartness(startness = true)
+            changeStopwatchStopness(stopness = true)
         }
     }
 
@@ -1295,23 +1301,23 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
      */
     private fun resetStopwatch(resetDuration: Boolean = true) {
         // Stop the stopwatch.
-        stopStopwatch(true)
+        stopStopwatch(fullStop = true)
 
         // Hide the stopwatch.
-        changeStopwatchVisibility(View.GONE)
+        changeStopwatchVisibility(visibility = false)
 
         // Reset stopwatch values.
         printStopwatchTime(String())
         changeStopwatchStartTimestamp(SystemClock.elapsedRealtime())
         if (resetDuration)
-            changeStopwatchDuration(0L)
+            changeStopwatchDuration(duration = 0L)
 
         // Reinitialise the stopwatch handler.
         initialiseStopwatchHandler()
 
         // Set [stopwatchStartness] and [stopwatchStopness] to `false`.
-        changeStopwatchStartness(false)
-        changeStopwatchStopness(false)
+        changeStopwatchStartness(startness = false)
+        changeStopwatchStopness(stopness = false)
     }
 
 
@@ -1610,7 +1616,7 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
         // set it to open.
         button.background = resources.getDrawable(R.drawable.open_cell_button, theme)
         button.text = value
-        changeCellOpennes(cell, true)
+        changeCellOpennes(cell, openness = true)
 
         // If [displayContent], display the text in [textViewCurrent].
         if (displayContent)
@@ -1729,7 +1735,7 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
         // [button] and set it to open.
         button.background = resources.getDrawable(R.drawable.open_column_button, theme)
         button.text = value
-        changeColumnOpennes(column, true)
+        changeColumnOpennes(column, openness = true)
 
         // Display the solution in [textViewCurrent] if needed.
         if (displayContent)
@@ -1821,7 +1827,7 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
      */
     private fun openFinal(recursiveOpen: Boolean = true, displayContent: Boolean = true) {
         // Permanently stop the stopwatch.
-        stopStopwatch(true)
+        stopStopwatch(fullStop = true)
 
         // Open all columns' solutions and cells first if needed.
         if (recursiveOpen)
@@ -1838,7 +1844,7 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
         // and set it to open.
         button.background = resources.getDrawable(R.drawable.open_solution_button, theme)
         button.text = value
-        changeFinalOpennes(true)
+        changeFinalOpennes(openness = true)
 
         // Display the solution in [textViewCurrent] if needed.
         if (displayContent)
@@ -2190,8 +2196,8 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
             // Save the state of the guess dialog
             putBoolean(GUESS_GIVE_UP, isGuessGivingUpAllowed())
             putString(GUESS_TARGET, retrieveGuessTarget())
-            putString(GUESS_HINT_ELABORATE, retrieveGuessHint(true))
-            putString(GUESS_HINT_BRIEF, retrieveGuessHint(false))
+            putString(GUESS_HINT_ELABORATE, retrieveGuessHint(elaborate = true))
+            putString(GUESS_HINT_BRIEF, retrieveGuessHint(elaborate = false))
         }
     }
 
@@ -2213,7 +2219,7 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
         // Recover data from [savedInstanceState].
         savedInstanceState.apply {
             // Temporarily set the game as fresh.
-            changeGameFreshness(true)
+            changeGameFreshness(freshness = true)
 
             // Clear properties.
             resetProperties()
@@ -2239,7 +2245,7 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
                     editCellValue(cell, getString(appendSuffix(cell, SUFFIX_VALUE))!!)
 
                     if (isCellOpen(cell))
-                        openCell(cell, false)
+                        openCell(cell, displayContent = false)
                 }
 
                 // Recover the state of the columns' solutions.
@@ -2248,7 +2254,7 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
                     editColumnValue(
                         column,
                         getStringArray(appendSuffix(column, SUFFIX_VALUE))!!,
-                        false
+                        fix = false
                     )
 
                     if (isColumnOpen(column))
@@ -2258,7 +2264,7 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
                 // Recover the state of the final solution.
 
                 changeFinalOpennes(getBoolean(appendSuffix(resources.getString(R.string.sol), SUFFIX_OPEN)))
-                editFinalValue(getStringArray(appendSuffix(resources.getString(R.string.sol), SUFFIX_VALUE))!!, false)
+                editFinalValue(getStringArray(appendSuffix(resources.getString(R.string.sol), SUFFIX_VALUE))!!, fix = false)
 
                 if (isFinalOpen())
                     openFinal(recursiveOpen = false, displayContent = false)
