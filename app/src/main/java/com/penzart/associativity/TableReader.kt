@@ -263,7 +263,7 @@ class TableReader : Any {
          * The only *NA* value is an empty cell.  Cells containing the usual *NA* indicators, such
          * as `"NA"`, `"na"`, `"NaN"`, `"nan"` etc., are parsed as non-empty strings (for instance,
          * `"NA"` results in a cell containing the string `"NA"`).  *NA* cells will be represented
-         * by empty strings, nut by `null` values.
+         * by empty strings, not by `null` values.
          *
          * The resulting two-dimensional array is the matrix of cells in the table represented by
          * the *CSV* read from [reader].  The first dimension represents the rows of the table,
@@ -280,13 +280,13 @@ class TableReader : Any {
          * @param reader [BufferedReader] from which to read the *CSV* table.
          * @param originName The name or the path of the origin of [reader].  If the table is read from a file, this parameter should be set to the file's name or its path.  This argument is used to explain errors when throwing exceptions.
          * @param precedingLine Index of the line directly before the first line read from [reader].  If the first line that is read should have index `1`, set this argument to `0`.  This argument is used to explain errors when throwing exceptions.  **Note: The first column that is read is assumed to have index `1`.**
-         * @param ends Characters indicating the end of reading.  A character that is read is first checked if it is in [ends], before any other *CSV* parsing or parsing of escape sequences; however, input is read from [reader] using [BufferedReader.readLine] method therefore text after the ending character but before the end of the line is ignored and cannot be fetched again.  **Note: Some characters, such as the line break (`\n`) will not work properly.  It is best practice to use printable non-whitespace characters for [ends].**
-         * @param parseEscapeSequences If `true`, any escape sequence in the text read by [reader] is parsed using [escapeSequence] method.  **Note: Since [CSV_SEPARATOR_CHAR]s and [CSV_QUOTE_CHAR]s can be escaped using [escapeSequence] method, subsequent parsing of these escape expressions is not possible.**
+         * @param ends Characters indicating the end of reading.  A character that is read is first checked if it is in [ends], before any other *CSV* parsing or parsing of escape sequences; however, input is read from [reader] using [BufferedReader.readLine] method therefore text after the ending character but before the end of the line or stream is ignored and cannot be fetched again.  **Note: Some characters, such as the line break (`'\n'`) will not work properly.  It is best practice to use printable non-whitespace characters for [ends] that are guaranteed not to appear in a *CSV* input by the protocol in use.**
+         * @param parseEscapeSequences If `true`, any escape sequence in the text read by [reader] is parsed using [escapeSequence] method.  **Note: Since [CSV_SEPARATOR_CHAR] and [CSV_QUOTE_CHAR] can be escaped using [escapeSequence] method, subsequent parsing of these escape expressions is not possible.**
          *
          * @return The table written in the *CSV* input.
          *
-         * @throws IllegalArgumentException If [precedingLine] is negative or rules of the *CSV* format are not followed.
-         * @throws IOException [IOException]s thrown by the [FileReader] used in the method are not caught, and additional [IOException]s may be thrown by the method itself if the *CSV* input is not formatted properly.
+         * @throws IllegalArgumentException If [precedingLine] is negative or if the rules of the *CSV* format are not followed.
+         * @throws IOException [IOException]s thrown by the [BufferedReader] used in the method are not caugh, and additional [IOException]s may be thrown by the method itself if the *CSV* input is not formatted properly.
          *
          */
         public fun readCSV(
@@ -1033,7 +1033,7 @@ class TableReader : Any {
      * The empty constructor is private.
      *
      */
-    private constructor()
+    private constructor() : super()
 
     /**
      * The copy constructor is private.
@@ -1041,7 +1041,7 @@ class TableReader : Any {
      * @param other Original [TableReader] to copy.
      *
      */
-    private constructor(other: TableReader)
+    private constructor(other: TableReader?) : super()
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

@@ -106,11 +106,13 @@ class GuessDialog : AppCompatDialogFragment() {
          * @param textId The resource id of the text to display in the try button.
          * @param listener [DialogInterface.OnClickListener] to use.
          *
+         * @return This [AlertDialog.Builder] object to allow for chaining of calls to set method.
+         *
          */
         private fun AlertDialog.Builder.setTryButton(
             textId: Int,
             listener: DialogInterface.OnClickListener
-        ) = setPositiveButton(textId, listener)
+        ): AlertDialog.Builder = setPositiveButton(textId, listener)
 
         /**
          * Set a listener to be invoked when the try button of the dialog is pressed.
@@ -118,11 +120,13 @@ class GuessDialog : AppCompatDialogFragment() {
          * @param textId The resource id of the text to display in the try button.
          * @param listener [DialogInterface.OnClickListener] to use.
          *
+         * @return This [AlertDialog.Builder] object to allow for chaining of calls to set method.
+         *
          */
         private fun AlertDialog.Builder.setTryButton(
             textId: Int,
             listener: (dialog: DialogInterface, which: Int) -> Unit
-        ) = setPositiveButton(textId, listener)
+        ): AlertDialog.Builder = setPositiveButton(textId, listener)
 
         /**
          * Set a listener to be invoked when the try button of the dialog is pressed.
@@ -130,11 +134,13 @@ class GuessDialog : AppCompatDialogFragment() {
          * @param text The text to display in the try button.
          * @param listener [DialogInterface.OnClickListener] to use.
          *
+         * @return This [AlertDialog.Builder] object to allow for chaining of calls to set method.
+         *
          */
         private fun AlertDialog.Builder.setTryButton(
             text: CharSequence,
             listener: DialogInterface.OnClickListener
-        ) = setPositiveButton(text, listener)
+        ): AlertDialog.Builder = setPositiveButton(text, listener)
 
         /**
          * Set a listener to be invoked when the try button of the dialog is pressed.
@@ -142,11 +148,13 @@ class GuessDialog : AppCompatDialogFragment() {
          * @param text The text to display in the try button.
          * @param listener [DialogInterface.OnClickListener] to use.
          *
+         * @return This [AlertDialog.Builder] object to allow for chaining of calls to set method.
+         *
          */
         private fun AlertDialog.Builder.setTryButton(
             text: CharSequence,
             listener: (dialog: DialogInterface, which: Int) -> Unit
-        ) = setPositiveButton(text, listener)
+        ): AlertDialog.Builder = setPositiveButton(text, listener)
 
         /**
          * Set a listener to be invoked when the dismiss button of the dialog is pressed.
@@ -154,11 +162,13 @@ class GuessDialog : AppCompatDialogFragment() {
          * @param textId The resource id of the text to display in the dismiss button.
          * @param listener [DialogInterface.OnClickListener] to use.
          *
+         * @return This [AlertDialog.Builder] object to allow for chaining of calls to set method.
+         *
          */
         private fun AlertDialog.Builder.setDismissButton(
             textId: Int,
             listener: DialogInterface.OnClickListener
-        ) = setNegativeButton(textId, listener)
+        ): AlertDialog.Builder = setNegativeButton(textId, listener)
 
         /**
          * Set a listener to be invoked when the dismiss button of the dialog is pressed.
@@ -166,11 +176,13 @@ class GuessDialog : AppCompatDialogFragment() {
          * @param textId The resource id of the text to display in the dismiss button.
          * @param listener [DialogInterface.OnClickListener] to use.
          *
+         * @return This [AlertDialog.Builder] object to allow for chaining of calls to set method.
+         *
          */
         private fun AlertDialog.Builder.setDismissButton(
             textId: Int,
             listener: (dialog: DialogInterface, which: Int) -> Unit
-        ) = setNegativeButton(textId, listener)
+        ): AlertDialog.Builder = setNegativeButton(textId, listener)
 
         /**
          * Set a listener to be invoked when the dismiss button of the dialog is pressed.
@@ -178,11 +190,13 @@ class GuessDialog : AppCompatDialogFragment() {
          * @param text The text to display in the dismiss button.
          * @param listener [DialogInterface.OnClickListener] to use.
          *
+         * @return This [AlertDialog.Builder] object to allow for chaining of calls to set method.
+         *
          */
         private fun AlertDialog.Builder.setDismissButton(
             text: CharSequence,
             listener: DialogInterface.OnClickListener
-        ) = setNegativeButton(text, listener)
+        ): AlertDialog.Builder = setNegativeButton(text, listener)
 
         /**
          * Set a listener to be invoked when the dismiss button of the dialog is pressed.
@@ -190,11 +204,13 @@ class GuessDialog : AppCompatDialogFragment() {
          * @param text The text to display in the dismiss button.
          * @param listener [DialogInterface.OnClickListener] to use.
          *
+         * @return This [AlertDialog.Builder] object to allow for chaining of calls to set method.
+         *
          */
         private fun AlertDialog.Builder.setDismissButton(
             text: CharSequence,
             listener: (dialog: DialogInterface, which: Int) -> Unit
-        ) = setNegativeButton(text, listener)
+        ): AlertDialog.Builder = setNegativeButton(text, listener)
 
         /**
          * Set a listener to be invoked when the give up button of the dialog is pressed.
@@ -202,11 +218,13 @@ class GuessDialog : AppCompatDialogFragment() {
          * @param textId The resource id of the text to display in the give up button.
          * @param listener [DialogInterface.OnClickListener] to use.
          *
+         * @return This [AlertDialog.Builder] object to allow for chaining of calls to set method.
+         *
          */
         private fun AlertDialog.Builder.setGiveUpButton(
             textId: Int,
             listener: DialogInterface.OnClickListener
-        ) = setNeutralButton(textId, listener)
+        ): AlertDialog.Builder = setNeutralButton(textId, listener)
 
         /**
          * Set a listener to be invoked when the give up button of the dialog is pressed.
@@ -214,23 +232,27 @@ class GuessDialog : AppCompatDialogFragment() {
          * @param textId The resource id of the text to display in the give up button.
          * @param listener [DialogInterface.OnClickListener] to use.
          *
+         * @return This [AlertDialog.Builder] object to allow for chaining of calls to set method.
+         *
          */
         private fun AlertDialog.Builder.setGiveUpButton(
             textId: Int,
             listener: (dialog: DialogInterface, which: Int) -> Unit
-        ) = setNeutralButton(textId, listener)
+        ): AlertDialog.Builder = setNeutralButton(textId, listener)
 
         /**
          * Set a listener to be invoked when the give up button of the dialog is pressed.
          *
          * @param text The text to display in the give up button.
          * @param listener [DialogInterface.OnClickListener] to use.
+         *
+         * @return This [AlertDialog.Builder] object to allow for chaining of calls to set method.
          *
          */
         private fun AlertDialog.Builder.setGiveUpButton(
             text: CharSequence,
             listener: DialogInterface.OnClickListener
-        ) = setNeutralButton(text, listener)
+        ): AlertDialog.Builder = setNeutralButton(text, listener)
 
         /**
          * Set a listener to be invoked when the give up button of the dialog is pressed.
@@ -238,11 +260,13 @@ class GuessDialog : AppCompatDialogFragment() {
          * @param text The text to display in the give up button.
          * @param listener [DialogInterface.OnClickListener] to use.
          *
+         * @return This [AlertDialog.Builder] object to allow for chaining of calls to set method.
+         *
          */
         private fun AlertDialog.Builder.setGiveUpButton(
             text: CharSequence,
             listener: (dialog: DialogInterface, which: Int) -> Unit
-        ) = setNeutralButton(text, listener)
+        ): AlertDialog.Builder = setNeutralButton(text, listener)
     }
 
 
@@ -476,7 +500,7 @@ class GuessDialog : AppCompatDialogFragment() {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Attach [GuessDialog] to [Context].
+     * Attach this [GuessDialog] object to a [Context] object.
      *
      * @param context [Context] of [GuessDialog].
      *
@@ -502,7 +526,7 @@ class GuessDialog : AppCompatDialogFragment() {
     }
 
     /**
-     * Show [GuessDialog].
+     * Create [Dialog] to be displayed by this [GuessDialog] object.
      *
      * @param savedInstanceState The last saved instance state of [GuessDialog], or null if this is a freshly created [GuessDialog].
      *

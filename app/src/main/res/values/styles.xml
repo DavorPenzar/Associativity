@@ -21,7 +21,7 @@
 
     <!-- Style of the title. -->
     <style name="Title" parent="Widget.AppCompat.TextView">
-        <item name="android:layout_marginBottom">@dimen/spacing_small</item>
+        <item name="android:paddingBottom">@dimen/spacing_small</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">@dimen/title_size</item>
         <item name="android:textStyle">bold</item>
