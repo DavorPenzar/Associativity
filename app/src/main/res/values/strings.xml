@@ -63,6 +63,6 @@
     <!-- Guess dialog feedback strings. -->
     <string name="guess_dialog_feedback_smiley_face" translatable="false">\ud83d\ude0a</string>
     <string name="guess_dialog_feedback_sad_face" translatable="false">\ud83d\ude1e</string>
-    <string name="guess_dialog_feedback_correct" translatable="true">Correct! %s</string>
-    <string name="guess_dialog_feedback_wrong" translatable="true">Wrong! %s</string>
+    <string name="guess_dialog_feedback_correct" translatable="true">Correct!</string>
+    <string name="guess_dialog_feedback_wrong" translatable="true">Wrong!</string>
 </resources>

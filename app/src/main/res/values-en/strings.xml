@@ -32,6 +32,6 @@
     <string name="guess_dialog_give_up" translatable="true">Give up</string>
     <string name="guess_dialog_try" translatable="true">Try</string>
 
-    <string name="guess_dialog_feedback_correct" translatable="true">Correct! %s</string>
-    <string name="guess_dialog_feedback_wrong" translatable="true">Wrong! %s</string>
+    <string name="guess_dialog_feedback_correct" translatable="true">Correct!</string>
+    <string name="guess_dialog_feedback_wrong" translatable="true">Wrong!</string>
 </resources>

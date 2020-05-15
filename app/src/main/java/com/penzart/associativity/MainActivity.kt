@@ -1442,35 +1442,15 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
     ) {
         if (guessColumn(retrieveGuessTarget(), guess)) {
             openColumn(retrieveGuessTarget(), displayContent = false)
-            displayCurrentText(
-                resources.getString(
-                    R.string.guess_dialog_feedback_correct,
-                    resources.getString(R.string.guess_dialog_feedback_smiley_face)
-                )
-            )
+            displayCurrentText(R.string.guess_dialog_feedback_correct)
         } else
-            displayCurrentText(
-                resources.getString(
-                    R.string.guess_dialog_feedback_wrong,
-                    resources.getString(R.string.guess_dialog_feedback_sad_face)
-                )
-            )
+            displayCurrentText(R.string.guess_dialog_feedback_wrong)
     } else {
         if (guessFinal(guess)) {
             openFinal(displayContent = false)
-            displayCurrentText(
-                resources.getString(
-                    R.string.guess_dialog_feedback_correct,
-                    resources.getString(R.string.guess_dialog_feedback_smiley_face)
-                )
-            )
+            displayCurrentText(R.string.guess_dialog_feedback_correct)
         } else
-            displayCurrentText(
-                resources.getString(
-                    R.string.guess_dialog_feedback_wrong,
-                    resources.getString(R.string.guess_dialog_feedback_sad_face)
-                )
-            )
+            displayCurrentText(R.string.guess_dialog_feedback_wrong)
     }
 
     /**
@@ -1521,6 +1501,14 @@ class MainActivity : AppCompatActivity(), GuessDialog.GuessDialogListener {
         else
             DISPLAY_PARENT_CHILD_TEXT.format(origin, text)
     }
+
+    /**
+     * Print a text in [textViewCurrent].
+     *
+     * @param textId The resource id of the text to display in [textViewCurrent].
+     *
+     */
+    private fun displayCurrentText(textId: Int) = textViewCurrent.setText(textId)
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

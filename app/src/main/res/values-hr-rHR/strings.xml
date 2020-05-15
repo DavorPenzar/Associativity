@@ -33,6 +33,6 @@
     <string name="guess_dialog_give_up" translatable="true">Predaj se</string>
     <string name="guess_dialog_try" translatable="true">Pokušaj</string>
 
-    <string name="guess_dialog_feedback_correct" translatable="true">Točno! %s</string>
-    <string name="guess_dialog_feedback_wrong" translatable="true">Pogrešno! %s</string>
+    <string name="guess_dialog_feedback_correct" translatable="true">Točno!</string>
+    <string name="guess_dialog_feedback_wrong" translatable="true">Pogrešno!</string>
 </resources>

@@ -1059,9 +1059,11 @@ class TableReader : Any {
     override fun hashCode(): Int = 0
 
     /**
-     * Check whether some other object is "equal to" this one.
+     * Check whether some other object is *equal to* this one.
      *
      * **Note: The method is hardcoded to always return `false`.**
+     *
+     * @param other The object to compare to.
      *
      * @return If the objects are equal, `true`; `false` otherwise.
      *
