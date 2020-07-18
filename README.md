@@ -116,7 +116,7 @@ In both formats shown commas (and empty cells in the second format) at the end o
 
 ### Producing a Game Table Using [Spreadsheet Software](http://en.wikipedia.org/wiki/Spreadsheet)
 
-The easiest way to create a [*CSV* file](http://en.wikipedia.org/wiki/Comma-separated_values) of a game table is using a [spreadsheet software](http://en.wikipedia.org/wiki/Spreadsheet) such as [*Google Sheets*](http://google.com/sheets/about/), [*Apple Numbers*](http://apple.com/numbers/), [*Microsoft Office Excel*](http://products.office.com/excel), [*OpenOffice Calc*](http://openoffice.org/product/calc.html) or [*LibreOffice Calc*](http://libreoffice.org/discover/calc/). In the software of your choice enter the game table as
+The easiest way to create a [*CSV* file](http://en.wikipedia.org/wiki/Comma-separated_values) of a game table is using a [spreadsheet software](http://en.wikipedia.org/wiki/Spreadsheet) such as [*Sheets*](http://google.com/sheets/about/), [*Numbers*](http://apple.com/numbers/), [*Excel*](http://products.office.com/excel), [*OpenOffice Calc*](http://openoffice.org/product/calc.html) or [*LibreOffice Calc*](http://libreoffice.org/discover/calc/). In the software of your choice enter the game table as
 
 |              | **A**     | **B**        | **C**   | **D**        | **E**          | **F** | **&hellip;** |
 | :----------: | :---------| :------------| :-------| :------------| :--------------| :-----| :------------|
